@@ -1,4 +1,3 @@
-import React from 'react';
 import Card from './Card';
 
 const StatCard = ({ icon: Icon, title, value, color, iconColor }) => {

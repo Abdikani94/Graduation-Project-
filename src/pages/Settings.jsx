@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Settings as SettingsIcon, Shield, Bell, HardDrive, Save } from 'lucide-react';
+import { useState } from 'react';
+import { Settings as SettingsIcon, Shield, Bell, Save } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 

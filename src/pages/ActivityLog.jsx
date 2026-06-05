@@ -1,5 +1,4 @@
-import React from 'react';
-import { History, Search } from 'lucide-react';
+import { History } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 

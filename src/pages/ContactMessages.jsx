@@ -1,4 +1,3 @@
-import React from 'react';
 import { User, Search, Eye } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';

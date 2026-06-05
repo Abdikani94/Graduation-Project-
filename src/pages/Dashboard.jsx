@@ -1,4 +1,3 @@
-import React from 'react';
 import { UserCheck, UserX, Clock, Users, Bell } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,

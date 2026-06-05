@@ -1,4 +1,3 @@
-import React from 'react';
 import { FileText, User, DollarSign, Download, Info, Eye, Calendar } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import StatCard from '../components/StatCard';

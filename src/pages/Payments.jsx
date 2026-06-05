@@ -1,5 +1,4 @@
-import React from 'react';
-import { DollarSign, Search } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';

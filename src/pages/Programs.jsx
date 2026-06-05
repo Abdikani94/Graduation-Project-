@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { User, Search, Edit2, Plus, X, Image as ImageIcon, BookOpen, Clock, Calendar, Check, Trash2, Edit } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
@@ -89,7 +89,7 @@ const Programs = () => {
   // New Faculty Modal Form State
   const [facultyName, setFacultyName] = useState('');
   const [fee, setFee] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const fileInputRef = useRef(null);
 

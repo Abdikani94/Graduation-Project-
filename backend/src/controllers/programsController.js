@@ -1,0 +1,149 @@
+import { createId, readDb, updateDb } from '../lib/db.js';
+import { fail, sendJson, sendNoContent } from '../lib/http.js';
+import { matchesText } from '../lib/query.js';
+import { addActivity } from '../services/audit.js';
+
+export const listPrograms = async (req, res) => {
+  const db = await readDb();
+  let programs = [...db.programs];
+  programs = programs.filter((item) => matchesText(item, ['title', 'campus'], req.query.search));
+  const summary = {
+    totalPrograms: db.programs.reduce((sum, item) => sum + item.departments.length, 0),
+    totalFaculties: db.programs.length,
+    totalAdmissionFees: db.programs.reduce((sum, item) => sum + Number(item.admissionFee || 0), 0)
+  };
+  sendJson(res, 200, { data: programs, summary });
+};
+
+export const createProgram = async (req, res) => {
+  const { title, admissionFee, campus = 'Main Campus', image = '', departments = [] } = req.body || {};
+  if (!title || admissionFee === undefined) fail(422, 'Faculty title and admission fee are required');
+
+  const program = await updateDb((db) => {
+    const now = new Date().toISOString();
+    const item = {
+      id: createId('fac'),
+      title,
+      admissionFee: Number(admissionFee),
+      campus,
+      image,
+      departments: departments.map((department) => ({
+        id: createId('dep'),
+        name: department.name,
+        durationYears: Number(department.durationYears || department.duration || 4)
+      })),
+      createdAt: now,
+      updatedAt: now
+    };
+    db.programs.unshift(item);
+    addActivity(db, req, {
+      action: 'Added Faculty',
+      afterAction: title,
+      module: 'Programs'
+    });
+    return item;
+  });
+
+  sendJson(res, 201, { program });
+};
+
+export const updateProgram = async (req, res) => {
+  const program = await updateDb((db) => {
+    const found = db.programs.find((item) => item.id === req.params.id);
+    if (!found) fail(404, 'Faculty not found');
+    const before = found.title;
+    for (const key of ['title', 'campus', 'image']) {
+      if (req.body[key] !== undefined) found[key] = req.body[key];
+    }
+    if (req.body.admissionFee !== undefined) found.admissionFee = Number(req.body.admissionFee);
+    found.updatedAt = new Date().toISOString();
+    addActivity(db, req, {
+      action: 'Updated Faculty',
+      beforeAction: before,
+      afterAction: found.title,
+      module: 'Programs'
+    });
+    return found;
+  });
+  sendJson(res, 200, { program });
+};
+
+export const deleteProgram = async (req, res) => {
+  await updateDb((db) => {
+    const index = db.programs.findIndex((item) => item.id === req.params.id);
+    if (index === -1) fail(404, 'Faculty not found');
+    const [program] = db.programs.splice(index, 1);
+    addActivity(db, req, {
+      action: 'Deleted Faculty',
+      beforeAction: program.title,
+      module: 'Programs'
+    });
+  });
+  sendNoContent(res);
+};
+
+export const createDepartment = async (req, res) => {
+  const { name, durationYears, duration } = req.body || {};
+  if (!name) fail(422, 'Department name is required');
+
+  const department = await updateDb((db) => {
+    const program = db.programs.find((item) => item.id === req.params.id);
+    if (!program) fail(404, 'Faculty not found');
+    const item = {
+      id: createId('dep'),
+      name,
+      durationYears: Number(durationYears || duration || 4)
+    };
+    program.departments.push(item);
+    program.updatedAt = new Date().toISOString();
+    addActivity(db, req, {
+      action: 'Added Department',
+      afterAction: name,
+      module: 'Programs'
+    });
+    return item;
+  });
+
+  sendJson(res, 201, { department });
+};
+
+export const updateDepartment = async (req, res) => {
+  const department = await updateDb((db) => {
+    const program = db.programs.find((item) => item.id === req.params.programId);
+    if (!program) fail(404, 'Faculty not found');
+    const found = program.departments.find((item) => item.id === req.params.departmentId);
+    if (!found) fail(404, 'Department not found');
+    const before = found.name;
+    if (req.body.name !== undefined) found.name = req.body.name;
+    if (req.body.durationYears !== undefined || req.body.duration !== undefined) {
+      found.durationYears = Number(req.body.durationYears || req.body.duration);
+    }
+    program.updatedAt = new Date().toISOString();
+    addActivity(db, req, {
+      action: 'Updated Department',
+      beforeAction: before,
+      afterAction: found.name,
+      module: 'Programs'
+    });
+    return found;
+  });
+
+  sendJson(res, 200, { department });
+};
+
+export const deleteDepartment = async (req, res) => {
+  await updateDb((db) => {
+    const program = db.programs.find((item) => item.id === req.params.programId);
+    if (!program) fail(404, 'Faculty not found');
+    const index = program.departments.findIndex((item) => item.id === req.params.departmentId);
+    if (index === -1) fail(404, 'Department not found');
+    const [department] = program.departments.splice(index, 1);
+    program.updatedAt = new Date().toISOString();
+    addActivity(db, req, {
+      action: 'Deleted Department',
+      beforeAction: department.name,
+      module: 'Programs'
+    });
+  });
+  sendNoContent(res);
+};

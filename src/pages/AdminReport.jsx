@@ -1,4 +1,3 @@
-import React from 'react';
 import { FileText, Users, CheckCircle, XCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import StatCard from '../components/StatCard';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -13,6 +12,8 @@ import Payments from './pages/Payments';
 import ActivityLog from './pages/ActivityLog';
 import AdminReport from './pages/AdminReport';
 import Settings from './pages/Settings';
+import LandingPage from './pages/LandingPage';
+import ApplyPage from './pages/ApplyPage';
 
 const AdminLayout = () => {
   return (
@@ -42,7 +43,10 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/apply" element={<ApplyPage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/admin/*" element={<AdminLayout />} />
         <Route path="/*" element={<AdminLayout />} />
       </Routes>
     </Router>
