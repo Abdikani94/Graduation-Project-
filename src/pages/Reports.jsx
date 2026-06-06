@@ -23,12 +23,12 @@ const trendData = [
 const sexData = [
   { name: 'Male', value: 30, color: '#f97316' },
   { name: 'Empty1', value: 15, color: 'transparent' },
-  { name: 'Female', value: 40, color: '#9b51e0' },
+  { name: 'Female', value: 40, color: '#2D368D' },
   { name: 'Empty2', value: 15, color: 'transparent' }
 ];
 
 const nationalityData = [
-  { name: 'Local Somali', value: 30, color: '#9b51e0' },
+  { name: 'Local Somali', value: 30, color: '#2D368D' },
   { name: 'International', value: 5, color: '#f97316' },
   { name: 'Empty', value: 65, color: 'transparent' }
 ];
@@ -43,24 +43,24 @@ const ageData = [
 
 const facultyDemandData = [
   { name: 'Computer Science & IT', value: 20, color: '#f97316' },
-  { name: 'Faculty of Education', value: 10, color: '#22c55e' },
-  { name: 'Faculty of Engineering', value: 40, color: '#9b51e0' },
-  { name: 'Faculty of Business & Economics', value: 30, color: '#3b82f6' },
+  { name: 'Faculty of Education', value: 10, color: '#00A451' },
+  { name: 'Faculty of Engineering', value: 40, color: '#2D368D' },
+  { name: 'Faculty of Business & Economics', value: 30, color: '#2D368D' },
   { name: 'Health Science', value: 30, color: '#fb923c' },
   { name: 'Faculty of Law & Sharia', value: 30, color: '#ef4444' }
 ];
 
 const studyModeData = [
-  { name: 'Full Time', value: 30, color: '#22c55e' },
+  { name: 'Full Time', value: 30, color: '#00A451' },
   { name: 'Empty1', value: 15, color: 'transparent' },
-  { name: 'Part Time', value: 40, color: '#3b82f6' },
+  { name: 'Part Time', value: 40, color: '#2D368D' },
   { name: 'Empty2', value: 15, color: 'transparent' }
 ];
 
 const paymentPlanData = [
-  { name: '4 semesters', value: 30, color: '#22c55e' },
+  { name: '4 semesters', value: 30, color: '#00A451' },
   { name: 'Empty1', value: 15, color: 'transparent' },
-  { name: '8 semesters', value: 40, color: '#3b82f6' },
+  { name: '8 semesters', value: 40, color: '#2D368D' },
   { name: 'Empty2', value: 15, color: 'transparent' }
 ];
 
@@ -73,7 +73,7 @@ const sourceData = [
   { name: 'Others', value: 40 }
 ];
 
-const SectionTitle = ({ title, color = "#894EEF" }) => (
+const SectionTitle = ({ title, color = "#2D368D" }) => (
   <div className="flex items-center gap-3 mt-4 mb-2">
     <span className="w-4 h-4 rounded-full border-4 opacity-80" style={{ borderColor: color }}></span>
     <h2 className="text-white text-[18px] font-semibold">{title}</h2>
@@ -149,14 +149,14 @@ const Reports = () => {
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
-        <StatCard icon={User} title="Total Applications" value="1,284" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={User} title="Total Applications" value="1,284" color="#00A451" iconColor="#00A451" />
         <StatCard icon={User} title="Acceptance Rate" value="26%" color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Rejection Rate" value="5%" color="#9b51e0" iconColor="#9b51e0" />
+        <StatCard icon={User} title="Rejection Rate" value="5%" color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={DollarSign} title="Total Revenue" value="$600" color="#d97706" iconColor="#d97706" />
       </div>
 
       {/* Admission Demographics */}
-      <SectionTitle title="Student Demographics" color="#22c55e" />
+      <SectionTitle title="Student Demographics" color="#00A451" />
       <Card className="p-6">
         <h3 className="text-white text-[16px] font-semibold mb-1">Admissions Trend</h3>
         <p className="text-gray-500 text-[12px] mb-6">against Total submitted vs Paid</p>
@@ -166,32 +166,32 @@ const Reports = () => {
             <AreaChart data={trendData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorSubmitted" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#00A451" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#00A451" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorPaid" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#9b51e0" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#9b51e0" stopOpacity={0} />
+                  <stop offset="5%" stopColor="#2D368D" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#2D368D" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6c6a7e', fontSize: 10 }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6c6a7e', fontSize: 10 }} domain={[0, 60]} />
               <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#130f1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-              <Area type="monotone" dataKey="submitted" stroke="#22c55e" strokeWidth={2} fillOpacity={1} fill="url(#colorSubmitted)" />
-              <Area type="monotone" dataKey="paid" stroke="#9b51e0" strokeWidth={2} fillOpacity={1} fill="url(#colorPaid)" />
+              <Area type="monotone" dataKey="submitted" stroke="#00A451" strokeWidth={2} fillOpacity={1} fill="url(#colorSubmitted)" />
+              <Area type="monotone" dataKey="paid" stroke="#2D368D" strokeWidth={2} fillOpacity={1} fill="url(#colorPaid)" />
               <Area type="step" dataKey="target" stroke="#f97316" strokeWidth={1} strokeDasharray="4 4" fill="none" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
         <div className="flex justify-center gap-8 mt-6">
-          <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div><span className="text-gray-400 text-[13px] font-medium">Submitted</span></div>
-          <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#9b51e0]"></div><span className="text-gray-400 text-[13px] font-medium">Paid</span></div>
+          <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#00A451]"></div><span className="text-gray-400 text-[13px] font-medium">Submitted</span></div>
+          <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#2D368D]"></div><span className="text-gray-400 text-[13px] font-medium">Paid</span></div>
         </div>
       </Card>
 
       {/* Student Demographics grid */}
-      <SectionTitle title="Student Demographics" color="#3b82f6" />
+      <SectionTitle title="Student Demographics" color="#2D368D" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
         <Card className="p-6 flex flex-col">
           <h3 className="text-white text-[16px] font-semibold mb-1">Sex Distribution</h3>
@@ -211,11 +211,11 @@ const Reports = () => {
               <p className="text-gray-500 text-[11px] mt-1">Applicants</p>
             </div>
             <div className="absolute left-[10px] top-1/2 -translate-y-1/2 text-[#f97316] text-[12px] font-bold">30%</div>
-            <div className="absolute right-[10px] top-1/2 -translate-y-1/2 text-[#9b51e0] text-[12px] font-bold">40%</div>
+            <div className="absolute right-[10px] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">40%</div>
           </div>
           <div className="flex justify-center gap-8 mt-6">
             <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#f97316]"></div><span className="text-gray-400 text-[13px] font-medium">Male</span></div>
-            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#9b51e0]"></div><span className="text-gray-400 text-[13px] font-medium">Female</span></div>
+            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#2D368D]"></div><span className="text-gray-400 text-[13px] font-medium">Female</span></div>
           </div>
         </Card>
 
@@ -270,7 +270,7 @@ const Reports = () => {
             </div>
           </div>
           <div className="flex justify-center gap-6 mt-6 flex-wrap">
-            <div className="text-[13px] font-medium text-[#9b51e0]">Local (Somali) : 30%</div>
+            <div className="text-[13px] font-medium text-[#2D368D]">Local (Somali) : 30%</div>
             <div className="text-[13px] font-medium text-[#f97316]">International : 5%</div>
           </div>
         </Card>
@@ -310,7 +310,7 @@ const Reports = () => {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6c6a7e', fontSize: 11 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6c6a7e', fontSize: 11 }} domain={[0, 100]} tickFormatter={(val) => `${val}%`} />
                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#130f1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                <Bar dataKey="value" fill="#9b51e0" radius={[4, 4, 0, 0]} barSize={24} />
+                <Bar dataKey="value" fill="#2D368D" radius={[4, 4, 0, 0]} barSize={24} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -318,7 +318,7 @@ const Reports = () => {
       </div>
 
       {/* Program Popularity */}
-      <SectionTitle title="Program Popularity" color="#9b51e0" />
+      <SectionTitle title="Program Popularity" color="#2D368D" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
         <Card className="p-6 flex flex-col col-span-1">
           <div className="flex justify-between items-start mb-6">
@@ -384,7 +384,7 @@ const Reports = () => {
             </div>
           </div>
           <div className="bg-white/5 p-4 rounded-xl flex gap-3 items-start mt-auto">
-            <Info size={16} className="text-[#894EEF] shrink-0 mt-0.5" />
+            <Info size={16} className="text-[#2D368D] shrink-0 mt-0.5" />
             <span className="text-[#8c8a9e] text-[12px] leading-relaxed">As the most popular faculty, it's recommended to allocate more resources towards infrastructure, faculty hires, and marketing to keep up with the growing demand.</span>
           </div>
         </Card>
@@ -408,12 +408,12 @@ const Reports = () => {
               <p className="text-white text-[22px] font-bold">1,284</p>
               <p className="text-gray-500 text-[11px] mt-1">Applicants</p>
             </div>
-            <div className="absolute left-[10%] top-1/2 -translate-y-1/2 text-[#22c55e] text-[12px] font-bold">30%</div>
-            <div className="absolute right-[10%] top-1/2 -translate-y-1/2 text-[#3b82f6] text-[12px] font-bold">40%</div>
+            <div className="absolute left-[10%] top-1/2 -translate-y-1/2 text-[#00A451] text-[12px] font-bold">30%</div>
+            <div className="absolute right-[10%] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">40%</div>
           </div>
           <div className="flex justify-center gap-8 mt-6">
-            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div><span className="text-gray-400 text-[13px] font-medium">Full Time</span></div>
-            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]"></div><span className="text-gray-400 text-[13px] font-medium">Part Time</span></div>
+            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#00A451]"></div><span className="text-gray-400 text-[13px] font-medium">Full Time</span></div>
+            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#2D368D]"></div><span className="text-gray-400 text-[13px] font-medium">Part Time</span></div>
           </div>
         </Card>
 
@@ -451,7 +451,7 @@ const Reports = () => {
       </div>
 
       {/* Financial Projections */}
-      <SectionTitle title="Financial Projections" color="#22c55e" />
+      <SectionTitle title="Financial Projections" color="#00A451" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
         <Card className="p-6 col-span-1 lg:col-span-2 flex flex-col">
           <div className="flex justify-between items-start mb-6">
@@ -463,7 +463,7 @@ const Reports = () => {
               <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors shrink-0"><Eye size={12} /> View all</button>
               <div className="text-right">
                 <p className="text-[11px] text-gray-500 mb-1 font-medium uppercase tracking-wider">Total Revenue</p>
-                <p className="text-[20px] font-bold text-[#22c55e] m-0">$480</p>
+                <p className="text-[20px] font-bold text-[#00A451] m-0">$480</p>
               </div>
             </div>
           </div>
@@ -491,13 +491,13 @@ const Reports = () => {
                   <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
                     <td className="py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-[#9b51e0]"></div>
+                        <div className="w-2 h-2 rounded-full bg-[#2D368D]"></div>
                         <span className="text-[13px] text-white font-medium">{row.n}</span>
                       </div>
                     </td>
                     <td className="py-4 text-[13px] text-gray-400 font-medium">{row.f}</td>
                     <td className="py-4 text-[13px] text-gray-400 font-medium">{row.a}</td>
-                    <td className="py-4 text-[14px] text-[#22c55e] font-semibold">{row.e}</td>
+                    <td className="py-4 text-[14px] text-[#00A451] font-semibold">{row.e}</td>
                   </tr>
                 ))}
               </tbody>
@@ -526,24 +526,24 @@ const Reports = () => {
           <div className="flex flex-col gap-3 mt-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#22c55e]"></div>
-                <span className="text-[#22c55e] text-[13px] font-medium">Fall semester</span>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#00A451]"></div>
+                <span className="text-[#00A451] text-[13px] font-medium">Fall semester</span>
               </div>
-              <span className="text-[#22c55e] text-[13px] font-bold">60%</span>
+              <span className="text-[#00A451] text-[13px] font-bold">60%</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]"></div>
-                <span className="text-[#3b82f6] text-[13px] font-medium">Installment</span>
+                <div className="w-2.5 h-2.5 rounded-full bg-[#2D368D]"></div>
+                <span className="text-[#2D368D] text-[13px] font-medium">Installment</span>
               </div>
-              <span className="text-[#3b82f6] text-[13px] font-bold">40%</span>
+              <span className="text-[#2D368D] text-[13px] font-bold">40%</span>
             </div>
           </div>
         </Card>
       </div>
 
       {/* Marketing Insights */}
-      <SectionTitle title="Marketing Insights" color="#9b51e0" />
+      <SectionTitle title="Marketing Insights" color="#2D368D" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
         <Card className="p-6 flex flex-col col-span-1 lg:col-span-2">
           <h3 className="text-white text-[16px] font-semibold mb-1">Source of Information</h3>
@@ -555,7 +555,7 @@ const Reports = () => {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6c6a7e', fontSize: 11 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6c6a7e', fontSize: 11 }} domain={[0, 100]} tickFormatter={(val) => `${val}%`} />
                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#130f1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                <Bar dataKey="value" fill="#9b51e0" radius={[4, 4, 0, 0]} barSize={28} />
+                <Bar dataKey="value" fill="#2D368D" radius={[4, 4, 0, 0]} barSize={28} />
               </BarChart>
             </ResponsiveContainer>
           </div>

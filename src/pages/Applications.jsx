@@ -16,7 +16,7 @@ const avatarFor = (name) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Applicant')}&background=894EEF&color=fff`;
 
 const statusClass = (status) => {
-  if (status === 'Approved') return 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20';
+  if (status === 'Approved') return 'text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20';
   if (status === 'Rejected') return 'text-red-500 bg-red-500/10 border-red-500/20';
   return 'text-[#d97706] bg-[#d97706]/10 border-[#d97706]/20';
 };
@@ -90,10 +90,10 @@ const Applications = () => {
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
-        <StatCard icon={User} title="Total Applications" value={summary.total.toLocaleString()} color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={User} title="Total Applications" value={summary.total.toLocaleString()} color="#00A451" iconColor="#00A451" />
         <StatCard icon={User} title="Approved Applications" value={summary.approved.toLocaleString()} color="#d97706" iconColor="#d97706" />
         <StatCard icon={User} title="Pending Application" value={summary.pending.toLocaleString()} color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Rejected Applications" value={summary.rejected.toLocaleString()} color="#894EEF" iconColor="#894EEF" />
+        <StatCard icon={User} title="Rejected Applications" value={summary.rejected.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">

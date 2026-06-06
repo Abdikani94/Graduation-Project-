@@ -69,7 +69,7 @@ const ActivityLog = () => {
   const getActionBadge = (action) => {
     if (action.includes('Approved') || action.includes('Added') || action.includes('Resolved')) {
       return (
-        <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20 inline-flex items-center justify-center">
+        <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20 inline-flex items-center justify-center">
           {action}
         </span>
       );

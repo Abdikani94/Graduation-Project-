@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
@@ -6,15 +6,520 @@ html {
   scroll-behavior: smooth;
 }
 
+:root {
+  --just-blue: #2D368D;
+  --just-green: #00A451;
+  --just-accent: #11B67A;
+  --just-bg: #FFFFFF;
+  --just-section: #F5F5F5;
+  --just-text: #182B49;
+  --just-muted: #555555;
+  --just-soft: #969696;
+  --just-border: #E5E7EB;
+  --just-card-border: #dbe3f1;
+  --just-card-shadow: 0 18px 46px rgba(24, 43, 73, 0.1);
+}
+
 body {
   margin: 0;
-  background: #120725;
-  font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+  background: var(--just-bg);
+  color: var(--just-text);
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.admin-shell {
+  background: var(--just-bg);
+}
+
+.admin-content {
+  color: var(--just-text);
+  background: var(--just-section);
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.admin-content .bg-card-bg,
+.admin-content .bg-\[\#090217\] {
+  background-color: var(--just-bg) !important;
+}
+
+.admin-content .bg-main-bg,
+.admin-content .bg-\[\#070211\],
+.admin-content .bg-\[\#070211\]\/40,
+.admin-content .bg-\[\#070211\]\/50,
+.admin-content .bg-\[\#070211\]\/60 {
+  background-color: var(--just-bg) !important;
+}
+
+.admin-content .border-border-color,
+.admin-content .border-white\/5,
+.admin-content .border-white\/10,
+.admin-content .border-\[\#150D25\] {
+  border-color: var(--just-border) !important;
+}
+
+.admin-content .text-white,
+.admin-content .text-gray-300 {
+  color: var(--just-text) !important;
+}
+
+.admin-content .text-gray-400,
+.admin-content .text-gray-500,
+.admin-content .text-\[\#6c6a7e\],
+.admin-content .text-\[\#8c8a9e\] {
+  color: var(--just-soft) !important;
+}
+
+.admin-content .bg-primary,
+.admin-content .bg-brand-green,
+.admin-content button.bg-primary,
+.admin-content button.bg-\[\#00A451\] {
+  color: #ffffff !important;
+}
+
+.admin-content .hover\:text-white:hover {
+  color: var(--just-blue) !important;
+}
+
+.sidebar-card {
+  background: var(--just-bg) !important;
+  border-color: var(--just-border) !important;
+  border-radius: 5px !important;
+  box-shadow: 0 10px 25px rgba(24, 43, 73, 0.06) !important;
 }
 
 .serif {
-  font-family: "Instrument Serif", Georgia, serif;
-  font-weight: 400;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+}
+
+.public-page,
+.apply-page {
+  background: #ffffff !important;
+  color: var(--just-text) !important;
+}
+
+.public-page .hero-pattern,
+.apply-page.hero-pattern,
+.hero-pattern {
+  background: #ffffff !important;
+}
+
+.public-page .hero-pattern::before,
+.apply-page.hero-pattern::before,
+.footer-panel::before {
+  display: none !important;
+}
+
+.public-page .site-nav,
+.apply-page .site-nav {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  box-shadow: 0 10px 25px rgba(24, 43, 73, 0.08);
+}
+
+.public-page .site-nav-link,
+.apply-page .site-nav-link {
+  color: var(--just-text);
+}
+
+.public-page .site-nav-link:hover,
+.public-page .site-nav-link:focus-visible,
+.public-page .site-nav-link.active,
+.apply-page .site-nav-link:hover,
+.apply-page .site-nav-link:focus-visible,
+.apply-page .site-nav-link.active {
+  background: var(--just-blue);
+  color: #ffffff;
+}
+
+.public-page [class*="text-white"],
+.apply-page [class*="text-white"] {
+  color: var(--just-text) !important;
+}
+
+.public-page [class*="bg-white/"],
+.apply-page [class*="bg-white/"] {
+  background-color: #f5f5f5 !important;
+}
+
+.public-page [class*="border-white/"],
+.apply-page [class*="border-white/"] {
+  border-color: #eeeeee !important;
+}
+
+.public-page .btn-primary,
+.apply-page .btn-primary,
+.public-page .contact-submit,
+.apply-page .contact-submit,
+.public-page .next-button,
+.apply-page .next-button {
+  background: var(--just-blue) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.public-page .btn-primary *,
+.apply-page .btn-primary *,
+.public-page .contact-submit *,
+.apply-page .contact-submit *,
+.public-page .next-button *,
+.apply-page .next-button * {
+  color: #ffffff !important;
+}
+
+.public-page .btn-primary:hover,
+.apply-page .btn-primary:hover,
+.public-page .contact-submit:hover,
+.apply-page .contact-submit:hover,
+.public-page .next-button:hover,
+.apply-page .next-button:hover {
+  background: var(--just-green) !important;
+}
+
+.public-page .btn-ghost,
+.apply-page .btn-ghost,
+.public-page .prev-button,
+.apply-page .prev-button {
+  background: #ffffff !important;
+  border: 1px solid #eeeeee !important;
+  color: var(--just-text) !important;
+}
+
+.public-page .section-title,
+.apply-page .section-title,
+.apply-page .apply-section-title,
+.apply-page .apply-requirements-showcase h2,
+.public-page .contact-title {
+  color: var(--just-blue) !important;
+}
+
+.public-page .section-title span,
+.apply-page .section-title span,
+.apply-page .apply-section-title span,
+.apply-page .apply-requirements-showcase h2 span,
+.public-page .contact-title span,
+.public-page .serif,
+.apply-page .serif {
+  color: var(--just-green) !important;
+}
+
+.public-page .stats-panel,
+.public-page .program-panel,
+.public-page .welcome-card,
+.public-page .network-panel,
+.public-page .timeline-card,
+.public-page .requirement-card,
+.public-page .faq-item,
+.public-page .cta-card,
+.apply-page .apply-card,
+.apply-page .apply-step,
+.apply-page .apply-requirement-node,
+.apply-page .faq-item,
+.apply-page .cta-card,
+.apply-page .review-section,
+.apply-page .review-item,
+.apply-page .condition-item,
+.apply-page .program-box {
+  background: #ffffff !important;
+  border: 1px solid #eeeeee !important;
+  color: var(--just-text) !important;
+  box-shadow: 0 10px 25px rgba(24, 43, 73, 0.05);
+}
+
+.public-page .stats-panel::after,
+.public-page .network-map::before,
+.public-page .timeline::before,
+.public-page .home-requirements-section .requirements::before,
+.public-page .home-requirements-section .requirements::after,
+.public-page .home-requirements-section .requirement-logo::before,
+.public-page .home-requirements-section .requirement-logo::after,
+.apply-page .apply-requirements-map::before,
+.apply-page .apply-requirements-map::after,
+.apply-page .apply-requirements-logo::before,
+.apply-page .apply-requirements-logo::after {
+  border-color: #eeeeee !important;
+  background: #eeeeee !important;
+}
+
+.public-page .faculty-tabs {
+  background: #ffffff !important;
+  border: 1px solid #eeeeee;
+}
+
+.public-page .faculty-tabs button {
+  color: var(--just-text);
+}
+
+.public-page .faculty-tabs button.active,
+.apply-page .apply-step.active,
+.apply-page .apply-step.done {
+  background: var(--just-blue) !important;
+  color: #ffffff !important;
+}
+
+.public-page .faculty-tabs button.active *,
+.apply-page .apply-step.active *,
+.apply-page .apply-step.done * {
+  color: #ffffff !important;
+}
+
+.public-page .number-pill,
+.public-page .play-button,
+.public-page .requirement-card span,
+.apply-page .apply-number,
+.apply-page .apply-note svg,
+.apply-page .condition-item > span,
+.apply-page .apply-requirement-node > span {
+  background: var(--just-blue) !important;
+  color: #ffffff !important;
+}
+
+.public-page .center-logo,
+.public-page .requirement-logo,
+.apply-page .apply-requirements-logo {
+  background: #ffffff !important;
+  border: 1px solid #eeeeee;
+}
+
+.public-page .contact-card {
+  background: #ffffff !important;
+  border: 1px solid #eeeeee;
+  box-shadow: 0 10px 25px rgba(24, 43, 73, 0.05);
+}
+
+.public-page .contact-form input,
+.public-page .contact-form textarea,
+.apply-page .apply-field input,
+.apply-page .apply-options label,
+.apply-page .program-box label,
+.apply-page .photo-upload,
+.apply-page .certificate-upload,
+.apply-page .certificate-appointment {
+  background: #ffffff !important;
+  border-color: #eeeeee !important;
+  color: var(--just-text) !important;
+}
+
+.public-page .footer-panel,
+.apply-page .footer-panel {
+  background: #ffffff !important;
+  border-top: 1px solid #eeeeee;
+  color: var(--just-text) !important;
+}
+
+.public-page .footer-panel a,
+.apply-page .footer-panel a,
+.public-page .footer-panel li,
+.apply-page .footer-panel li,
+.public-page .footer-panel p,
+.apply-page .footer-panel p {
+  color: var(--just-muted) !important;
+}
+
+.admin-content .bg-card-bg,
+.admin-content [class*="bg-card-bg"] {
+  border-color: var(--just-card-border) !important;
+  box-shadow: var(--just-card-shadow) !important;
+}
+
+.admin-content table,
+.admin-content thead,
+.admin-content tbody,
+.admin-content tr {
+  color: var(--just-text);
+}
+
+.admin-content input,
+.admin-content select,
+.admin-content textarea {
+  background: #ffffff !important;
+  border-color: var(--just-card-border) !important;
+  color: var(--just-text) !important;
+}
+
+.admin-content input::placeholder,
+.admin-content textarea::placeholder {
+  color: var(--just-soft) !important;
+}
+
+.public-page main,
+.apply-page main {
+  background: #ffffff;
+}
+
+.public-page .section-wrap:nth-of-type(even) {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.public-page .stats-panel,
+.public-page .program-panel,
+.public-page .welcome-card,
+.public-page .network-panel,
+.public-page .timeline-card,
+.public-page .requirement-card,
+.public-page .faq-item,
+.public-page .cta-card,
+.public-page .contact-card,
+.apply-page .apply-card,
+.apply-page .apply-step,
+.apply-page .apply-requirement-node,
+.apply-page .faq-item,
+.apply-page .cta-card,
+.apply-page .review-section,
+.apply-page .review-item,
+.apply-page .condition-item,
+.apply-page .program-box,
+.apply-page .review-profile {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%) !important;
+  border: 1px solid var(--just-card-border) !important;
+  box-shadow: var(--just-card-shadow) !important;
+}
+
+.public-page .stats-panel,
+.public-page .welcome-card,
+.public-page .network-panel,
+.public-page .cta-card {
+  border-top: 4px solid var(--just-blue) !important;
+}
+
+.public-page .program-panel,
+.public-page .contact-card,
+.apply-page .apply-card {
+  border-top: 4px solid var(--just-green) !important;
+}
+
+.public-page .stats-panel p,
+.public-page .stats-panel div,
+.public-page .program-panel p,
+.public-page .program-panel h3,
+.public-page .welcome-card p,
+.public-page .welcome-card h2,
+.public-page .network-panel p,
+.public-page .timeline-card p,
+.public-page .timeline-card h3,
+.public-page .requirement-card p,
+.public-page .requirement-card h3,
+.public-page .faq-item p,
+.public-page .faq-item summary,
+.public-page .cta-card p,
+.public-page .cta-card h2,
+.apply-page .apply-card p,
+.apply-page .apply-card h1,
+.apply-page .apply-card h2,
+.apply-page .condition-item p,
+.apply-page .condition-item h3,
+.apply-page .review-item dd,
+.apply-page .review-item dt,
+.apply-page .review-profile p,
+.apply-page .review-profile span {
+  color: var(--just-text) !important;
+}
+
+.public-page .requirement-card p,
+.public-page .timeline-card p,
+.public-page .faq-item p,
+.public-page .cta-card p,
+.apply-page .condition-item p,
+.apply-page .review-item dt,
+.apply-page .review-profile span {
+  color: var(--just-muted) !important;
+}
+
+.public-page .stats-panel > div:first-child,
+.public-page .network-panel > p {
+  color: var(--just-blue) !important;
+}
+
+.public-page .network-panel {
+  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(220px, 340px) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  min-height: 430px;
+  overflow: hidden;
+  padding: clamp(2.5rem, 5vw, 4.5rem) !important;
+}
+
+.public-page .network-panel > p {
+  background: #ffffff;
+  border-left: 5px solid var(--just-green);
+  border-radius: 5px;
+  box-shadow: 0 12px 26px rgba(24, 43, 73, 0.08);
+  font-size: clamp(1.25rem, 2.1vw, 1.85rem) !important;
+  line-height: 1.22 !important;
+  max-width: 100% !important;
+  padding: 1rem 1.15rem;
+  position: relative;
+  z-index: 2;
+}
+
+.public-page .network-map {
+  height: 330px;
+  inset: auto !important;
+  min-width: 0;
+  position: relative !important;
+}
+
+.public-page .network-map::before {
+  background: #d7deeb !important;
+  left: 10% !important;
+  right: 10% !important;
+  top: 50% !important;
+}
+
+.public-page .center-logo {
+  height: 175px;
+  width: 175px;
+}
+
+.public-page .center-logo::before {
+  background: rgba(45, 54, 141, 0.06);
+  border: 1px solid var(--just-card-border);
+  height: 245px;
+  width: 245px;
+}
+
+.public-page .center-logo img {
+  height: 64px;
+  width: 64px;
+}
+
+.public-page .network-node {
+  border: 9px solid #ffffff;
+  box-shadow: 0 16px 36px rgba(24, 43, 73, 0.16);
+  height: 78px;
+  width: 78px;
+}
+
+.public-page .node-1 { left: 3%; top: 58%; }
+.public-page .node-2 { left: 17%; top: 70%; }
+.public-page .node-3 { left: 12%; top: 18%; }
+.public-page .node-4 { right: 18%; top: 16%; }
+.public-page .node-5 { right: 2%; top: 56%; }
+.public-page .node-6 { right: 18%; top: 69%; }
+.public-page .node-7 { left: 3%; top: 28%; }
+
+.public-page .faculty-tabs button span {
+  background: var(--just-green);
+}
+
+.public-page .faculty-tabs button.active span {
+  background: #ffffff;
+}
+
+.public-page .contact-options label:has(input:checked),
+.apply-page .apply-options label:has(input:checked),
+.apply-page .program-box label:has(input:checked) {
+  background: rgba(0, 164, 81, 0.1) !important;
+  border-color: rgba(0, 164, 81, 0.45) !important;
+  color: var(--just-green) !important;
+}
+
+.apply-page .program-box.selected {
+  border-color: var(--just-green) !important;
 }
 
 .hero-pattern {
@@ -51,7 +556,7 @@ body {
 }
 
 .btn-primary {
-  background: #8d4df4;
+  background: #2D368D;
   color: white;
   box-shadow: 0 18px 45px rgba(141, 77, 244, 0.3);
 }
@@ -93,7 +598,7 @@ body {
 .site-nav-link:focus-visible,
 .site-nav-link:active,
 .site-nav-link.active {
-  background: #8d4df4;
+  background: #2D368D;
   color: white;
   outline: none;
 }
@@ -120,14 +625,14 @@ body {
 }
 
 .section-title span {
-  color: #c08cff;
-  font-family: "Instrument Serif", Georgia, serif;
+  color: #11B67A;
+  font-family: "Poppins", sans-serif;
   font-style: italic;
   font-weight: 400;
 }
 
 .stats-panel {
-  background: linear-gradient(135deg, #8d4df4 0%, #7a37ed 42%, #4a10c9 100%);
+  background: linear-gradient(135deg, #2D368D 0%, #17346f 42%, #00A451 100%);
   border-radius: 60px;
   min-height: 360px;
   overflow: hidden;
@@ -159,7 +664,7 @@ body {
 }
 
 .faculty-tabs {
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 28px;
   display: grid;
   gap: 1.25rem;
@@ -191,7 +696,7 @@ body {
 
 .number-pill {
   align-items: center;
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   display: flex;
   font-size: 1.1rem;
@@ -211,7 +716,7 @@ body {
 
 .play-button {
   align-items: center;
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   box-shadow: 0 0 0 18px rgba(141, 77, 244, 0.2);
   display: flex;
@@ -225,7 +730,7 @@ body {
 }
 
 .welcome-card {
-  background: linear-gradient(135deg, #8d4df4 0%, #7c39ee 52%, #5b18d7 100%);
+  background: linear-gradient(135deg, #2D368D 0%, #17346f 52%, #00A451 100%);
   border-radius: 48px;
   display: flex;
   gap: 0;
@@ -245,7 +750,7 @@ body {
 }
 
 .network-panel {
-  background: linear-gradient(135deg, #8d4df4 0%, #7a2ff1 48%, #671ce7 100%);
+  background: linear-gradient(135deg, #2D368D 0%, #17346f 48%, #00A451 100%);
   border-radius: 58px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   margin: 2.7rem auto 0;
@@ -354,7 +859,7 @@ body {
 }
 
 .timeline-card::after {
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   content: "";
   height: 26px;
@@ -422,7 +927,7 @@ body {
 
 .requirement-card span {
   align-items: center;
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   display: flex;
   height: 54px;
@@ -623,8 +1128,8 @@ body {
 }
 
 .contact-title span {
-  color: #c08cff;
-  font-family: "Instrument Serif", Georgia, serif;
+  color: #11B67A;
+  font-family: "Poppins", sans-serif;
   font-size: 0.9em;
   font-style: italic;
   font-weight: 400;
@@ -650,8 +1155,8 @@ body {
 }
 
 .contact-copy h3 span {
-  color: #c08cff;
-  font-family: "Instrument Serif", Georgia, serif;
+  color: #11B67A;
+  font-family: "Poppins", sans-serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -673,9 +1178,9 @@ body {
 
 .contact-copy li svg {
   background: #f2ebff;
-  border: 1px solid #8d4df4;
+  border: 1px solid #2D368D;
   border-radius: 999px;
-  color: #8d4df4;
+  color: #2D368D;
   flex: 0 0 auto;
   margin-top: 0.1rem;
   padding: 2px;
@@ -735,7 +1240,7 @@ body {
 
 .contact-form input:focus,
 .contact-form textarea:focus {
-  border-color: #8d4df4;
+  border-color: #2D368D;
   box-shadow: 0 0 0 4px rgba(141, 77, 244, 0.14);
 }
 
@@ -786,15 +1291,15 @@ body {
 
 .contact-options label:has(input:checked) {
   background: #f2ebff;
-  border-color: #8d4df4;
+  border-color: #2D368D;
   box-shadow: inset 0 0 0 1px rgba(141, 77, 244, 0.18);
-  color: #5d22c9;
+  color: #2D368D;
   font-weight: 900;
 }
 
 .contact-submit {
   align-items: center;
-  background: linear-gradient(135deg, #8d4df4 0%, #6d27df 100%);
+  background: linear-gradient(135deg, #2D368D 0%, #17346f 100%);
   border: 0;
   border-radius: 999px;
   box-shadow: 0 18px 38px rgba(141, 77, 244, 0.26);
@@ -873,8 +1378,8 @@ body {
 }
 
 .apply-hero h1 span {
-  color: #c08cff;
-  font-family: "Instrument Serif", Georgia, serif;
+  color: #11B67A;
+  font-family: "Poppins", sans-serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -927,8 +1432,8 @@ body {
 }
 
 .apply-requirements-showcase h2 span {
-  color: #c08cff;
-  font-family: "Instrument Serif", Georgia, serif;
+  color: #11B67A;
+  font-family: "Poppins", sans-serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -1059,7 +1564,7 @@ body {
 
 .apply-requirement-node > span {
   align-items: center;
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   color: white;
   display: flex;
@@ -1105,8 +1610,8 @@ body {
 }
 
 .apply-section-title span {
-  color: #c08cff;
-  font-family: "Instrument Serif", Georgia, serif;
+  color: #11B67A;
+  font-family: "Poppins", sans-serif;
   font-style: italic;
   font-weight: 400;
 }
@@ -1191,7 +1696,7 @@ body {
   align-items: center;
   background: rgba(141, 77, 244, 0.16);
   border-radius: 999px;
-  color: #c08cff;
+  color: #11B67A;
   display: flex;
   flex: 0 0 auto;
   font-size: 0.75rem;
@@ -1210,13 +1715,13 @@ body {
 
 .apply-step.active,
 .apply-step.done {
-  background: #8d4df4;
+  background: #2D368D;
 }
 
 .apply-step.active span,
 .apply-step.done span {
   background: white;
-  color: #5d22c9;
+  color: #2D368D;
 }
 
 .apply-step.active p,
@@ -1239,7 +1744,7 @@ body {
 
 .apply-number {
   align-items: center;
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   display: flex;
   font-size: 1rem;
@@ -1270,7 +1775,7 @@ body {
 }
 
 .apply-note svg {
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   color: white;
   flex: 0 0 auto;
@@ -1294,7 +1799,7 @@ body {
 }
 
 .condition-item > span {
-  background: #8d4df4;
+  background: #2D368D;
   border-radius: 999px;
   flex: 0 0 auto;
   height: 12px;
@@ -1386,7 +1891,7 @@ body {
 }
 
 .apply-field input:focus {
-  border-color: #8d4df4;
+  border-color: #2D368D;
   box-shadow: 0 0 0 4px rgba(141, 77, 244, 0.14);
 }
 
@@ -1444,8 +1949,8 @@ body {
 
 .apply-options input:checked,
 .program-box input:checked {
-  background: #8d4df4;
-  border-color: #8d4df4;
+  background: #2D368D;
+  border-color: #2D368D;
 }
 
 .apply-options input:checked::after,
@@ -1492,7 +1997,7 @@ body {
 
 .photo-upload svg,
 .certificate-upload svg {
-  color: #c08cff;
+  color: #11B67A;
 }
 
 .photo-upload strong,
@@ -1665,7 +2170,7 @@ body {
 }
 
 .review-section h2 {
-  color: #c08cff;
+  color: #11B67A;
   font-size: 0.92rem;
   font-weight: 900;
   margin-bottom: 1rem;
@@ -1772,11 +2277,11 @@ body {
 
 .toast-success .toast-icon {
   background: rgba(34, 197, 94, 0.14);
-  color: #86efac;
+  color: #11B67A;
 }
 
 .toast-info .toast-icon {
-  color: #c08cff;
+  color: #11B67A;
 }
 
 .apply-actions {
@@ -1807,12 +2312,26 @@ body {
 }
 
 .next-button {
-  background: #8d4df4;
+  background: #2D368D;
   color: white;
   min-width: 150px;
 }
 
 @media (max-width: 900px) {
+  .public-page .network-panel {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding: 1.5rem !important;
+  }
+
+  .public-page .network-map {
+    height: 300px;
+  }
+
+  .public-page .network-panel > p {
+    max-width: none !important;
+  }
+
   .program-panel,
   .welcome-card {
     flex-direction: column;
@@ -2131,6 +2650,105 @@ body {
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #894EEF;
+    background: #2D368D;
   }
+}
+
+/* Final JUST contrast pass: public/apply cards are white, so text must be dark. */
+.public-page .requirement-card,
+.public-page .faq-item,
+.public-page .timeline-card,
+.public-page .cta-card,
+.apply-page .apply-card,
+.apply-page .apply-requirement-node,
+.apply-page .condition-item,
+.apply-page .review-panel,
+.apply-page .review-profile,
+.apply-page .review-section,
+.apply-page .review-item,
+.apply-page .program-box,
+.apply-page .apply-step:not(.active):not(.done) {
+  background: #ffffff !important;
+  border-color: var(--just-card-border) !important;
+  color: var(--just-text) !important;
+}
+
+.public-page .requirement-card h3,
+.public-page .requirement-card p,
+.public-page .faq-item summary,
+.public-page .faq-item p,
+.public-page .timeline-card h3,
+.public-page .timeline-card p,
+.public-page .cta-card h2,
+.public-page .cta-card p,
+.apply-page .apply-card h1,
+.apply-page .apply-card h2,
+.apply-page .apply-card h3,
+.apply-page .apply-card h4,
+.apply-page .apply-card p,
+.apply-page .apply-card label,
+.apply-page .apply-card legend,
+.apply-page .apply-card span,
+.apply-page .apply-requirement-node h3,
+.apply-page .apply-requirement-node p,
+.apply-page .condition-item h3,
+.apply-page .condition-item p,
+.apply-page .review-profile p,
+.apply-page .review-profile span,
+.apply-page .review-section h2,
+.apply-page .review-item dt,
+.apply-page .review-item dd,
+.apply-page .program-box,
+.apply-page .program-box label,
+.apply-page .apply-step:not(.active):not(.done) p {
+  color: var(--just-text) !important;
+}
+
+.public-page .requirement-card p,
+.public-page .faq-item p,
+.public-page .timeline-card p,
+.public-page .cta-card p,
+.apply-page .apply-note,
+.apply-page .condition-item p,
+.apply-page .apply-requirement-node p,
+.apply-page .review-profile span,
+.apply-page .review-item dt {
+  color: var(--just-muted) !important;
+}
+
+.public-page .requirement-card span,
+.apply-page .apply-number,
+.apply-page .apply-note svg,
+.apply-page .condition-item > span,
+.apply-page .apply-requirement-node > span,
+.apply-page .apply-step.active,
+.apply-page .apply-step.done {
+  background: var(--just-blue) !important;
+  color: #ffffff !important;
+}
+
+.public-page .requirement-card span *,
+.apply-page .apply-number *,
+.apply-page .apply-note svg *,
+.apply-page .apply-requirement-node > span *,
+.apply-page .apply-step.active *,
+.apply-page .apply-step.done * {
+  color: #ffffff !important;
+}
+
+.apply-page .apply-step:not(.active):not(.done) span {
+  background: rgba(0, 164, 81, 0.12) !important;
+  color: var(--just-green) !important;
+}
+
+.apply-page .apply-field input,
+.apply-page .apply-options label,
+.apply-page .program-box label,
+.apply-page .photo-upload,
+.apply-page .certificate-upload,
+.apply-page .certificate-appointment,
+.apply-page .review-panel,
+.apply-page .review-item {
+  background: #ffffff !important;
+  border-color: var(--just-card-border) !important;
 }

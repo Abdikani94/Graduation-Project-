@@ -18,9 +18,9 @@ const Students = () => {
   return (
     <PageLayout>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
-        <StatCard icon={User} title="Total Students" value="1,284" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={User} title="Total Students" value="1,284" color="#00A451" iconColor="#00A451" />
         <StatCard icon={User} title="Send students" value="600" color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Un-sends students" value="700" color="#9b51e0" iconColor="#9b51e0" />
+        <StatCard icon={User} title="Un-sends students" value="700" color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">
@@ -35,7 +35,7 @@ const Students = () => {
           <option>All Compuses</option>
         </select>
         <button className="bg-primary hover:bg-opacity-90 text-white rounded-full px-8 py-3.5 text-[13px] font-medium transition-colors cursor-pointer">Reset</button>
-        <button className="bg-[#22c55e] hover:bg-opacity-90 text-white rounded-full px-6 py-3.5 text-[13px] font-medium transition-colors cursor-pointer md:ml-auto flex items-center gap-2">
+        <button className="bg-[#00A451] hover:bg-opacity-90 text-white rounded-full px-6 py-3.5 text-[13px] font-medium transition-colors cursor-pointer md:ml-auto flex items-center gap-2">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
           WhatsApp all filtered
         </button>
@@ -73,7 +73,7 @@ const Students = () => {
                   <td className="px-6 py-4 text-[13px] text-gray-400">{student.campus}</td>
                   <td className="px-6 py-4 text-[13px] text-gray-400">{student.date}</td>
                   <td className="px-6 py-4">
-                    <span className="px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20">
+                    <span className="px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20">
                       {student.status}
                     </span>
                   </td>

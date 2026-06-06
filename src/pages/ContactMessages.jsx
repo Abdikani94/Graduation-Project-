@@ -16,7 +16,7 @@ const ContactMessages = () => {
   return (
     <PageLayout>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
-        <StatCard icon={User} title="Replied contact" value="1,284" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={User} title="Replied contact" value="1,284" color="#00A451" iconColor="#00A451" />
         <StatCard icon={User} title="Pending contact" value="1,284" color="#d97706" iconColor="#d97706" />
         <StatCard icon={User} title="Cancelled contacts" value="1,284" color="#d97706" iconColor="#d97706" />
       </div>
@@ -60,13 +60,13 @@ const ContactMessages = () => {
                   </td>
                   <td className="px-6 py-4 text-[13px] text-gray-400">{contact.phone}</td>
                   <td className="px-6 py-4">
-                    <span className="px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center text-[#a855f7] bg-[#a855f7]/10 border-[#a855f7]/20">
+                    <span className="px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20">
                       {contact.type}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-[13px] text-gray-400 max-w-[300px] truncate">{contact.message}</td>
                   <td className="px-6 py-4">
-                    <span className="px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20">
+                    <span className="px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20">
                       {contact.status}
                     </span>
                   </td>

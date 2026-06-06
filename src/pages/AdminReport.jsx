@@ -31,8 +31,8 @@ const AdminReport = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-[15px]">
-        <StatCard icon={Users} title="Total Admins/Officers" value="4" color="#894EEF" iconColor="#894EEF" />
-        <StatCard icon={CheckCircle} title="Total Approved" value="155" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={Users} title="Total Admins/Officers" value="4" color="#2D368D" iconColor="#2D368D" />
+        <StatCard icon={CheckCircle} title="Total Approved" value="155" color="#00A451" iconColor="#00A451" />
         <StatCard icon={XCircle} title="Total Rejected" value="43" color="#fb923c" iconColor="#fb923c" />
         <StatCard icon={FileText} title="Avg Processing Time" value="4.9 hrs" color="#fb923c" iconColor="#fb923c" />
       </div>
@@ -49,7 +49,7 @@ const AdminReport = () => {
                 <XAxis dataKey="name" stroke="#6c6a7e" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6c6a7e' }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6c6a7e' }} />
                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.02)' }} contentStyle={{ backgroundColor: '#130f1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-                <Bar dataKey="approved" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={20} name="Approved" />
+                <Bar dataKey="approved" fill="#00A451" radius={[4, 4, 0, 0]} barSize={20} name="Approved" />
                 <Bar dataKey="rejected" fill="#fb923c" radius={[4, 4, 0, 0]} barSize={20} name="Rejected" />
               </BarChart>
             </ResponsiveContainer>
@@ -66,7 +66,7 @@ const AdminReport = () => {
             </div>
             <div className="flex items-center justify-between pb-3 border-b border-white/5">
               <span className="text-[#8c8a9e] text-[13px]">Fastest Decision Rate</span>
-              <span className="text-[#22c55e] text-[13px] font-semibold">3.8 hrs/app</span>
+              <span className="text-[#00A451] text-[13px] font-semibold">3.8 hrs/app</span>
             </div>
             <div className="flex items-center justify-between pb-3 border-b border-white/5">
               <span className="text-[#8c8a9e] text-[13px]">Approval to Rejection Ratio</span>

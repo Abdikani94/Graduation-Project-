@@ -16,7 +16,7 @@ const AdminUsers = () => {
   return (
     <PageLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
-        <StatCard icon={User} title="Total Programs" value="1,284" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={User} title="Total Programs" value="1,284" color="#00A451" iconColor="#00A451" />
         <StatCard icon={User} title="Total Faculties" value="1,284" color="#d97706" iconColor="#d97706" />
         <StatCard icon={User} title="Pending Application" value="1,284" color="#d97706" iconColor="#d97706" />
       </div>

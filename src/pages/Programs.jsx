@@ -257,7 +257,7 @@ const Programs = () => {
   return (
     <PageLayout>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
-        <StatCard icon={User} title="Total Programs" value="1,284" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={User} title="Total Programs" value="1,284" color="#00A451" iconColor="#00A451" />
         <StatCard icon={User} title="Total Faculties" value={programs.length.toString()} color="#d97706" iconColor="#d97706" />
         <StatCard icon={User} title="Total Admission fees" value="$684" color="#d97706" iconColor="#d97706" />
       </div>
@@ -300,7 +300,7 @@ const Programs = () => {
             <div className="p-5 flex flex-col flex-1">
               <h3 className="text-[18px] font-semibold text-white mb-2 font-jakarta">{program.title}</h3>
               <p className="text-[16px] font-semibold text-white mb-6">
-                <span className="text-[#3b82f6] font-medium font-sans">Fee - </span>{program.fee}
+                <span className="text-[#2D368D] font-medium font-sans">Fee - </span>{program.fee}
               </p>
 
               <div className="mt-auto flex flex-col gap-3">
@@ -342,12 +342,12 @@ const Programs = () => {
               {/* Upload Image Section */}
               <div
                 onClick={triggerFileInput}
-                className="w-full border-2 border-dashed border-[#894EEF]/30 hover:border-[#894EEF]/60 transition-all rounded-[16px] bg-[#070211]/50 h-[140px] flex flex-col items-center justify-center cursor-pointer gap-2 overflow-hidden relative"
+                className="w-full border-2 border-dashed border-[#2D368D]/30 hover:border-[#2D368D]/60 transition-all rounded-[16px] bg-[#070211]/50 h-[140px] flex flex-col items-center justify-center cursor-pointer gap-2 overflow-hidden relative"
               >
                 {imagePreview ? (
                   <img src={imagePreview} alt="Upload Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
                 ) : (
-                  <div className="flex items-center gap-2.5 text-[#894EEF] font-semibold text-[13px]">
+                  <div className="flex items-center gap-2.5 text-[#2D368D] font-semibold text-[13px]">
                     <ImageIcon size={18} />
                     <span>Click to upload</span>
                   </div>
@@ -521,7 +521,7 @@ const Programs = () => {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="p-4 rounded-2xl bg-[#070211]/50 border border-white/5">
                   <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wider mb-1">Admission Fee</p>
-                  <p className="text-[#3b82f6] text-[18px] font-bold">{selectedFaculty.fee}</p>
+                  <p className="text-[#2D368D] text-[18px] font-bold">{selectedFaculty.fee}</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-[#070211]/50 border border-white/5">
                   <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wider mb-1">Total Enrollment</p>
