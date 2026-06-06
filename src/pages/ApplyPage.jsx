@@ -493,7 +493,7 @@ function ApplyPage() {
         </nav>
 
         <section className="apply-hero">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#22123d] px-4 py-2 text-xs text-white/85">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#F5F5F5] px-4 py-2 text-xs text-text-dark">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             Online admission form
           </div>
@@ -746,7 +746,7 @@ function ApplyPage() {
       <section className="apply-bottom-cta">
         <div className="cta-card">
           <h2>
-            Your <span className="serif italic text-[#c08cff]">Future</span> starts here
+            Your <span className="serif italic text-[#11B67A]">Future</span> starts here
           </h2>
           <p>
             Join Jamhuriya University of Science & Technology - one form, one fee, one decision that changes everything.

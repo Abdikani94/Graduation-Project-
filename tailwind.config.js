@@ -7,15 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        'main-bg': '#070211',
-        'card-bg': '#090217',
-        'border-color': '#150D25',
-        'primary': '#894EEF',
+        'main-bg': '#F5F5F5',
+        'card-bg': '#FFFFFF',
+        'border-color': '#E5E7EB',
+        'primary': '#2D368D',
+        'brand-blue': '#2D368D',
+        'brand-green': '#00A451',
+        'brand-lime': '#11B67A',
+        'text-dark': '#182B49',
+        'text-muted': '#555555',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        jakarta: ['"Plus Jakarta Sans"', 'sans-serif'],
-        serif: ['"Instrument Serif"', 'serif'],
+        sans: ['Poppins', 'sans-serif'],
+        jakarta: ['Poppins', 'sans-serif'],
+        serif: ['Poppins', 'sans-serif'],
       },
     },
   },

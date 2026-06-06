@@ -18,11 +18,11 @@ const barData = [
 
 const pieData = [
   { name: 'Computer Science & IT', value: 20, color: '#f97316' },
-  { name: 'Faculty of Education', value: 10, color: '#22c55e' },
-  { name: 'Faculty of Engineering', value: 40, color: '#a855f7' },
-  { name: 'Faculty of Business & Economics', value: 30, color: '#3b82f6' },
+  { name: 'Faculty of Education', value: 10, color: '#00A451' },
+  { name: 'Faculty of Engineering', value: 40, color: '#2D368D' },
+  { name: 'Faculty of Business & Economics', value: 30, color: '#2D368D' },
   { name: 'Health Science', value: 30, color: '#ec4899' },
-  { name: 'Faculty of Law & Sharia', value: 30, color: '#8b5cf6' },
+  { name: 'Faculty of Law & Sharia', value: 30, color: '#2D368D' },
 ];
 
 const areaData = [
@@ -83,10 +83,10 @@ const Dashboard = () => {
   return (
     <PageLayout>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
-        <StatCard icon={Users} title="Total Applications" value="1,284" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={Users} title="Total Applications" value="1,284" color="#00A451" iconColor="#00A451" />
         <StatCard icon={UserCheck} title="Approved Applications" value="1,284" color="#f97316" iconColor="#f97316" />
         <StatCard icon={Clock} title="Pending Application" value="1,284" color="#f97316" iconColor="#f97316" />
-        <StatCard icon={UserX} title="Rejected Applications" value="1,284" color="#9b51e0" iconColor="#9b51e0" />
+        <StatCard icon={UserX} title="Rejected Applications" value="1,284" color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
@@ -101,7 +101,7 @@ const Dashboard = () => {
                 <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6c6a7e'}} ticks={[15, 30, 45, 60]} />
                 <RechartsTooltip content={<CustomTooltip />} cursor={{fill: 'rgba(255,255,255,0.02)'}} />
                 <Bar dataKey="applications" fill="#4b4b5a" radius={[6, 6, 0, 0]} barSize={28} name="Applications" shape={<CustomBarShape />} />
-                <Bar dataKey="approved" fill="#9b51e0" radius={[6, 6, 0, 0]} barSize={28} name="Approved" shape={<CustomBarShape />} />
+                <Bar dataKey="approved" fill="#2D368D" radius={[6, 6, 0, 0]} barSize={28} name="Approved" shape={<CustomBarShape />} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -111,8 +111,8 @@ const Dashboard = () => {
                 <span className="text-[#6c6a7e] text-[13px] font-medium">Applications</span>
              </div>
              <div className="flex items-center gap-2">
-                <div className="w-3 h-1.5 rounded bg-[#3b82f6]"></div>
-                <span className="text-[#3b82f6] text-[13px] font-medium">Approved</span>
+                <div className="w-3 h-1.5 rounded bg-[#2D368D]"></div>
+                <span className="text-[#2D368D] text-[13px] font-medium">Approved</span>
              </div>
           </div>
         </Card>
@@ -175,8 +175,8 @@ const Dashboard = () => {
               <AreaChart data={areaData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAccepted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#9b51e0" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#9b51e0" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#2D368D" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#2D368D" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorSubmitted" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.4}/>
@@ -188,22 +188,22 @@ const Dashboard = () => {
                 <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6c6a7e'}} ticks={[20, 60, 100, 140]} />
                 <RechartsTooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="rejected" stroke="#f97316" fill="none" strokeWidth={2} strokeDasharray="4 4" name="Rejected" />
-                <Area type="monotone" dataKey="accepted" stroke="#9b51e0" fillOpacity={1} fill="url(#colorAccepted)" strokeWidth={2} name="Accepted" />
+                <Area type="monotone" dataKey="accepted" stroke="#2D368D" fillOpacity={1} fill="url(#colorAccepted)" strokeWidth={2} name="Accepted" />
                 <Area type="monotone" dataKey="submitted" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorSubmitted)" strokeWidth={2} name="Submitted" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
           <div className="flex justify-center gap-8 mt-4">
              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#22c55e]"></div>
+                <div className="w-2 h-2 rounded-full bg-[#00A451]"></div>
                 <span className="text-[#6c6a7e] text-[13px] font-medium">Submitted</span>
              </div>
              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#9b51e0]"></div>
+                <div className="w-2 h-2 rounded-full bg-[#2D368D]"></div>
                 <span className="text-[#6c6a7e] text-[13px] font-medium">Rejected</span>
              </div>
              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#9b51e0]"></div>
+                <div className="w-2 h-2 rounded-full bg-[#2D368D]"></div>
                 <span className="text-[#6c6a7e] text-[13px] font-medium">Accepted</span>
              </div>
           </div>

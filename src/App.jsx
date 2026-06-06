@@ -17,9 +17,9 @@ import ApplyPage from './pages/ApplyPage';
 
 const AdminLayout = () => {
   return (
-    <div className="flex h-screen w-full p-[15px] gap-[15px] bg-main-bg text-white overflow-hidden box-border font-sans">
+    <div className="admin-shell flex h-screen w-full p-[15px] gap-[15px] bg-main-bg text-text-dark overflow-hidden box-border font-sans">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto h-full pr-1 custom-scrollbar">
+      <main className="admin-content flex-1 overflow-y-auto h-full pr-1 custom-scrollbar">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />

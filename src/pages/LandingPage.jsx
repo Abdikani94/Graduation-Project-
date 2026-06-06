@@ -170,7 +170,7 @@ function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#120725] text-white">
+    <div className="public-page min-h-screen overflow-hidden bg-white text-text-dark">
       <Toast toast={contactToast} onClose={() => setContactToast(null)} />
       <header className="hero-pattern relative min-h-screen px-5 pb-24 pt-8 sm:px-8 lg:px-12">
         <nav className="mx-auto flex max-w-5xl items-center justify-center gap-4">
@@ -186,14 +186,14 @@ function LandingPage() {
         </nav>
 
         <section id="home" className="mx-auto flex max-w-5xl flex-col items-center pt-16 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#22123d] px-4 py-2 text-xs text-white/85">
+          <div className="inline-flex items-center gap-2 rounded-full bg-[#F5F5F5] px-4 py-2 text-xs text-text-dark">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             Admissions open - class of 2026
           </div>
           <h1 className="mt-8 max-w-4xl text-5xl font-extrabold leading-tight tracking-normal sm:text-7xl lg:text-8xl">
-            We <span className="serif italic text-[#c08cff]">Educate</span> Students
+            We <span className="serif italic text-[#11B67A]">Educate</span> Students
             <br />
-            That Shape <span className="serif italic text-[#c08cff]">Tomorrow</span>
+            That Shape <span className="serif italic text-[#11B67A]">Tomorrow</span>
           </h1>
           <p className="mt-6 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
             Five world-class faculties. One ambitious community. Apply online in minutes and join
@@ -218,7 +218,7 @@ function LandingPage() {
 
         <a
           aria-label="Open support chat"
-          className="fixed bottom-7 right-7 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-[#8d4df4] shadow-[0_0_32px_rgba(141,77,244,0.8)]"
+          className="fixed bottom-7 right-7 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-[#2D368D] shadow-[0_0_32px_rgba(141,77,244,0.8)]"
           href="#faq"
         >
           <MessageCircle size={21} />
@@ -266,14 +266,14 @@ function LandingPage() {
               <div className="mt-5 flex flex-wrap gap-4 text-xs font-semibold text-white/85">
                 {activeFaculty.programs.map((program) => (
                   <span key={program} className="inline-flex items-center gap-2">
-                    <i className="h-4 w-4 rounded-full border border-white/20 bg-[#8d4df4]" />
+                    <i className="h-4 w-4 rounded-full border border-white/20 bg-[#2D368D]" />
                     {program}
                   </span>
                 ))}
               </div>
-              <div className="relative mt-7 overflow-hidden rounded-[28px] border-4 border-[#8d4df4]">
+              <div className="relative mt-7 overflow-hidden rounded-[28px] border-4 border-[#2D368D]">
                 <img src={computer} alt="Computer faculty students" className="h-72 w-full object-cover" />
-                <div className="absolute bottom-0 left-0 rounded-tr-2xl bg-[#8d4df4] px-7 py-4 text-sm font-bold">
+                <div className="absolute bottom-0 left-0 rounded-tr-2xl bg-[#2D368D] px-7 py-4 text-sm font-bold">
                   Admission Fee <span className="ml-3 text-lg">$30</span>
                 </div>
               </div>
@@ -357,7 +357,7 @@ function LandingPage() {
           <div className="timeline">
             {dates.map(([date, title, text, side]) => (
               <article className={`timeline-card ${side}`} key={`${date}-${title}-${side}`}>
-                <p className="serif text-xl italic text-[#c08cff]">{date}</p>
+                <p className="serif text-xl italic text-[#11B67A]">{date}</p>
                 <h3 className="mt-2 font-bold">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-white/45">{text}</p>
               </article>
@@ -471,7 +471,7 @@ function LandingPage() {
         <section className="section-wrap">
           <div className="cta-card">
             <h2 className="text-4xl font-extrabold sm:text-5xl">
-              Your <span className="serif italic text-[#c08cff]">Future</span> starts here
+              Your <span className="serif italic text-[#11B67A]">Future</span> starts here
             </h2>
             <p className="mt-5 text-sm leading-6 text-white/55">
               Join Jamhuriya University of Science & Technology - one form, one fee, one decision that changes everything.

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../components/Toast';
+import logo from '../images/logo.jpg';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,21 +38,22 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-main-bg w-full p-4 font-sans">
+    <div className="flex items-center justify-center min-h-screen bg-main-bg w-full p-4 font-sans text-text-dark">
       <Toast toast={toast} onClose={() => setToast(null)} />
-      <div className="bg-card-bg border border-border-color rounded-[24px] w-full max-w-[500px] p-12 flex flex-col">
+      <div className="bg-card-bg border border-border-color rounded-[5px] shadow-xl shadow-primary/10 w-full max-w-[500px] p-12 flex flex-col">
         <div className="text-center mb-10">
-          <h1 className="text-white text-[42px] font-extrabold tracking-tight font-jakarta">
-            Welcome <span className="font-serif italic font-normal text-primary">back</span>
+          <img src={logo} alt="Jamhuriya University logo" className="mx-auto mb-5 h-20 w-20 rounded-full object-contain" />
+          <h1 className="text-primary text-[36px] font-bold tracking-[0.3px] font-jakarta">
+            Welcome Back
           </h1>
-          <p className="text-gray-500 text-[14px] mt-2">
-            Sign in to track your application
+          <p className="text-brand-green text-[14px] mt-2 font-medium">
+            Sign in to the JUST administration portal
           </p>
         </div>
 
         <form onSubmit={handleSignIn} className="flex flex-col gap-6">
           <div className="flex flex-col">
-            <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">
+            <label className="text-text-dark text-[13px] font-semibold mb-2.5 ml-1">
               Username
             </label>
             <input
@@ -59,12 +61,12 @@ const Login = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter username"
-              className="w-full bg-[#070211]/60 border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-600"
+              className="w-full bg-white border border-border-color text-text-dark rounded-[5px] px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-[#969696]"
             />
           </div>
 
           <div className="flex flex-col">
-            <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">
+            <label className="text-text-dark text-[13px] font-semibold mb-2.5 ml-1">
               Password
             </label>
             <input
@@ -72,13 +74,13 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="**********"
-              className="w-full bg-[#070211]/60 border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-600"
+              className="w-full bg-white border border-border-color text-text-dark rounded-[5px] px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-[#969696]"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-primary hover:bg-opacity-90 text-white rounded-full py-4 text-[13px] font-semibold transition-all mt-4 cursor-pointer"
+            className="w-full bg-primary hover:bg-brand-green text-white rounded-[5px] py-4 text-[13px] font-semibold transition-all mt-4 cursor-pointer shadow-lg shadow-primary/20"
           >
             Sign In
           </button>

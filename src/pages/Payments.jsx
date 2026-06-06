@@ -17,13 +17,13 @@ const Payments = () => {
     switch (method) {
       case 'EVC PLUS':
         return (
-          <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#a855f7] bg-[#a855f7]/10 border-[#a855f7]/20 inline-flex items-center justify-center">
+          <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20 inline-flex items-center justify-center">
             EVC PLUS
           </span>
         );
       case 'Zaad':
         return (
-          <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/20 inline-flex items-center justify-center">
+          <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20 inline-flex items-center justify-center">
             Zaad
           </span>
         );
@@ -46,7 +46,7 @@ const Payments = () => {
     <PageLayout>
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
-        <StatCard icon={DollarSign} title="Total Collected" value="$6,284" color="#22c55e" iconColor="#22c55e" />
+        <StatCard icon={DollarSign} title="Total Collected" value="$6,284" color="#00A451" iconColor="#00A451" />
         <StatCard icon={DollarSign} title="Today" value="$1,284" color="#fb923c" iconColor="#fb923c" />
         <StatCard icon={DollarSign} title="Transactions" value="284" color="#fb923c" iconColor="#fb923c" />
       </div>
