@@ -16,6 +16,12 @@ import LandingPage from './pages/LandingPage';
 import ApplyPage from './pages/ApplyPage';
 
 const AdminLayout = () => {
+  const token = localStorage.getItem('authToken');
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <div className="admin-shell flex h-screen w-full p-[15px] gap-[15px] bg-main-bg text-text-dark overflow-hidden box-border font-sans">
       <Sidebar />

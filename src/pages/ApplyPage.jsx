@@ -53,7 +53,7 @@ const programs = [
 ];
 
 const today = new Date().toISOString().slice(0, 10);
-const apiBaseUrl = 'http://127.0.0.1:4000';
+const apiBaseUrl = 'http://localhost:4000';
 
 const initialForm = {
   fullName: null,

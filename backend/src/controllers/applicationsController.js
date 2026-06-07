@@ -189,6 +189,51 @@ export const getApplication = async (req, res) => {
   sendJson(res, 200, { application, payment });
 };
 
+export const updateApplication = async (req, res) => {
+  const allowedFields = new Set([...applicationFields, 'faculty', 'department', 'program', 'programOfStudy', 'paymentStatus', 'notes']);
+  const application = await updateDb((db) => {
+    const found = db.applications.find((item) => item.id === req.params.id || item.reference === req.params.id);
+    if (!found) fail(404, 'Application not found');
+    const before = { ...found };
+
+    for (const [key, value] of Object.entries(req.body || {})) {
+      if (!allowedFields.has(key)) continue;
+      if (key === 'program') found.faculty = value;
+      else if (key === 'programOfStudy') found.department = value;
+      else found[key] = value;
+    }
+
+    if (req.body?.faculty || req.body?.program) {
+      found.admissionFee = getProgramFee(db, found.faculty);
+    }
+    found.updatedAt = new Date().toISOString();
+
+    const student = db.students.find((item) => item.applicationId === found.id);
+    if (student) {
+      student.fullName = found.fullName;
+      student.email = found.email;
+      student.mobile = found.mobile;
+      student.faculty = found.faculty;
+      student.department = found.department;
+      student.campus = found.campus;
+      student.updatedAt = found.updatedAt;
+    }
+
+    addActivity(db, req, {
+      action: 'Updated Application',
+      beforeAction: before.status,
+      afterAction: found.status,
+      applicantPerson: found.fullName,
+      applicationReference: found.reference,
+      module: 'Applications'
+    });
+
+    return found;
+  });
+
+  sendJson(res, 200, { application });
+};
+
 export const updateApplicationStatus = async (req, res) => {
   const { status, note = '' } = req.body || {};
   const allowed = new Set(['Pending', 'Approved', 'Rejected', 'Waitlisted', 'Cancelled']);

@@ -1,5 +1,5 @@
 import { createId, readDb, updateDb } from '../lib/db.js';
-import { fail, sendJson } from '../lib/http.js';
+import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 
@@ -82,4 +82,19 @@ export const updateContactStatus = async (req, res) => {
   });
 
   sendJson(res, 200, { contact });
+};
+
+export const deleteContactMessage = async (req, res) => {
+  await updateDb((db) => {
+    const index = db.contactMessages.findIndex((item) => item.id === req.params.id);
+    if (index === -1) fail(404, 'Contact message not found');
+    const [contact] = db.contactMessages.splice(index, 1);
+    addActivity(db, req, {
+      action: 'Deleted Contact Message',
+      beforeAction: contact.status,
+      applicantPerson: contact.name,
+      module: 'Contacts'
+    });
+  });
+  sendNoContent(res);
 };

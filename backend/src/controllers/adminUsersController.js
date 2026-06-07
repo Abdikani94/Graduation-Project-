@@ -1,5 +1,5 @@
 import { createId, readDb, updateDb } from '../lib/db.js';
-import { fail, sendJson } from '../lib/http.js';
+import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { hashPassword } from '../lib/crypto.js';
 import { matchesText, paginate, sortNewest, toPublicUser } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
@@ -91,4 +91,20 @@ export const updateAdminUser = async (req, res) => {
     return toPublicUser(found);
   });
   sendJson(res, 200, { user });
+};
+
+export const deleteAdminUser = async (req, res) => {
+  await updateDb((db) => {
+    if (req.user.id === req.params.id) fail(422, 'You cannot delete your own admin account');
+    const index = db.users.findIndex((item) => item.id === req.params.id);
+    if (index === -1) fail(404, 'Admin user not found');
+    const [user] = db.users.splice(index, 1);
+    addActivity(db, req, {
+      action: 'Deleted Admin User',
+      beforeAction: user.role,
+      applicantPerson: user.name,
+      module: 'Admin Users'
+    });
+  });
+  sendNoContent(res);
 };

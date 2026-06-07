@@ -13,7 +13,12 @@ export const listActivity = async (req, res) => {
 
 export const exportActivityCsv = async (req, res) => {
   const db = await readDb();
-  const csv = toCsv(sortNewest(db.activities), [
+  let items = sortNewest(db.activities);
+  const { search, module } = req.query;
+  if (module && module !== 'All Modules') items = items.filter((item) => item.module === module);
+  items = items.filter((item) => matchesText(item, ['action', 'adminName', 'adminEmail', 'applicantPerson', 'applicationReference'], search));
+
+  const csv = toCsv(items, [
     { key: 'action', header: 'Action' },
     { key: 'beforeAction', header: 'Before' },
     { key: 'afterAction', header: 'After' },

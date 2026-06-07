@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { UserCheck, UserX, Clock, Users, Bell } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
@@ -7,38 +8,37 @@ import {
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
+import Toast from '../components/Toast';
+import api from '../api/axios';
 
-const barData = [
-  { name: 'Mon', applications: 42, approved: 32 },
-  { name: 'Tue', applications: 50, approved: 37 },
-  { name: 'Wed', applications: 36, approved: 26 },
-  { name: 'Thu', applications: 54, approved: 39 },
-  { name: 'Fri', applications: 49, approved: 34 },
-];
+const emptyDashboard = {
+  stats: {
+    totalApplications: 0,
+    approvedApplications: 0,
+    pendingApplications: 0,
+    rejectedApplications: 0,
+    students: 0,
+    paymentsCollected: 0,
+  },
+  weeklyAdmissions: [],
+  facultyDemand: [],
+  trend30: [],
+  recentAdmissions: [],
+};
 
-const pieData = [
-  { name: 'Computer Science & IT', value: 20, color: '#f97316' },
-  { name: 'Faculty of Education', value: 10, color: '#00A451' },
-  { name: 'Faculty of Engineering', value: 40, color: '#2D368D' },
-  { name: 'Faculty of Business & Economics', value: 30, color: '#2D368D' },
-  { name: 'Health Science', value: 30, color: '#ec4899' },
-  { name: 'Faculty of Law & Sharia', value: 30, color: '#2D368D' },
-];
+const avatarFor = (name) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Applicant')}&background=894EEF&color=fff`;
 
-const areaData = [
-  { name: 'Feb 16', submitted: 70, rejected: 130, accepted: 100 },
-  { name: 'Feb 22', submitted: 80, rejected: 125, accepted: 90 },
-  { name: 'Mar 1', submitted: 90, rejected: 128, accepted: 120 },
-  { name: 'Mar 7', submitted: 110, rejected: 135, accepted: 100 },
-  { name: 'Mar 14', submitted: 100, rejected: 132, accepted: 115 },
-  { name: 'Mar 17', submitted: 115, rejected: 130, accepted: 110 },
-];
-
-const recentAdmissions = [
-  { id: 1, name: 'Thereso Webb', program: 'Computer application', time: '3 min', avatar: 'https://ui-avatars.com/api/?name=Thereso+Webb' },
-  { id: 2, name: 'Thereso Webb', program: 'Computer application', time: '3 min', avatar: 'https://ui-avatars.com/api/?name=Thereso+Webb' },
-  { id: 3, name: 'Thereso Webb', program: 'Computer application', time: '3 min', avatar: 'https://ui-avatars.com/api/?name=Thereso+Webb' },
-];
+const timeAgo = (value) => {
+  if (!value) return 'Recently';
+  const diff = Date.now() - new Date(value).getTime();
+  const minutes = Math.max(Math.floor(diff / 60000), 0);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hrs`;
+  return `${Math.floor(hours / 24)} days`;
+};
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -80,13 +80,40 @@ const CustomBarShape = (props) => {
 
 
 const Dashboard = () => {
+  const [dashboard, setDashboard] = useState(emptyDashboard);
+  const [isLoading, setIsLoading] = useState(true);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        const data = await api.get('/dashboard');
+        setDashboard({ ...emptyDashboard, ...data });
+      } catch (error) {
+        setToast({ type: 'error', title: 'Dashboard error', message: error.message });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadDashboard();
+  }, []);
+
+  const stats = dashboard.stats || emptyDashboard.stats;
+  const barData = dashboard.weeklyAdmissions || [];
+  const pieData = dashboard.facultyDemand || [];
+  const areaData = dashboard.trend30 || [];
+  const recentAdmissions = dashboard.recentAdmissions || [];
+  const totalApplicants = stats.totalApplications || 0;
+
   return (
     <PageLayout>
+      <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
-        <StatCard icon={Users} title="Total Applications" value="1,284" color="#00A451" iconColor="#00A451" />
-        <StatCard icon={UserCheck} title="Approved Applications" value="1,284" color="#f97316" iconColor="#f97316" />
-        <StatCard icon={Clock} title="Pending Application" value="1,284" color="#f97316" iconColor="#f97316" />
-        <StatCard icon={UserX} title="Rejected Applications" value="1,284" color="#2D368D" iconColor="#2D368D" />
+        <StatCard icon={Users} title="Total Applications" value={isLoading ? '...' : stats.totalApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={UserCheck} title="Approved Applications" value={isLoading ? '...' : stats.approvedApplications.toLocaleString()} color="#f97316" iconColor="#f97316" />
+        <StatCard icon={Clock} title="Pending Application" value={isLoading ? '...' : stats.pendingApplications.toLocaleString()} color="#f97316" iconColor="#f97316" />
+        <StatCard icon={UserX} title="Rejected Applications" value={isLoading ? '...' : stats.rejectedApplications.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
@@ -140,7 +167,7 @@ const Dashboard = () => {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                 <span className="text-white text-[20px] font-bold">1,284</span>
+                 <span className="text-white text-[20px] font-bold">{totalApplicants.toLocaleString()}</span>
                  <span className="text-[#6c6a7e] text-[11px] mt-0.5">Applicants</span>
               </div>
             </div>
@@ -152,7 +179,7 @@ const Dashboard = () => {
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
                     <span className="text-[#6c6a7e] text-[12px]">{item.name}</span>
                   </div>
-                  <span className="text-white text-[12px] font-medium">{item.value}%</span>
+                  <span className="text-white text-[12px] font-medium">{item.value}</span>
                 </div>
               ))}
             </div>
@@ -213,16 +240,19 @@ const Dashboard = () => {
           <h3 className="text-white text-[16px] font-semibold mb-1">Last Admissions</h3>
           <p className="text-gray-500 text-[12px] mb-4">Applications submitted vs paid</p>
           <div className="flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2 flex-1">
+            {recentAdmissions.length === 0 && (
+              <p className="text-[#6c6a7e] text-[13px] py-6 text-center">No admissions yet.</p>
+            )}
             {recentAdmissions.map((item, index) => (
               <div key={index} className={`flex items-center justify-between pb-4 ${index < recentAdmissions.length - 1 ? 'border-b border-white/5' : ''}`}>
                 <div className="flex items-center gap-4">
-                  <img src={item.avatar} alt={item.name} className="w-11 h-11 rounded-full object-cover grayscale" />
+                  <img src={avatarFor(item.name)} alt={item.name} className="w-11 h-11 rounded-full object-cover grayscale" />
                   <div>
                     <h4 className="text-white text-[14px] font-medium mb-1">{item.name}</h4>
                     <p className="text-[#6c6a7e] text-[12px]">{item.program}</p>
                   </div>
                 </div>
-                <span className="text-[#6c6a7e] text-[12px] font-medium">{item.time}</span>
+                <span className="text-[#6c6a7e] text-[12px] font-medium">{timeAgo(item.createdAt)}</span>
               </div>
             ))}
           </div>

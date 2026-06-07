@@ -1,43 +1,63 @@
+import { useEffect, useMemo, useState } from 'react';
 import { FileText, Users, CheckCircle, XCircle } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
-
-const performanceData = [
-  { name: 'said omar', approved: 45, rejected: 12 },
-  { name: 'Officer Ali', approved: 30, rejected: 5 },
-  { name: 'Admin Fatima', approved: 55, rejected: 18 },
-  { name: 'Officer Ahmed', approved: 25, rejected: 8 },
-];
-
-const adminReportData = [
-  { name: 'said omar ahmed mohamud', email: 'sayad465608@gmail.com', role: 'Admin', total: 57, approved: 45, rejected: 12, avgTime: '4.5 hrs' },
-  { name: 'Officer Ali Mohamed', email: 'ali@gmail.com', role: 'Officer', total: 35, approved: 30, rejected: 5, avgTime: '6.2 hrs' },
-  { name: 'Admin Fatima Hassan', email: 'fatima@gmail.com', role: 'Admin', total: 73, approved: 55, rejected: 18, avgTime: '3.8 hrs' },
-  { name: 'Officer Ahmed Gurey', email: 'ahmed@gmail.com', role: 'Officer', total: 33, approved: 25, rejected: 8, avgTime: '5.1 hrs' },
-];
+import Toast from '../components/Toast';
+import api from '../api/axios';
 
 const AdminReport = () => {
+  const [admins, setAdmins] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    const loadReport = async () => {
+      try {
+        const [adminResult, activityResult] = await Promise.all([
+          api.get('/admin-users', { limit: 100 }),
+          api.get('/activity-log', { limit: 100 }),
+        ]);
+        setAdmins(adminResult.data || []);
+        setActivities(activityResult.data || []);
+      } catch (error) {
+        setToast({ type: 'error', title: 'Admin report error', message: error.message });
+      }
+    };
+
+    loadReport();
+  }, []);
+
+  const stats = useMemo(() => {
+    const approved = admins.reduce((sum, admin) => sum + Number(admin.approved || 0), 0);
+    const rejected = admins.reduce((sum, admin) => sum + Number(admin.rejected || 0), 0);
+    return {
+      totalAdmins: admins.length,
+      approved,
+      rejected,
+      avgProcessingTime: activities.length ? `${Math.max(Math.round(24 / Math.max(activities.length, 1)), 1)} hrs` : '0 hrs',
+    };
+  }, [admins, activities]);
+
+  const topPerformer = [...admins].sort((a, b) => Number(b.total || 0) - Number(a.total || 0))[0];
+  const performanceData = admins.map((admin) => ({
+    name: admin.name,
+    approved: Number(admin.approved || 0),
+    rejected: Number(admin.rejected || 0),
+  }));
+
   return (
     <PageLayout>
-      {/* Header */}
-      {/* <div className="flex items-center gap-3 bg-transparent">
-        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-primary">
-          <FileText size={20} />
-        </div>
-        <h1 className="text-white text-[22px] font-semibold tracking-tight">Admin Performance Report</h1>
-      </div> */}
+      <Toast toast={toast} onClose={() => setToast(null)} />
 
-      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-[15px]">
-        <StatCard icon={Users} title="Total Admins/Officers" value="4" color="#2D368D" iconColor="#2D368D" />
-        <StatCard icon={CheckCircle} title="Total Approved" value="155" color="#00A451" iconColor="#00A451" />
-        <StatCard icon={XCircle} title="Total Rejected" value="43" color="#fb923c" iconColor="#fb923c" />
-        <StatCard icon={FileText} title="Avg Processing Time" value="4.9 hrs" color="#fb923c" iconColor="#fb923c" />
+        <StatCard icon={Users} title="Total Admins/Officers" value={stats.totalAdmins.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
+        <StatCard icon={CheckCircle} title="Total Approved" value={stats.approved.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={XCircle} title="Total Rejected" value={stats.rejected.toLocaleString()} color="#fb923c" iconColor="#fb923c" />
+        <StatCard icon={FileText} title="Avg Processing Time" value={stats.avgProcessingTime} color="#fb923c" iconColor="#fb923c" />
       </div>
 
-      {/* Performance Graph & Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
         <Card className="p-6 col-span-2 flex flex-col h-[350px]">
           <h3 className="text-white text-[16px] font-semibold mb-1">Decisions by Admin User</h3>
@@ -62,21 +82,20 @@ const AdminReport = () => {
           <div className="flex flex-col gap-5 flex-1 justify-center">
             <div className="flex items-center justify-between pb-3 border-b border-white/5">
               <span className="text-[#8c8a9e] text-[13px]">Top Performer</span>
-              <span className="text-white text-[13px] font-semibold">Fatima Hassan (73)</span>
+              <span className="text-white text-[13px] font-semibold">{topPerformer ? `${topPerformer.name} (${topPerformer.total})` : '-'}</span>
             </div>
             <div className="flex items-center justify-between pb-3 border-b border-white/5">
               <span className="text-[#8c8a9e] text-[13px]">Fastest Decision Rate</span>
-              <span className="text-[#00A451] text-[13px] font-semibold">3.8 hrs/app</span>
+              <span className="text-[#00A451] text-[13px] font-semibold">{stats.avgProcessingTime}/app</span>
             </div>
             <div className="flex items-center justify-between pb-3 border-b border-white/5">
               <span className="text-[#8c8a9e] text-[13px]">Approval to Rejection Ratio</span>
-              <span className="text-white text-[13px] font-semibold">3.6 : 1</span>
+              <span className="text-white text-[13px] font-semibold">{stats.rejected ? (stats.approved / stats.rejected).toFixed(1) : stats.approved} : 1</span>
             </div>
           </div>
         </Card>
       </div>
 
-      {/* Admin Performance Table */}
       <Card className="flex flex-col flex-1 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -87,12 +106,13 @@ const AdminReport = () => {
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">TOTAL HANDLED</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">APPROVED</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">REJECTED</th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">AVG TIME</th>
+                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">STATUS</th>
               </tr>
             </thead>
             <tbody>
-              {adminReportData.map((item, index) => (
-                <tr key={index} className="border-b border-white/[0.02] hover:bg-white/[0.01] transition-colors">
+              {admins.length === 0 && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={6}>No admin activity found.</td></tr>}
+              {admins.map((item) => (
+                <tr key={item.id} className="border-b border-white/[0.02] hover:bg-white/[0.01] transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-4">
                       <div className="w-9 h-9 rounded-full bg-primary shrink-0"></div>
@@ -110,7 +130,7 @@ const AdminReport = () => {
                   <td className="px-6 py-4 text-[13px] text-gray-300 font-semibold">{item.total}</td>
                   <td className="px-6 py-4 text-[13px] text-gray-400">{item.approved}</td>
                   <td className="px-6 py-4 text-[13px] text-gray-400">{item.rejected}</td>
-                  <td className="px-6 py-4 text-[13px] text-gray-400 font-semibold">{item.avgTime}</td>
+                  <td className="px-6 py-4 text-[13px] text-gray-400 font-semibold">{item.status}</td>
                 </tr>
               ))}
             </tbody>

@@ -32,7 +32,7 @@ export const env = {
   port: toNumber(process.env.PORT, 4000),
   nodeEnv: process.env.NODE_ENV || 'development',
   dbDriver: process.env.DB_DRIVER || (process.env.MONGODB_URI ? 'mongodb' : 'json'),
-  corsOrigin: process.env.CORS_ORIGIN || '*',
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   jwtSecret: process.env.JWT_SECRET || 'development-only-secret',
   tokenExpiresInSeconds: toNumber(process.env.TOKEN_EXPIRES_IN_SECONDS, 60 * 60 * 24),
   maxBodyBytes: toNumber(process.env.MAX_BODY_BYTES, 15 * 1024 * 1024),
