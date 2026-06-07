@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../components/Toast';
 import logo from '../images/logo.jpg';
+import api from '../api/axios';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,17 +15,7 @@ const Login = () => {
     setToast(null);
 
     try {
-      const response = await fetch('http://127.0.0.1:4000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error?.message || 'Invalid username or password');
-      }
-
+      const result = await api.post('/auth/login', { username, password });
       localStorage.setItem('authToken', result.token);
       localStorage.setItem('authUser', JSON.stringify(result.user));
       navigate('/dashboard');

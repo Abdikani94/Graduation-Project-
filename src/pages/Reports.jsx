@@ -1,77 +1,29 @@
+import { useEffect, useState } from 'react';
 import { FileText, User, DollarSign, Download, Info, Eye, Calendar } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
+import Toast from '../components/Toast';
+import api from '../api/axios';
 
-// Chart Data (same as original)
-const trendData = [
-  { name: 'Jan', submitted: 35, paid: 25, target: 55 },
-  { name: 'Feb', submitted: 33, paid: 23, target: 55 },
-  { name: 'Mar', submitted: 30, paid: 20, target: 55 },
-  { name: 'Apr', submitted: 35, paid: 25, target: 55 },
-  { name: 'May', submitted: 40, paid: 30, target: 55 },
-  { name: 'Jun', submitted: 45, paid: 25, target: 55 },
-  { name: 'Jul', submitted: 42, paid: 30, target: 55 },
-  { name: 'Aug', submitted: 45, paid: 35, target: 55 },
-  { name: 'Sep', submitted: 48, paid: 38, target: 55 },
-  { name: 'Oct', submitted: 50, paid: 40, target: 55 },
-  { name: 'Nov', submitted: 52, paid: 42, target: 55 },
-  { name: 'Dec', submitted: 55, paid: 45, target: 56 },
-];
+const emptyReport = {
+  stats: { totalApplications: 0, acceptanceRate: 0, rejectionRate: 0, totalRevenue: 0 },
+  trend: [],
+  demographics: { sex: [], nationality: [], age: [], studyMode: [], paymentPlan: [] },
+  geography: { topDistricts: [], topRegions: [] },
+  schools: { topFeeders: [] },
+  programs: { facultyDemand: [], topDepartments: [], revenueByProgram: [] },
+  marketing: { sourceOfInformation: [], topSources: [] },
+};
 
-const sexData = [
-  { name: 'Male', value: 30, color: '#f97316' },
-  { name: 'Empty1', value: 15, color: 'transparent' },
-  { name: 'Female', value: 40, color: '#2D368D' },
-  { name: 'Empty2', value: 15, color: 'transparent' }
-];
+const asChart = (items = [], usePercent = true) => items.map((item) => ({
+  name: item.name,
+  value: usePercent ? item.percent : item.value,
+  color: item.color || '#2D368D',
+}));
 
-const nationalityData = [
-  { name: 'Local Somali', value: 30, color: '#2D368D' },
-  { name: 'International', value: 5, color: '#f97316' },
-  { name: 'Empty', value: 65, color: 'transparent' }
-];
-
-const ageData = [
-  { name: 'under 18', value: 60 },
-  { name: '18-20', value: 80 },
-  { name: '21-25', value: 50 },
-  { name: '26-30', value: 90 },
-  { name: 'over 30', value: 80 }
-];
-
-const facultyDemandData = [
-  { name: 'Computer Science & IT', value: 20, color: '#f97316' },
-  { name: 'Faculty of Education', value: 10, color: '#00A451' },
-  { name: 'Faculty of Engineering', value: 40, color: '#2D368D' },
-  { name: 'Faculty of Business & Economics', value: 30, color: '#2D368D' },
-  { name: 'Health Science', value: 30, color: '#fb923c' },
-  { name: 'Faculty of Law & Sharia', value: 30, color: '#ef4444' }
-];
-
-const studyModeData = [
-  { name: 'Full Time', value: 30, color: '#00A451' },
-  { name: 'Empty1', value: 15, color: 'transparent' },
-  { name: 'Part Time', value: 40, color: '#2D368D' },
-  { name: 'Empty2', value: 15, color: 'transparent' }
-];
-
-const paymentPlanData = [
-  { name: '4 semesters', value: 30, color: '#00A451' },
-  { name: 'Empty1', value: 15, color: 'transparent' },
-  { name: '8 semesters', value: 40, color: '#2D368D' },
-  { name: 'Empty2', value: 15, color: 'transparent' }
-];
-
-const sourceData = [
-  { name: 'Social media', value: 60 },
-  { name: 'Friend / Family', value: 70 },
-  { name: 'Radio / TV', value: 90 },
-  { name: 'Website', value: 70 },
-  { name: 'Banner / Poster', value: 40 },
-  { name: 'Others', value: 40 }
-];
+const money = (value) => `$${Number(value || 0).toLocaleString()}`;
 
 const SectionTitle = ({ title, color = "#2D368D" }) => (
   <div className="flex items-center gap-3 mt-4 mb-2">
@@ -81,8 +33,45 @@ const SectionTitle = ({ title, color = "#2D368D" }) => (
 );
 
 const Reports = () => {
+  const [report, setReport] = useState(emptyReport);
+  const [filters, setFilters] = useState({ year: '', from: '', to: '' });
+  const [toast, setToast] = useState(null);
+
+  const loadReport = async () => {
+    try {
+      const result = await api.get('/reports/summary', filters);
+      setReport({ ...emptyReport, ...result });
+    } catch (error) {
+      setToast({ type: 'error', title: 'Reports error', message: error.message });
+    }
+  };
+
+  useEffect(() => {
+    loadReport();
+  }, [filters.year, filters.from, filters.to]);
+
+  const resetFilters = () => setFilters({ year: '', from: '', to: '' });
+  const exportCsv = async () => {
+    try {
+      await api.downloadCsv('/reports/export/csv', 'admission-report.csv', filters);
+    } catch (error) {
+      setToast({ type: 'error', title: 'Export failed', message: error.message });
+    }
+  };
+
+  const trendData = report.trend || [];
+  const sexData = asChart(report.demographics?.sex);
+  const nationalityData = asChart(report.demographics?.nationality);
+  const ageData = asChart(report.demographics?.age);
+  const facultyDemandData = asChart(report.programs?.facultyDemand);
+  const studyModeData = asChart(report.demographics?.studyMode);
+  const paymentPlanData = asChart(report.demographics?.paymentPlan);
+  const sourceData = asChart(report.marketing?.sourceOfInformation);
+  const totalApplications = report.stats?.totalApplications || 0;
+
   return (
     <PageLayout>
+      <Toast toast={toast} onClose={() => setToast(null)} />
       {/* Filter Reports Container */}
       <Card className="p-6 flex flex-col gap-5 mb-[15px]">
         <div className="flex items-center gap-2.5">
@@ -97,6 +86,8 @@ const Reports = () => {
             <div className="flex flex-col gap-1.5">
               <label className="text-[#8c8a9e] text-[12px] font-medium ml-1">Select Year</label>
               <select
+                value={filters.year}
+                onChange={(event) => setFilters((current) => ({ ...current, year: event.target.value }))}
                 className="bg-main-bg border border-white/5 text-white rounded-xl pl-4 pr-10 py-3 text-[13px] outline-none min-w-[140px] appearance-none cursor-pointer focus:border-primary transition-colors"
                 style={{
                   backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`,
@@ -104,7 +95,7 @@ const Reports = () => {
                   backgroundPosition: 'right 16px center'
                 }}
               >
-                <option>All Status</option>
+                <option value="">All Years</option>
                 <option>2026</option>
                 <option>2025</option>
                 <option>2024</option>
@@ -114,9 +105,10 @@ const Reports = () => {
               <label className="text-[#8c8a9e] text-[12px] font-medium ml-1">From</label>
               <div className="relative">
                 <input
-                  type="text"
+                  type="date"
                   className="bg-main-bg border border-white/5 text-white rounded-xl pl-4 pr-10 py-3 text-[13px] outline-none w-[140px] focus:border-primary transition-colors"
-                  defaultValue="MM/DD/YYYY"
+                  value={filters.from}
+                  onChange={(event) => setFilters((current) => ({ ...current, from: event.target.value }))}
                 />
                 <Calendar size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8c8a9e] pointer-events-none" />
               </div>
@@ -125,22 +117,23 @@ const Reports = () => {
               <label className="text-[#8c8a9e] text-[12px] font-medium ml-1">To</label>
               <div className="relative">
                 <input
-                  type="text"
+                  type="date"
                   className="bg-main-bg border border-white/5 text-white rounded-xl pl-4 pr-10 py-3 text-[13px] outline-none w-[140px] focus:border-primary transition-colors"
-                  defaultValue="MM/DD/YYYY"
+                  value={filters.to}
+                  onChange={(event) => setFilters((current) => ({ ...current, to: event.target.value }))}
                 />
                 <Calendar size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8c8a9e] pointer-events-none" />
               </div>
             </div>
             <div className="flex flex-col gap-1.5 mt-auto">
-              <button className="bg-primary hover:bg-opacity-90 text-white rounded-full px-8 py-3 text-[13px] font-semibold transition-colors cursor-pointer h-[46px] flex items-center justify-center">
+              <button onClick={resetFilters} className="bg-primary hover:bg-opacity-90 text-white rounded-full px-8 py-3 text-[13px] font-semibold transition-colors cursor-pointer h-[46px] flex items-center justify-center">
                 Reset
               </button>
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5 mt-auto">
-            <button className="bg-primary hover:bg-opacity-90 text-white rounded-full px-6 py-3 text-[13px] font-semibold transition-colors cursor-pointer flex items-center gap-2 h-[46px] justify-center">
+            <button onClick={exportCsv} className="bg-primary hover:bg-opacity-90 text-white rounded-full px-6 py-3 text-[13px] font-semibold transition-colors cursor-pointer flex items-center gap-2 h-[46px] justify-center">
               <Download size={14} /> Export CSV
             </button>
           </div>
@@ -149,10 +142,10 @@ const Reports = () => {
 
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
-        <StatCard icon={User} title="Total Applications" value="1,284" color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Acceptance Rate" value="26%" color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Rejection Rate" value="5%" color="#2D368D" iconColor="#2D368D" />
-        <StatCard icon={DollarSign} title="Total Revenue" value="$600" color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Total Applications" value={totalApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={User} title="Acceptance Rate" value={`${report.stats?.acceptanceRate || 0}%`} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Rejection Rate" value={`${report.stats?.rejectionRate || 0}%`} color="#2D368D" iconColor="#2D368D" />
+        <StatCard icon={DollarSign} title="Total Revenue" value={money(report.stats?.totalRevenue)} color="#d97706" iconColor="#d97706" />
       </div>
 
       {/* Admission Demographics */}
@@ -207,11 +200,11 @@ const Reports = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="text-white text-[22px] font-bold">1,284</p>
+              <p className="text-white text-[22px] font-bold">{totalApplications.toLocaleString()}</p>
               <p className="text-gray-500 text-[11px] mt-1">Applicants</p>
             </div>
-            <div className="absolute left-[10px] top-1/2 -translate-y-1/2 text-[#f97316] text-[12px] font-bold">30%</div>
-            <div className="absolute right-[10px] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">40%</div>
+            <div className="absolute left-[10px] top-1/2 -translate-y-1/2 text-[#f97316] text-[12px] font-bold">{sexData.find((item) => item.name === 'Male')?.value || 0}%</div>
+            <div className="absolute right-[10px] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">{sexData.find((item) => item.name === 'Female')?.value || 0}%</div>
           </div>
           <div className="flex justify-center gap-8 mt-6">
             <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#f97316]"></div><span className="text-gray-400 text-[13px] font-medium">Male</span></div>
@@ -235,16 +228,10 @@ const Reports = () => {
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: '1   Hodon District', val: 300 },
-                { name: '2   Waaberi District', val: 300 },
-                { name: '3   Wadajir District', val: 240 },
-                { name: '4   Dharkenley District', val: 100 },
-                { name: '5   Yaaqshid District', val: 100 }
-              ].map((row, i) => (
+              {(report.geography?.topDistricts || []).map((row, i) => (
                 <tr key={i} className="border-b border-white/5 last:border-0">
-                  <td className="py-3.5 text-[13px] text-gray-300 font-medium">{row.name}</td>
-                  <td className="py-3.5 text-[13px] text-gray-400 text-right">{row.val}</td>
+                  <td className="py-3.5 text-[13px] text-gray-300 font-medium">{i + 1}   {row.name}</td>
+                  <td className="py-3.5 text-[13px] text-gray-400 text-right">{row.value}</td>
                 </tr>
               ))}
             </tbody>
@@ -265,13 +252,14 @@ const Reports = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="text-white text-[22px] font-bold">1,284</p>
+              <p className="text-white text-[22px] font-bold">{totalApplications.toLocaleString()}</p>
               <p className="text-gray-500 text-[11px] mt-1">Applicants</p>
             </div>
           </div>
           <div className="flex justify-center gap-6 mt-6 flex-wrap">
-            <div className="text-[13px] font-medium text-[#2D368D]">Local (Somali) : 30%</div>
-            <div className="text-[13px] font-medium text-[#f97316]">International : 5%</div>
+            {nationalityData.map((item) => (
+              <div key={item.name} className="text-[13px] font-medium text-[#2D368D]">{item.name} : {item.value}%</div>
+            ))}
           </div>
         </Card>
       </div>
@@ -288,12 +276,10 @@ const Reports = () => {
               </tr>
             </thead>
             <tbody>
-              {[
-                '1   Banadir Region', '2   Banadir Region', '3   Jubaasi House', '4   Shabelle Dhexe', '5   Nugaal Region'
-              ].map((row, i) => (
+              {(report.geography?.topRegions || []).map((row, i) => (
                 <tr key={i} className="border-b border-white/5 last:border-0">
-                  <td className="py-3 text-[13px] text-gray-300 font-medium">{row}</td>
-                  <td className="py-3 text-[13px] text-gray-400 text-right">50</td>
+                  <td className="py-3 text-[13px] text-gray-300 font-medium">{i + 1}   {row.name}</td>
+                  <td className="py-3 text-[13px] text-gray-400 text-right">{row.value}</td>
                 </tr>
               ))}
             </tbody>
@@ -336,12 +322,10 @@ const Reports = () => {
               </tr>
             </thead>
             <tbody>
-              {[
-                '1   Tawakkal Secondary School', '2   Al Furqan Secondary School', '3   Al Huda Secondary School', '4   Dhameyaale Secondary School', '5   Mujma\'a Secondary School'
-              ].map((row, i) => (
+              {(report.schools?.topFeeders || []).map((row, i) => (
                 <tr key={i} className="border-b border-white/5 last:border-0">
-                  <td className="py-3.5 text-[13px] text-gray-300 font-medium">{row}</td>
-                  <td className="py-3.5 text-[13px] text-gray-400 text-right">50</td>
+                  <td className="py-3.5 text-[13px] text-gray-300 font-medium">{i + 1}   {row.name}</td>
+                  <td className="py-3.5 text-[13px] text-gray-400 text-right">{row.value}</td>
                 </tr>
               ))}
             </tbody>
@@ -369,7 +353,7 @@ const Reports = () => {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="text-white text-[20px] font-bold">1,284</p>
+                <p className="text-white text-[20px] font-bold">{totalApplications.toLocaleString()}</p>
                 <p className="text-gray-500 text-[11px] mt-1">Applicants</p>
               </div>
             </div>
@@ -405,11 +389,11 @@ const Reports = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="text-white text-[22px] font-bold">1,284</p>
+              <p className="text-white text-[22px] font-bold">{totalApplications.toLocaleString()}</p>
               <p className="text-gray-500 text-[11px] mt-1">Applicants</p>
             </div>
-            <div className="absolute left-[10%] top-1/2 -translate-y-1/2 text-[#00A451] text-[12px] font-bold">30%</div>
-            <div className="absolute right-[10%] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">40%</div>
+            <div className="absolute left-[10%] top-1/2 -translate-y-1/2 text-[#00A451] text-[12px] font-bold">{studyModeData[0]?.value || 0}%</div>
+            <div className="absolute right-[10%] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">{studyModeData[1]?.value || 0}%</div>
           </div>
           <div className="flex justify-center gap-8 mt-6">
             <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#00A451]"></div><span className="text-gray-400 text-[13px] font-medium">Full Time</span></div>
@@ -433,16 +417,10 @@ const Reports = () => {
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: '1   Hodon District', val: 120 },
-                { name: '2   Waaberi District', val: 130 },
-                { name: '3   Wadajir District', val: 240 },
-                { name: '4   Dharkenley District', val: 100 },
-                { name: '5   Yaaqshid District', val: 100 }
-              ].map((row, i) => (
+              {(report.programs?.topDepartments || []).map((row, i) => (
                 <tr key={i} className="border-b border-white/5 last:border-0">
-                  <td className="py-4 text-[13px] text-gray-300 font-medium">{row.name}</td>
-                  <td className="py-4 text-[13px] text-gray-400 text-right">{row.val}</td>
+                  <td className="py-4 text-[13px] text-gray-300 font-medium">{i + 1}   {row.name}</td>
+                  <td className="py-4 text-[13px] text-gray-400 text-right">{row.value}</td>
                 </tr>
               ))}
             </tbody>
@@ -463,7 +441,7 @@ const Reports = () => {
               <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors shrink-0"><Eye size={12} /> View all</button>
               <div className="text-right">
                 <p className="text-[11px] text-gray-500 mb-1 font-medium uppercase tracking-wider">Total Revenue</p>
-                <p className="text-[20px] font-bold text-[#00A451] m-0">$480</p>
+                <p className="text-[20px] font-bold text-[#00A451] m-0">{money(report.stats?.totalRevenue)}</p>
               </div>
             </div>
           </div>
@@ -479,25 +457,17 @@ const Reports = () => {
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { n: 'Faculty Of Computing & ICT', f: '$25', a: 4, e: '$100' },
-                  { n: 'Faculty Of Education', f: '$25', a: 4, e: '$100' },
-                  { n: 'Faculty Of Engineering', f: '$25', a: 3, e: '$75' },
-                  { n: 'Faculty Of Business & Economics', f: '$25', a: 4, e: '$100' },
-                  { n: 'Faculty Of Medicine & Health Sciences', f: '$25', a: 3, e: '$75' },
-                  { n: 'Faculty Of Law & Sharia', f: '$15', a: 10, e: '$150' },
-                  { n: 'Computer Science & IT', f: '$10', a: 3, e: '$30' }
-                ].map((row, i) => (
+                {(report.programs?.revenueByProgram || []).map((row, i) => (
                   <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
                     <td className="py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-[#2D368D]"></div>
-                        <span className="text-[13px] text-white font-medium">{row.n}</span>
+                        <span className="text-[13px] text-white font-medium">{row.faculty}</span>
                       </div>
                     </td>
-                    <td className="py-4 text-[13px] text-gray-400 font-medium">{row.f}</td>
-                    <td className="py-4 text-[13px] text-gray-400 font-medium">{row.a}</td>
-                    <td className="py-4 text-[14px] text-[#00A451] font-semibold">{row.e}</td>
+                    <td className="py-4 text-[13px] text-gray-400 font-medium">{money(row.fee)}</td>
+                    <td className="py-4 text-[13px] text-gray-400 font-medium">{row.applicants}</td>
+                    <td className="py-4 text-[14px] text-[#00A451] font-semibold">{money(row.estimated)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -519,7 +489,7 @@ const Reports = () => {
               </PieChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <p className="text-white text-[24px] font-bold">1,284</p>
+              <p className="text-white text-[24px] font-bold">{totalApplications.toLocaleString()}</p>
               <p className="text-gray-500 text-[12px] mt-1 font-medium">Total</p>
             </div>
           </div>
@@ -529,14 +499,14 @@ const Reports = () => {
                 <div className="w-2.5 h-2.5 rounded-full bg-[#00A451]"></div>
                 <span className="text-[#00A451] text-[13px] font-medium">Fall semester</span>
               </div>
-              <span className="text-[#00A451] text-[13px] font-bold">60%</span>
+              <span className="text-[#00A451] text-[13px] font-bold">{paymentPlanData[0]?.value || 0}%</span>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-[#2D368D]"></div>
                 <span className="text-[#2D368D] text-[13px] font-medium">Installment</span>
               </div>
-              <span className="text-[#2D368D] text-[13px] font-bold">40%</span>
+              <span className="text-[#2D368D] text-[13px] font-bold">{paymentPlanData[1]?.value || 0}%</span>
             </div>
           </div>
         </Card>
@@ -577,16 +547,10 @@ const Reports = () => {
               </tr>
             </thead>
             <tbody>
-              {[
-                { name: '1   Social Media', val: 400 },
-                { name: '2   Friend / Family', val: 200 },
-                { name: '3   Website', val: 100 },
-                { name: '4   Banner / Poster', val: 120 },
-                { name: '5   Others', val: 50 }
-              ].map((row, i) => (
+              {(report.marketing?.topSources || []).map((row, i) => (
                 <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                  <td className="py-4 text-[13px] text-gray-300 font-medium">{row.name}</td>
-                  <td className="py-4 text-[13px] text-gray-400 text-right">{row.val}</td>
+                  <td className="py-4 text-[13px] text-gray-300 font-medium">{i + 1}   {row.name}</td>
+                  <td className="py-4 text-[13px] text-gray-400 text-right">{row.value}</td>
                 </tr>
               ))}
             </tbody>

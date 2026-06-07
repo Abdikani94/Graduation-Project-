@@ -88,7 +88,7 @@ const faqs = [
   'When will admission results be announced?',
 ];
 
-const apiBaseUrl = 'http://127.0.0.1:4000';
+const apiBaseUrl = 'http://localhost:4000';
 
 const initialContactForm = {
   name: null,

@@ -1,5 +1,5 @@
 import { createId, readDb, updateDb } from '../lib/db.js';
-import { fail, sendCsv, sendJson } from '../lib/http.js';
+import { fail, sendCsv, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest, toCsv } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 
@@ -91,9 +91,66 @@ export const updatePaymentStatus = async (req, res) => {
   sendJson(res, 200, { payment });
 };
 
+export const updatePayment = async (req, res) => {
+  const payment = await updateDb((db) => {
+    const found = db.payments.find((item) => item.id === req.params.id);
+    if (!found) fail(404, 'Payment not found');
+    const before = found.status;
+    for (const key of ['reference', 'applicationId', 'method', 'transactionCode', 'currency']) {
+      if (req.body[key] !== undefined) found[key] = req.body[key];
+    }
+    if (req.body.amount !== undefined) found.amount = Number(req.body.amount);
+    if (req.body.status !== undefined) {
+      const allowed = new Set(['Pending', 'Paid', 'Failed', 'Refunded']);
+      if (!allowed.has(req.body.status)) fail(422, 'Invalid payment status');
+      found.status = req.body.status;
+    }
+    found.updatedAt = new Date().toISOString();
+
+    const application = db.applications.find((item) => item.id === found.applicationId || item.reference === found.reference);
+    if (application) {
+      application.paymentStatus = found.status;
+      application.updatedAt = found.updatedAt;
+    }
+
+    addActivity(db, req, {
+      action: 'Updated Payment',
+      beforeAction: before,
+      afterAction: found.status,
+      applicantPerson: application?.fullName || '',
+      applicationReference: found.reference,
+      module: 'Payments'
+    });
+    return found;
+  });
+
+  sendJson(res, 200, { payment });
+};
+
+export const deletePayment = async (req, res) => {
+  await updateDb((db) => {
+    const index = db.payments.findIndex((item) => item.id === req.params.id);
+    if (index === -1) fail(404, 'Payment not found');
+    const [payment] = db.payments.splice(index, 1);
+    addActivity(db, req, {
+      action: 'Deleted Payment',
+      beforeAction: payment.status,
+      applicationReference: payment.reference,
+      module: 'Payments'
+    });
+  });
+  sendNoContent(res);
+};
+
 export const exportPaymentsCsv = async (req, res) => {
   const db = await readDb();
-  const csv = toCsv(sortNewest(db.payments), [
+  let items = sortNewest(db.payments);
+  const { search, method, status } = req.query;
+  if (method && method !== 'Method') items = items.filter((item) => item.method === method);
+  if (status && status !== 'All Status') items = items.filter((item) => item.status === status);
+  items = items.filter((item) => matchesText(item, ['reference', 'method', 'transactionCode', 'status'], search));
+
+  const csv = toCsv(items, [
     { key: 'reference', header: 'Reference' },
     { key: 'amount', header: 'Amount' },
     { key: 'currency', header: 'Currency' },

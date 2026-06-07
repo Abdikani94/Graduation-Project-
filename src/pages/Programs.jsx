@@ -1,85 +1,26 @@
-import { useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { User, Search, Edit2, Plus, X, Image as ImageIcon, BookOpen, Clock, Calendar, Check, Trash2, Edit } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
+import Toast from '../components/Toast';
+import api from '../api/axios';
 
-const initialPrograms = [
-  {
-    title: 'Medicine & Health Science',
-    fee: '$35',
-    image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    departments: [
-      { name: 'General Medicine', duration: '6' },
-      { name: 'Nursing & Midwifery', duration: '4' },
-      { name: 'Dentistry', duration: '5' },
-      { name: 'Pharmacy', duration: '4' },
-      { name: 'Public Health', duration: '4' }
-    ]
-  },
-  {
-    title: 'Computer Science & IT',
-    fee: '$25',
-    image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    departments: [
-      { name: 'Computer Science', duration: '4' },
-      { name: 'Information Technology', duration: '4' },
-      { name: 'Software Engineering', duration: '4' },
-      { name: 'Cybersecurity', duration: '4' }
-    ]
-  },
-  {
-    title: 'Faculty of Education',
-    fee: '$20',
-    image: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    departments: [
-      { name: 'Primary Education', duration: '4' },
-      { name: 'Secondary Education', duration: '4' },
-      { name: 'Special Needs Education', duration: '4' }
-    ]
-  },
-  {
-    title: 'Faculty of Engineering',
-    fee: '$30',
-    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    departments: [
-      { name: 'Civil Engineering', duration: '5' },
-      { name: 'Electrical Engineering', duration: '5' },
-      { name: 'Mechanical Engineering', duration: '5' },
-      { name: 'Telecommunication Engineering', duration: '5' }
-    ]
-  },
-  {
-    title: 'Faculty of Business & Economics',
-    fee: '$25',
-    image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    departments: [
-      { name: 'Business Administration', duration: '4' },
-      { name: 'Public Administration', duration: '4' },
-      { name: 'Accounting & Finance', duration: '4' },
-      { name: 'Human Resource Management', duration: '4' }
-    ]
-  },
-  {
-    title: 'Faculty of Law & Sharia',
-    fee: '$20',
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-    departments: [
-      { name: 'Sharia & Law', duration: '4' },
-      { name: 'Public Law', duration: '4' },
-      { name: 'Private Law', duration: '4' }
-    ]
-  }
-];
+const fallbackImage = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
 
 const Programs = () => {
-  const [programs, setPrograms] = useState(initialPrograms);
+  const [programs, setPrograms] = useState([]);
+  const [summary, setSummary] = useState({ totalPrograms: 0, totalFaculties: 0, totalAdmissionFees: 0 });
+  const [search, setSearch] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [toast, setToast] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   // Selected Faculty for Detail Modal
   const [selectedFaculty, setSelectedFaculty] = useState(null);
+  const [editingFaculty, setEditingFaculty] = useState(null);
 
   // Inline Edit Department States
   const [editingDeptIndex, setEditingDeptIndex] = useState(null);
@@ -98,6 +39,31 @@ const Programs = () => {
   const [deptName, setDeptName] = useState('');
   const [deptDuration, setDeptDuration] = useState('');
 
+  const loadPrograms = async () => {
+    setIsLoading(true);
+    try {
+      const result = await api.get('/programs', { search });
+      setPrograms(result.data || []);
+      setSummary(result.summary || { totalPrograms: 0, totalFaculties: 0, totalAdmissionFees: 0 });
+      if (selectedFaculty) {
+        const refreshed = (result.data || []).find((program) => program.id === selectedFaculty.id);
+        setSelectedFaculty(refreshed || null);
+      }
+    } catch (error) {
+      setToast({ type: 'error', title: 'Programs error', message: error.message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPrograms();
+  }, [search]);
+
+  const filteredPrograms = useMemo(() => programs, [programs]);
+  const money = (value) => `$${Number(value || 0).toLocaleString()}`;
+  const showSuccess = (message) => setToast({ type: 'success', title: 'Saved', message });
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -114,25 +80,29 @@ const Programs = () => {
     fileInputRef.current.click();
   };
 
-  const handleSaveFaculty = (e) => {
+  const handleSaveFaculty = async (e) => {
     e.preventDefault();
     if (!facultyName || !fee) return;
 
-    const newFaculty = {
+    const payload = {
       title: facultyName,
-      fee: fee.startsWith('$') ? fee : `$${fee}`,
-      image: imagePreview || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-      departments: []
+      admissionFee: Number(String(fee).replace(/[^0-9.]/g, '')),
+      image: imagePreview || editingFaculty?.image || fallbackImage,
     };
 
-    setPrograms([newFaculty, ...programs]);
-
-    // Reset Form & Close Modal
-    setFacultyName('');
-    setFee('');
-    setSelectedImage(null);
-    setImagePreview('');
-    setIsModalOpen(false);
+    try {
+      if (editingFaculty) {
+        await api.patch(`/programs/${editingFaculty.id}`, payload);
+        showSuccess('Faculty updated.');
+      } else {
+        await api.post('/programs', { ...payload, departments: [] });
+        showSuccess('Faculty added.');
+      }
+      handleCancelFaculty();
+      await loadPrograms();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Save failed', message: error.message });
+    }
   };
 
   const handleCancelFaculty = () => {
@@ -140,7 +110,29 @@ const Programs = () => {
     setFee('');
     setSelectedImage(null);
     setImagePreview('');
+    setEditingFaculty(null);
     setIsModalOpen(false);
+  };
+
+  const handleOpenFacultyEdit = (e, faculty) => {
+    e.stopPropagation();
+    setEditingFaculty(faculty);
+    setFacultyName(faculty.title || '');
+    setFee(String(faculty.admissionFee || ''));
+    setImagePreview(faculty.image || '');
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteFaculty = async (e, faculty) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete ${faculty.title}?`)) return;
+    try {
+      await api.delete(`/programs/${faculty.id}`);
+      showSuccess('Faculty deleted.');
+      await loadPrograms();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Delete failed', message: error.message });
+    }
   };
 
   const handleOpenDeptModal = (e, facultyTitle) => {
@@ -149,26 +141,19 @@ const Programs = () => {
     setIsDeptModalOpen(true);
   };
 
-  const handleSaveDept = (e) => {
+  const handleSaveDept = async (e) => {
     e.preventDefault();
     if (!deptFaculty || !deptName || !deptDuration) return;
 
-    // Dynamically add the new department to the selected faculty in the state list
-    setPrograms(programs.map(p => {
-      if (p.title === deptFaculty) {
-        return {
-          ...p,
-          departments: [...p.departments, { name: deptName, duration: deptDuration }]
-        };
-      }
-      return p;
-    }));
-
-    // Reset & Close
-    setDeptFaculty('');
-    setDeptName('');
-    setDeptDuration('');
-    setIsDeptModalOpen(false);
+    try {
+      const program = programs.find((item) => item.title === deptFaculty || item.id === deptFaculty);
+      await api.post(`/programs/${program.id}/departments`, { name: deptName, durationYears: deptDuration });
+      showSuccess('Department added.');
+      handleCancelDept();
+      await loadPrograms();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Save failed', message: error.message });
+    }
   };
 
   const handleCancelDept = () => {
@@ -193,79 +178,55 @@ const Programs = () => {
   const startEditDept = (index, dept) => {
     setEditingDeptIndex(index);
     setEditDeptName(dept.name);
-    setEditDeptDuration(dept.duration);
+    setEditDeptDuration(String(dept.durationYears || dept.duration || ''));
   };
 
-  const saveEditDept = (index) => {
+  const saveEditDept = async (index) => {
     if (!selectedFaculty || !editDeptName || !editDeptDuration) return;
-
-    const updatedDepartments = selectedFaculty.departments.map((dept, i) => {
-      if (i === index) {
-        return { name: editDeptName, duration: editDeptDuration };
-      }
-      return dept;
-    });
-
-    // Update programs state
-    const updatedPrograms = programs.map(p => {
-      if (p.title === selectedFaculty.title) {
-        return {
-          ...p,
-          departments: updatedDepartments
-        };
-      }
-      return p;
-    });
-    setPrograms(updatedPrograms);
-
-    // Update selected faculty reference to refresh detail modal UI
-    setSelectedFaculty({
-      ...selectedFaculty,
-      departments: updatedDepartments
-    });
-
-    setEditingDeptIndex(null);
+    try {
+      const department = selectedFaculty.departments[index];
+      await api.patch(`/programs/${selectedFaculty.id}/departments/${department.id}`, {
+        name: editDeptName,
+        durationYears: editDeptDuration,
+      });
+      setEditingDeptIndex(null);
+      showSuccess('Department updated.');
+      await loadPrograms();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Update failed', message: error.message });
+    }
   };
 
   const cancelEditDept = () => {
     setEditingDeptIndex(null);
   };
 
-  const deleteDept = (index) => {
+  const deleteDept = async (index) => {
     if (!selectedFaculty) return;
-    const updatedDepartments = selectedFaculty.departments.filter((_, i) => i !== index);
-
-    // Update programs state
-    const updatedPrograms = programs.map(p => {
-      if (p.title === selectedFaculty.title) {
-        return {
-          ...p,
-          departments: updatedDepartments
-        };
-      }
-      return p;
-    });
-    setPrograms(updatedPrograms);
-
-    // Update selected faculty reference to refresh detail modal UI
-    setSelectedFaculty({
-      ...selectedFaculty,
-      departments: updatedDepartments
-    });
+    const department = selectedFaculty.departments[index];
+    if (!window.confirm(`Delete ${department.name}?`)) return;
+    try {
+      await api.delete(`/programs/${selectedFaculty.id}/departments/${department.id}`);
+      showSuccess('Department deleted.');
+      await loadPrograms();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Delete failed', message: error.message });
+    }
   };
 
   return (
     <PageLayout>
+      <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
-        <StatCard icon={User} title="Total Programs" value="1,284" color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Total Faculties" value={programs.length.toString()} color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Total Admission fees" value="$684" color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Total Programs" value={summary.totalPrograms.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={User} title="Total Faculties" value={summary.totalFaculties.toLocaleString()} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Total Admission fees" value={money(summary.totalAdmissionFees)} color="#d97706" iconColor="#d97706" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">
         <div className="flex-1 relative min-w-[200px]">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input type="text" className="w-full bg-main-bg border border-white/5 text-white rounded-xl py-3.5 pl-[44px] pr-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500" placeholder="Search Name, email ..." />
+          <input type="text" value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-main-bg border border-white/5 text-white rounded-xl py-3.5 pl-[44px] pr-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500" placeholder="Search programs ..." />
         </div>
         <select className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
           <option>All Status</option>
@@ -283,15 +244,17 @@ const Programs = () => {
 
       {/* Faculty Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[15px]">
-        {programs.map((program, index) => (
+        {isLoading && <Card className="p-6 text-gray-500 text-[13px]">Loading programs...</Card>}
+        {!isLoading && filteredPrograms.length === 0 && <Card className="p-6 text-gray-500 text-[13px]">No programs found.</Card>}
+        {filteredPrograms.map((program) => (
           <Card
-            key={index}
+            key={program.id}
             onClick={() => handleOpenDetailModal(program)}
             className="flex flex-col overflow-hidden cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all duration-300 group"
           >
             <div className="overflow-hidden relative h-[180px]">
               <img
-                src={program.image}
+                src={program.image || fallbackImage}
                 alt={program.title}
                 className="w-full h-full object-cover grayscale opacity-90 group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
               />
@@ -300,7 +263,7 @@ const Programs = () => {
             <div className="p-5 flex flex-col flex-1">
               <h3 className="text-[18px] font-semibold text-white mb-2 font-jakarta">{program.title}</h3>
               <p className="text-[16px] font-semibold text-white mb-6">
-                <span className="text-[#2D368D] font-medium font-sans">Fee - </span>{program.fee}
+                <span className="text-[#2D368D] font-medium font-sans">Fee - </span>{money(program.admissionFee)}
               </p>
 
               <div className="mt-auto flex flex-col gap-3">
@@ -311,10 +274,16 @@ const Programs = () => {
                   <Plus size={16} /> Add program
                 </button>
                 <button
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(e) => handleOpenFacultyEdit(e, program)}
                   className="flex items-center justify-center gap-2 bg-transparent text-gray-400 border border-dashed border-white/10 rounded-lg p-3 text-[14px] font-medium hover:border-white/30 hover:text-white transition-all cursor-pointer w-full"
                 >
                   <Edit2 size={16} /> Edit
+                </button>
+                <button
+                  onClick={(e) => handleDeleteFaculty(e, program)}
+                  className="flex items-center justify-center gap-2 bg-transparent text-red-400 border border-dashed border-red-500/20 rounded-lg p-3 text-[14px] font-medium hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer w-full"
+                >
+                  <Trash2 size={16} /> Delete
                 </button>
               </div>
             </div>
@@ -335,7 +304,7 @@ const Programs = () => {
             </button>
 
             {/* Title */}
-            <h2 className="text-white text-[20px] font-bold tracking-tight mb-6 font-jakarta">New Faculty</h2>
+            <h2 className="text-white text-[20px] font-bold tracking-tight mb-6 font-jakarta">{editingFaculty ? 'Edit Faculty' : 'New Faculty'}</h2>
 
             {/* Form */}
             <form onSubmit={handleSaveFaculty} className="flex flex-col">
@@ -439,8 +408,8 @@ const Programs = () => {
                     required
                   >
                     <option value="" disabled>Select Faculty</option>
-                    {programs.map((p, idx) => (
-                      <option key={idx} value={p.title}>{p.title}</option>
+                    {programs.map((p) => (
+                      <option key={p.id} value={p.title}>{p.title}</option>
                     ))}
                   </select>
                 </div>
@@ -505,7 +474,7 @@ const Programs = () => {
 
             {/* Banner Image */}
             <div className="w-full h-[220px] relative shrink-0">
-              <img src={selectedFaculty.image} alt={selectedFaculty.title} className="w-full h-full object-cover" />
+              <img src={selectedFaculty.image || fallbackImage} alt={selectedFaculty.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#090217] via-[#090217]/50 to-transparent"></div>
             </div>
 
@@ -521,7 +490,7 @@ const Programs = () => {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="p-4 rounded-2xl bg-[#070211]/50 border border-white/5">
                   <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wider mb-1">Admission Fee</p>
-                  <p className="text-[#2D368D] text-[18px] font-bold">{selectedFaculty.fee}</p>
+                  <p className="text-[#2D368D] text-[18px] font-bold">{money(selectedFaculty.admissionFee)}</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-[#070211]/50 border border-white/5">
                   <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wider mb-1">Total Enrollment</p>
@@ -595,7 +564,7 @@ const Programs = () => {
                             </div>
                             <div className="flex items-center gap-3">
                               <span className="flex items-center gap-1.5 text-gray-400 bg-white/5 border border-white/5 px-4 py-1.5 rounded-full text-[11px] font-semibold">
-                                <Clock size={11} className="text-primary" /> {dept.duration} Years
+                                <Clock size={11} className="text-primary" /> {dept.durationYears || dept.duration} Years
                               </span>
                               {/* Edit & Delete Action Buttons */}
                               <div className="flex items-center gap-1 opacity-40 hover:opacity-100 group-hover:opacity-100 transition-all duration-200">
