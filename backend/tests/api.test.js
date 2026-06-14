@@ -16,6 +16,41 @@ const { ensureDb } = await import('../src/lib/db.js');
 
 await ensureDb();
 
+const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+const validApplication = (overrides = {}) => ({
+  fullName: 'Test Applicant',
+  motherName: 'Test Mother',
+  nationality: 'Somali',
+  nationalId: '',
+  rollNumber: 'ROLL-1001',
+  dateOfBirth: '2002-01-15',
+  placeOfBirth: 'Mogadishu',
+  district: 'Hodan',
+  area: 'Taleex',
+  email: 'test.applicant@example.com',
+  mobile: '610000000',
+  sex: 'Male',
+  maritalStatus: 'Single',
+  emergencyName: 'Emergency Contact',
+  emergencyTell: '610000002',
+  relationship: 'Father',
+  familyStudied: 'Maya',
+  schoolName: 'Jamhuriya Secondary School',
+  schoolDistrict: 'Hodan',
+  graduationYear: '2022',
+  percentage: '86',
+  heardFrom: 'Social Media',
+  program: 'Computer Science & IT',
+  department: 'Computer Application',
+  modeOfStudy: 'Full Time',
+  paymentPlan: 'Admission fee only',
+  paymentMethod: 'EVC PLUS',
+  hasCertificate: 'No',
+  appointmentDate: tomorrow,
+  appointmentTime: '09:30',
+  ...overrides
+});
+
 const request = async ({ method = 'GET', path: requestPath, token, body }) =>
   new Promise((resolve, reject) => {
     const server = http.createServer(createApp());
@@ -85,17 +120,7 @@ test('public applicant can submit an application', async () => {
   const response = await request({
     method: 'POST',
     path: '/api/applications',
-    body: {
-      fullName: 'Test Applicant',
-      email: 'test.applicant@example.com',
-      mobile: '610000000',
-      program: 'Computer Science & IT',
-      department: 'Computer Application',
-      paymentMethod: 'EVC PLUS',
-      hasCertificate: 'No',
-      appointmentDate: '2026-06-15',
-      appointmentTime: '09:30'
-    }
+    body: validApplication()
   });
   assert.equal(response.status, 201);
   assert.equal(response.body.application.status, 'Pending');
@@ -106,15 +131,13 @@ test('certificate appointment is required when applicant has no certificate', as
   const response = await request({
     method: 'POST',
     path: '/api/applications',
-    body: {
+    body: validApplication({
       fullName: 'Missing Appointment',
       email: 'missing.appointment@example.com',
       mobile: '610000001',
-      program: 'Computer Science & IT',
-      department: 'Computer Application',
-      paymentMethod: 'EVC PLUS',
-      hasCertificate: 'No'
-    }
+      appointmentDate: '',
+      appointmentTime: ''
+    })
   });
   assert.equal(response.status, 422);
   assert.deepEqual(response.body.error.details, ['appointmentDate', 'appointmentTime']);

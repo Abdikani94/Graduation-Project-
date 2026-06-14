@@ -102,11 +102,22 @@ function Stepper({ currentStep }) {
   );
 }
 
-function Field({ label, name, type = 'text', value, onChange, placeholder, min, max }) {
+function Field({ label, name, type = 'text', value, onChange, placeholder, min, max, maxLength, inputMode, step }) {
   return (
     <label className="apply-field">
       <span>{label}</span>
-      <input name={name} type={type} value={value ?? ''} onChange={onChange} placeholder={placeholder || label} min={min} max={max} />
+      <input
+        name={name}
+        type={type}
+        value={value ?? ''}
+        onChange={onChange}
+        placeholder={placeholder || label}
+        min={min}
+        max={max}
+        maxLength={maxLength}
+        inputMode={inputMode}
+        step={step}
+      />
     </label>
   );
 }
@@ -208,6 +219,45 @@ const requiredFieldsByStep = {
 };
 
 const isEmpty = (value) => value === null || value === undefined || String(value).trim() === '';
+const normalizeValue = (value) => String(value ?? '').trim();
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeValue(value)) && normalizeValue(value).length <= 254;
+const isValidPhone = (value) => {
+  const text = normalizeValue(value);
+  const digits = text.replace(/\D/g, '');
+  return /^\+?[\d\s-]{7,20}$/.test(text) && digits.length >= 7 && digits.length <= 15;
+};
+const isValidDateValue = (value) => {
+  const text = normalizeValue(value);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
+  const [year, month, day] = text.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+};
+const ageFromDate = (dateText) => {
+  const birthDate = new Date(`${dateText}T00:00:00`);
+  const currentDate = new Date(`${today}T00:00:00`);
+  let age = currentDate.getFullYear() - birthDate.getFullYear();
+  const monthDifference = currentDate.getMonth() - birthDate.getMonth();
+  if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < birthDate.getDate())) age -= 1;
+  return age;
+};
+const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
+const simpleTextPattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,/-]{1,99}$/;
+const idPattern = /^[A-Za-z0-9][A-Za-z0-9\s/-]{2,29}$/;
+const rollNumberPattern = /^[A-Za-z0-9][A-Za-z0-9/-]{2,29}$/;
+const optionValues = {
+  sex: ['Male', 'Female'],
+  maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
+  hasCertificate: ['Yes', 'No'],
+  relationship: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'],
+  familyStudied: ['Haa', 'Maya'],
+  heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
+  modeOfStudy: ['Full Time', 'Part Time'],
+  paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
+  paymentMethod: ['EVC PLUS', 'Zaad', 'eDahab', 'Cash Office'],
+};
+
+const isAllowedOption = (name, value) => optionValues[name]?.includes(value);
 
 function ApplyPage() {
   const [activeNav, setActiveNav] = useState('apply');
@@ -320,26 +370,6 @@ function ApplyPage() {
       return false;
     }
 
-    if (stepIndex === 1 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email || '')) {
-      showError('Please enter a valid email address.');
-      return false;
-    }
-
-    if (stepIndex === 1 && !/^\+?\d[\d\s-]{6,}$/.test(form.mobile || '')) {
-      showError('Please enter a valid phone number.');
-      return false;
-    }
-
-    if (stepIndex === 1 && form.dateOfBirth && form.dateOfBirth > today) {
-      showError('Date of birth cannot be in the future.');
-      return false;
-    }
-
-    if (stepIndex === 1 && form.hasCertificate === 'No' && form.appointmentDate && form.appointmentDate < today) {
-      showError('Appointment date cannot be in the past.');
-      return false;
-    }
-
     if (stepIndex === 2) {
       const graduationYear = Number(form.graduationYear);
       const percentage = Number(form.percentage);
@@ -350,6 +380,143 @@ function ApplyPage() {
       }
       if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) {
         showError('Percentage must be between 0 and 100.');
+        return false;
+      }
+    }
+
+    if (stepIndex === 1) {
+      if (!personNamePattern.test(normalizeValue(form.fullName))) {
+        showError('Full Name must contain only letters, spaces, apostrophes, hyphens, or periods.');
+        return false;
+      }
+      if (!personNamePattern.test(normalizeValue(form.motherName))) {
+        showError("Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods.");
+        return false;
+      }
+      if (!simpleTextPattern.test(normalizeValue(form.nationality))) {
+        showError('Nationality must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        return false;
+      }
+      if (!isEmpty(form.nationalId) && !idPattern.test(normalizeValue(form.nationalId))) {
+        showError('National ID is optional, but if entered it must be 3-30 letters or numbers.');
+        return false;
+      }
+      if (!rollNumberPattern.test(normalizeValue(form.rollNumber))) {
+        showError('Roll Number must be 3-30 letters or numbers. Hyphens and slashes are allowed.');
+        return false;
+      }
+      if (!isValidDateValue(form.dateOfBirth)) {
+        showError('Please enter a valid date of birth.');
+        return false;
+      }
+      if (form.dateOfBirth > today) {
+        showError('Date of birth cannot be in the future.');
+        return false;
+      }
+      const age = ageFromDate(form.dateOfBirth);
+      if (age < 14 || age > 100) {
+        showError('Applicant age must be between 14 and 100 years.');
+        return false;
+      }
+      if (!simpleTextPattern.test(normalizeValue(form.placeOfBirth))) {
+        showError('Place Of Birth must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        return false;
+      }
+      if (!simpleTextPattern.test(normalizeValue(form.district))) {
+        showError('District must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        return false;
+      }
+      if (!simpleTextPattern.test(normalizeValue(form.area))) {
+        showError('Area must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        return false;
+      }
+      if (!isValidEmail(form.email)) {
+        showError('Please enter a valid email address.');
+        return false;
+      }
+      if (!isValidPhone(form.mobile)) {
+        showError('Please enter a valid phone number with 7 to 15 digits.');
+        return false;
+      }
+      if (!isAllowedOption('sex', form.sex)) {
+        showError('Please select a valid sex option.');
+        return false;
+      }
+      if (!isAllowedOption('maritalStatus', form.maritalStatus)) {
+        showError('Please select a valid marital status.');
+        return false;
+      }
+      if (!isAllowedOption('hasCertificate', form.hasCertificate)) {
+        showError('Please select a valid certificate status.');
+        return false;
+      }
+      if (form.hasCertificate === 'No') {
+        if (!isValidDateValue(form.appointmentDate)) {
+          showError('Please enter a valid appointment date.');
+          return false;
+        }
+        if (form.appointmentDate < today) {
+          showError('Appointment date cannot be in the past.');
+          return false;
+        }
+        if (!/^\d{2}:\d{2}$/.test(normalizeValue(form.appointmentTime))) {
+          showError('Please enter a valid appointment time.');
+          return false;
+        }
+      }
+    }
+
+    if (stepIndex === 2) {
+      if (!personNamePattern.test(normalizeValue(form.emergencyName))) {
+        showError('Emergency Contact Name must contain only letters, spaces, apostrophes, hyphens, or periods.');
+        return false;
+      }
+      if (!isValidPhone(form.emergencyTell)) {
+        showError('Emergency phone must contain 7 to 15 digits.');
+        return false;
+      }
+      if (!isAllowedOption('relationship', form.relationship)) {
+        showError('Please select a valid relationship.');
+        return false;
+      }
+      if (!isAllowedOption('familyStudied', form.familyStudied)) {
+        showError('Please select whether a family member studied here.');
+        return false;
+      }
+      if (!simpleTextPattern.test(normalizeValue(form.schoolName))) {
+        showError('Secondary School Name must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        return false;
+      }
+      if (!simpleTextPattern.test(normalizeValue(form.schoolDistrict))) {
+        showError('School District must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        return false;
+      }
+      if (!isAllowedOption('heardFrom', form.heardFrom)) {
+        showError('Please select a valid source for how you heard about the university.');
+        return false;
+      }
+    }
+
+    if (stepIndex === 3) {
+      const selectedProgram = programs.find(([program]) => program === form.program);
+      if (!selectedProgram) {
+        showError('Please select a valid faculty.');
+        return false;
+      }
+      if (!selectedProgram[1].includes(form.department)) {
+        showError('Please select a department that belongs to the chosen faculty.');
+        return false;
+      }
+      if (!isAllowedOption('modeOfStudy', form.modeOfStudy)) {
+        showError('Please select a valid mode of study.');
+        return false;
+      }
+      if (!isAllowedOption('paymentPlan', form.paymentPlan)) {
+        showError('Please select a valid payment plan.');
+        return false;
+      }
+      if (!isAllowedOption('paymentMethod', form.paymentMethod)) {
+        showError('Please select a valid payment method.');
         return false;
       }
     }
@@ -556,19 +723,19 @@ function ApplyPage() {
                 )}
               </label>
               <div className="apply-form-grid">
-                <Field label="Full Name" name="fullName" value={form.fullName} onChange={updateForm} placeholder="Your full name" />
-                <Field label="Mother's Name" name="motherName" value={form.motherName} onChange={updateForm} placeholder="Mother's name" />
-                <Field label="Nationality" name="nationality" value={form.nationality} onChange={updateForm} placeholder="Your nationality" />
-                <Field label="National ID" name="nationalId" value={form.nationalId} onChange={updateForm} placeholder="Enter your national id" />
+                <Field label="Full Name" name="fullName" value={form.fullName} onChange={updateForm} placeholder="Your full name" maxLength={80} />
+                <Field label="Mother's Name" name="motherName" value={form.motherName} onChange={updateForm} placeholder="Mother's name" maxLength={80} />
+                <Field label="Nationality" name="nationality" value={form.nationality} onChange={updateForm} placeholder="Your nationality" maxLength={100} />
+                <Field label="National ID" name="nationalId" value={form.nationalId} onChange={updateForm} placeholder="Enter your national id" maxLength={30} />
               </div>
               <div className="apply-form-grid full">
-                <Field label="Roll Number" name="rollNumber" value={form.rollNumber} onChange={updateForm} placeholder="Enter your roll number" />
+                <Field label="Roll Number" name="rollNumber" value={form.rollNumber} onChange={updateForm} placeholder="Enter your roll number" maxLength={30} />
                 <Field label="Date Of Birth" name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={updateForm} max={today} />
-                <Field label="Place Of Birth" name="placeOfBirth" value={form.placeOfBirth} onChange={updateForm} placeholder="Enter your place of birth" />
-                <Field label="District" name="district" value={form.district} onChange={updateForm} placeholder="Enter your district" />
-                <Field label="Your Email" name="email" type="email" value={form.email} onChange={updateForm} placeholder="yourmail@gmail.com" />
-                <Field label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} placeholder="1123 1234567" />
-                <Field label="Area" name="area" value={form.area} onChange={updateForm} placeholder="Enter your area" />
+                <Field label="Place Of Birth" name="placeOfBirth" value={form.placeOfBirth} onChange={updateForm} placeholder="Enter your place of birth" maxLength={100} />
+                <Field label="District" name="district" value={form.district} onChange={updateForm} placeholder="Enter your district" maxLength={100} />
+                <Field label="Your Email" name="email" type="email" value={form.email} onChange={updateForm} placeholder="yourmail@gmail.com" maxLength={254} inputMode="email" />
+                <Field label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} placeholder="1123 1234567" maxLength={20} inputMode="tel" />
+                <Field label="Area" name="area" value={form.area} onChange={updateForm} placeholder="Enter your area" maxLength={100} />
                 <OptionGroup label="Sex" name="sex" value={form.sex} options={['Male', 'Female']} onChange={updateForm} />
                 <OptionGroup className="wide" label="Marital Status" name="maritalStatus" value={form.maritalStatus} options={['Single', 'Marriage', 'Divorced', 'Widowed']} onChange={updateForm} />
                 <OptionGroup label="Do you have certificate?" name="hasCertificate" value={form.hasCertificate} options={['Yes', 'No']} onChange={updateForm} />
@@ -601,7 +768,7 @@ function ApplyPage() {
                   <div className="certificate-appointment">
                     <p className="appointment-helper">Qabso xilliga aad keeneyso certificate ka</p>
                     <Field label="Appointment Date" name="appointmentDate" type="date" value={form.appointmentDate} onChange={updateForm} min={today} />
-                    <Field label="Appointment Time" name="appointmentTime" type="time" value={form.appointmentTime} onChange={updateForm} />
+                    <Field label="Appointment Time" name="appointmentTime" type="time" value={form.appointmentTime} onChange={updateForm} step={60} />
                   </div>
                 )}
               </div>
@@ -614,14 +781,14 @@ function ApplyPage() {
             <h1>Emergency Contact & School Information</h1>
             <p className="apply-note"><Check size={14} /> Add a trusted contact and secondary school details.</p>
             <div className="apply-form-grid">
-              <Field label="Emergency Contact Name" name="emergencyName" value={form.emergencyName} onChange={updateForm} placeholder="Name" />
-              <Field label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} placeholder="Phone number" />
+              <Field label="Emergency Contact Name" name="emergencyName" value={form.emergencyName} onChange={updateForm} placeholder="Name" maxLength={80} />
+              <Field label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} placeholder="Phone number" maxLength={20} inputMode="tel" />
               <OptionGroup className="wide" label="Relationship to applicant" name="relationship" value={form.relationship} options={['Mother', 'Father', 'Brother', 'Sister', 'Other specify']} onChange={updateForm} />
               <OptionGroup className="wide" label="Majiraa qof kamida qoyskaaga oo Jaamacad dhigta?" name="familyStudied" value={form.familyStudied} options={['Haa', 'Maya']} onChange={updateForm} />
-              <Field label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} />
-              <Field label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} />
-              <Field label="Graduation Year" name="graduationYear" type="number" value={form.graduationYear} onChange={updateForm} />
-              <Field label="Percentage (%)" name="percentage" type="number" value={form.percentage} onChange={updateForm} />
+              <Field label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} maxLength={100} />
+              <Field label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} maxLength={100} />
+              <Field label="Graduation Year" name="graduationYear" type="number" value={form.graduationYear} onChange={updateForm} min="1970" max={String(new Date().getFullYear())} inputMode="numeric" />
+              <Field label="Percentage (%)" name="percentage" type="number" value={form.percentage} onChange={updateForm} min="0" max="100" step="0.01" inputMode="decimal" />
               <OptionGroup className="wide" label="How did you know about university?" name="heardFrom" value={form.heardFrom} options={['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify']} onChange={updateForm} />
             </div>
           </section>
