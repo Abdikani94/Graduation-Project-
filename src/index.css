@@ -1833,6 +1833,15 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.personal-grid > .apply-form-grid {
+  align-content: start;
+  align-self: start;
+}
+
+.personal-grid > .apply-form-grid .apply-field {
+  align-self: start;
+}
+
 .apply-form-grid.full {
   grid-column: 1 / -1;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2030,6 +2039,43 @@ body {
   max-height: 210px;
   object-fit: cover;
   width: min(165px, 100%);
+}
+
+.photo-upload {
+  align-self: start;
+  height: 255px;
+  min-height: 255px;
+}
+
+.photo-upload .upload-preview {
+  gap: 0.65rem;
+}
+
+.photo-upload .upload-preview img {
+  aspect-ratio: 1 / 1;
+  border-radius: 999px;
+  height: 132px;
+  max-height: none;
+  width: 132px;
+}
+
+.photo-upload .upload-preview > div:last-child {
+  max-width: 190px;
+  padding: 0.6rem 0.75rem;
+}
+
+.photo-upload .upload-preview strong {
+  display: -webkit-box;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.photo-upload .upload-preview small {
+  font-size: 0.7rem;
+  line-height: 1.35;
 }
 
 .upload-preview > div:last-child {

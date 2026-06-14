@@ -176,7 +176,6 @@ const requiredFieldsByStep = {
     ['fullName', 'Full Name'],
     ['motherName', "Mother's Name"],
     ['nationality', 'Nationality'],
-    ['nationalId', 'National ID'],
     ['rollNumber', 'Roll Number'],
     ['dateOfBirth', 'Date Of Birth'],
     ['placeOfBirth', 'Place Of Birth'],
@@ -544,8 +543,8 @@ function ApplyPage() {
                   <div className="upload-preview">
                     <img src={photoPreview} alt="Passport photo preview" />
                     <div>
-                      <strong>{photo.name}</strong>
-                      <small>Passport photo selected. Click to replace.</small>
+                      <strong>Profile photo uploaded</strong>
+                      <small>Click to replace</small>
                     </div>
                   </div>
                 ) : (
