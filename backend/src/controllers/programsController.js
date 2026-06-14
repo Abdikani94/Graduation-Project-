@@ -4,7 +4,15 @@ import { matchesText } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 
 const fixedAdmissionFee = 25;
+const minimumProgramDurationYears = 5;
 const withFixedAdmissionFee = (program) => ({ ...program, admissionFee: fixedAdmissionFee });
+const parseProgramDuration = (value) => {
+  const duration = Number(value === undefined || value === null || value === '' ? minimumProgramDurationYears : value);
+  if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
+    fail(422, `Academic program duration must be at least ${minimumProgramDurationYears} years`);
+  }
+  return duration;
+};
 
 export const listPrograms = async (req, res) => {
   const db = await readDb();
@@ -21,6 +29,9 @@ export const listPrograms = async (req, res) => {
 export const createProgram = async (req, res) => {
   const { title, campus = 'Main Campus', image = '', departments = [] } = req.body || {};
   if (!title) fail(422, 'Faculty title is required');
+  departments.forEach((department) => {
+    parseProgramDuration(department.durationYears || department.duration);
+  });
 
   const program = await updateDb((db) => {
     const now = new Date().toISOString();
@@ -33,7 +44,7 @@ export const createProgram = async (req, res) => {
       departments: departments.map((department) => ({
         id: createId('dep'),
         name: department.name,
-        durationYears: Number(department.durationYears || department.duration || 4)
+        durationYears: parseProgramDuration(department.durationYears || department.duration)
       })),
       createdAt: now,
       updatedAt: now
@@ -88,6 +99,7 @@ export const deleteProgram = async (req, res) => {
 export const createDepartment = async (req, res) => {
   const { name, durationYears, duration } = req.body || {};
   if (!name) fail(422, 'Department name is required');
+  const parsedDuration = parseProgramDuration(durationYears || duration);
 
   const department = await updateDb((db) => {
     const program = db.programs.find((item) => item.id === req.params.id);
@@ -95,7 +107,7 @@ export const createDepartment = async (req, res) => {
     const item = {
       id: createId('dep'),
       name,
-      durationYears: Number(durationYears || duration || 4)
+      durationYears: parsedDuration
     };
     program.departments.push(item);
     program.updatedAt = new Date().toISOString();
@@ -119,7 +131,7 @@ export const updateDepartment = async (req, res) => {
     const before = found.name;
     if (req.body.name !== undefined) found.name = req.body.name;
     if (req.body.durationYears !== undefined || req.body.duration !== undefined) {
-      found.durationYears = Number(req.body.durationYears || req.body.duration);
+      found.durationYears = parseProgramDuration(req.body.durationYears || req.body.duration);
     }
     program.updatedAt = new Date().toISOString();
     addActivity(db, req, {

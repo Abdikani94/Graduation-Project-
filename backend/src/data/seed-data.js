@@ -9,10 +9,10 @@ const programs = [
     image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80',
     departments: [
       { id: 'dep_mbbs', name: 'MBBS', durationYears: 6 },
-      { id: 'dep_nursing', name: 'Nursing', durationYears: 4 },
-      { id: 'dep_midwifery', name: 'Midwifery', durationYears: 4 },
-      { id: 'dep_public_health', name: 'Public Health', durationYears: 4 },
-      { id: 'dep_laboratory', name: 'Medical Laboratory Science', durationYears: 4 }
+      { id: 'dep_nursing', name: 'Nursing', durationYears: 5 },
+      { id: 'dep_midwifery', name: 'Midwifery', durationYears: 5 },
+      { id: 'dep_public_health', name: 'Public Health', durationYears: 5 },
+      { id: 'dep_laboratory', name: 'Medical Laboratory Science', durationYears: 5 }
     ]
   },
   {
@@ -22,10 +22,10 @@ const programs = [
     campus: 'Campus 3',
     image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80',
     departments: [
-      { id: 'dep_computer_application', name: 'Computer Application', durationYears: 4 },
-      { id: 'dep_networking', name: 'Computer Networking & Security', durationYears: 4 },
-      { id: 'dep_multimedia', name: 'Computer Multimedia', durationYears: 4 },
-      { id: 'dep_software', name: 'Software Engineering', durationYears: 4 }
+      { id: 'dep_computer_application', name: 'Computer Application', durationYears: 5 },
+      { id: 'dep_networking', name: 'Computer Networking & Security', durationYears: 5 },
+      { id: 'dep_multimedia', name: 'Computer Multimedia', durationYears: 5 },
+      { id: 'dep_software', name: 'Software Engineering', durationYears: 5 }
     ]
   },
   {
@@ -35,11 +35,11 @@ const programs = [
     campus: 'Main Campus',
     image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80',
     departments: [
-      { id: 'dep_business_admin', name: 'Business Administration', durationYears: 4 },
-      { id: 'dep_public_admin', name: 'Public Administration', durationYears: 4 },
-      { id: 'dep_banking', name: 'Banking & Finance', durationYears: 4 },
-      { id: 'dep_accounting', name: 'Accounting', durationYears: 4 },
-      { id: 'dep_economics', name: 'Economics', durationYears: 4 }
+      { id: 'dep_business_admin', name: 'Business Administration', durationYears: 5 },
+      { id: 'dep_public_admin', name: 'Public Administration', durationYears: 5 },
+      { id: 'dep_banking', name: 'Banking & Finance', durationYears: 5 },
+      { id: 'dep_accounting', name: 'Accounting', durationYears: 5 },
+      { id: 'dep_economics', name: 'Economics', durationYears: 5 }
     ]
   },
   {
@@ -61,8 +61,8 @@ const programs = [
     campus: 'Main Campus',
     image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=600&q=80',
     departments: [
-      { id: 'dep_agriculture', name: 'Agricultural', durationYears: 4 },
-      { id: 'dep_veterinary', name: 'Veterinary', durationYears: 4 }
+      { id: 'dep_agriculture', name: 'Agricultural', durationYears: 5 },
+      { id: 'dep_veterinary', name: 'Veterinary', durationYears: 5 }
     ]
   }
 ];
