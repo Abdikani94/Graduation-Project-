@@ -7,6 +7,8 @@ import Toast from '../components/Toast';
 import api from '../api/axios';
 
 const fallbackImage = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+const fixedAdmissionFee = 25;
+const minimumProgramDurationYears = 5;
 
 const Programs = () => {
   const [programs, setPrograms] = useState([]);
@@ -29,7 +31,6 @@ const Programs = () => {
 
   // New Faculty Modal Form State
   const [facultyName, setFacultyName] = useState('');
-  const [fee, setFee] = useState('');
   const [, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const fileInputRef = useRef(null);
@@ -82,11 +83,11 @@ const Programs = () => {
 
   const handleSaveFaculty = async (e) => {
     e.preventDefault();
-    if (!facultyName || !fee) return;
+    if (!facultyName) return;
 
     const payload = {
       title: facultyName,
-      admissionFee: Number(String(fee).replace(/[^0-9.]/g, '')),
+      admissionFee: fixedAdmissionFee,
       image: imagePreview || editingFaculty?.image || fallbackImage,
     };
 
@@ -107,7 +108,6 @@ const Programs = () => {
 
   const handleCancelFaculty = () => {
     setFacultyName('');
-    setFee('');
     setSelectedImage(null);
     setImagePreview('');
     setEditingFaculty(null);
@@ -118,14 +118,21 @@ const Programs = () => {
     e.stopPropagation();
     setEditingFaculty(faculty);
     setFacultyName(faculty.title || '');
-    setFee(String(faculty.admissionFee || ''));
     setImagePreview(faculty.image || '');
     setIsModalOpen(true);
   };
 
   const handleDeleteFaculty = async (e, faculty) => {
     e.stopPropagation();
-    if (!window.confirm(`Delete ${faculty.title}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this faculty?',
+      '',
+      `Faculty: ${faculty.title || 'Untitled faculty'}`,
+      'All departments under this faculty will also be removed.',
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
       await api.delete(`/programs/${faculty.id}`);
       showSuccess('Faculty deleted.');
@@ -144,10 +151,19 @@ const Programs = () => {
   const handleSaveDept = async (e) => {
     e.preventDefault();
     if (!deptFaculty || !deptName || !deptDuration) return;
+    const duration = Number(deptDuration);
+    if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
+      setToast({
+        type: 'error',
+        title: 'Validation error',
+        message: `Academic program duration must be at least ${minimumProgramDurationYears} years.`,
+      });
+      return;
+    }
 
     try {
       const program = programs.find((item) => item.title === deptFaculty || item.id === deptFaculty);
-      await api.post(`/programs/${program.id}/departments`, { name: deptName, durationYears: deptDuration });
+      await api.post(`/programs/${program.id}/departments`, { name: deptName, durationYears: duration });
       showSuccess('Department added.');
       handleCancelDept();
       await loadPrograms();
@@ -183,11 +199,20 @@ const Programs = () => {
 
   const saveEditDept = async (index) => {
     if (!selectedFaculty || !editDeptName || !editDeptDuration) return;
+    const duration = Number(editDeptDuration);
+    if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
+      setToast({
+        type: 'error',
+        title: 'Validation error',
+        message: `Academic program duration must be at least ${minimumProgramDurationYears} years.`,
+      });
+      return;
+    }
     try {
       const department = selectedFaculty.departments[index];
       await api.patch(`/programs/${selectedFaculty.id}/departments/${department.id}`, {
         name: editDeptName,
-        durationYears: editDeptDuration,
+        durationYears: duration,
       });
       setEditingDeptIndex(null);
       showSuccess('Department updated.');
@@ -204,7 +229,15 @@ const Programs = () => {
   const deleteDept = async (index) => {
     if (!selectedFaculty) return;
     const department = selectedFaculty.departments[index];
-    if (!window.confirm(`Delete ${department.name}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this department/program?',
+      '',
+      `Faculty: ${selectedFaculty.title || 'Not provided'}`,
+      `Department: ${department.name || 'Unnamed department'}`,
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
       await api.delete(`/programs/${selectedFaculty.id}/departments/${department.id}`);
       showSuccess('Department deleted.');
@@ -347,9 +380,9 @@ const Programs = () => {
                 <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Fee (Admission)</label>
                 <input
                   type="text"
-                  value={fee}
-                  onChange={(e) => setFee(e.target.value)}
-                  className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors"
+                  value={`$${fixedAdmissionFee}`}
+                  readOnly
+                  className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none opacity-80 cursor-not-allowed"
                   required
                 />
               </div>
@@ -427,16 +460,20 @@ const Programs = () => {
                 />
               </div>
 
-              {/* Duration (Year) */}
+              {/* Duration (Years) */}
               <div className="flex flex-col mt-6">
-                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Duration (Year)</label>
+                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Duration (Years)</label>
                 <input
-                  type="text"
+                  type="number"
+                  min={minimumProgramDurationYears}
+                  step="1"
                   value={deptDuration}
                   onChange={(e) => setDeptDuration(e.target.value)}
                   className="w-[200px] bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors"
+                  placeholder={`${minimumProgramDurationYears} or more`}
                   required
                 />
+                <p className="text-gray-500 text-[12px] mt-2 ml-1">Minimum duration is {minimumProgramDurationYears} years.</p>
               </div>
 
               {/* Action Buttons */}
@@ -530,7 +567,9 @@ const Programs = () => {
                                 required
                               />
                               <input
-                                type="text"
+                                type="number"
+                                min={minimumProgramDurationYears}
+                                step="1"
                                 value={editDeptDuration}
                                 onChange={(e) => setEditDeptDuration(e.target.value)}
                                 className="w-[70px] bg-[#070211] border border-white/10 text-white text-[13px] rounded-lg px-3 py-1.5 outline-none focus:border-primary text-center"

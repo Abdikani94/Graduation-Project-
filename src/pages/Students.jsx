@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { User, Search } from 'lucide-react';
+import { Edit2, Eye, Search, User, X } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
@@ -19,7 +19,11 @@ const Students = () => {
   const [campus, setCampus] = useState('All Campuses');
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [editForm, setEditForm] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState(null);
 
   const loadStudents = async () => {
@@ -51,6 +55,52 @@ const Students = () => {
     setSearch('');
     setFaculty('All Faculties');
     setCampus('All Campuses');
+  };
+
+  const openPreview = async (student) => {
+    try {
+      const result = await api.get(`/students/${student.id}`);
+      setSelectedStudent(result.student || student);
+    } catch (error) {
+      setToast({ type: 'error', title: 'Preview failed', message: error.message });
+    }
+  };
+
+  const openEdit = (student) => {
+    setEditingStudent(student);
+    setEditForm({
+      fullName: student.fullName || '',
+      email: student.email || '',
+      mobile: student.mobile || '',
+      faculty: student.faculty || '',
+      department: student.department || '',
+      campus: student.campus || '',
+      status: student.status || 'Enrolled',
+    });
+  };
+
+  const updateEditForm = (event) => {
+    const { name, value } = event.target;
+    setEditForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleEditSubmit = async (event) => {
+    event.preventDefault();
+    if (!editForm.fullName?.trim() || !editForm.email?.trim() || !editForm.mobile?.trim()) {
+      setToast({ type: 'error', title: 'Validation error', message: 'Full name, email, and mobile are required.' });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await api.patch(`/students/${editingStudent.id}`, editForm);
+      setToast({ type: 'success', title: 'Student updated', message: 'Student information was saved successfully.' });
+      setEditingStudent(null);
+      await loadStudents();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Update failed', message: error.message });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleWhatsAppAll = async () => {
@@ -108,11 +158,12 @@ const Students = () => {
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">CAMPUS</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">DATE</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">STATUS</th>
+                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">ACTION</th>
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={7}>Loading students...</td></tr>}
-              {!isLoading && students.length === 0 && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={7}>No students found.</td></tr>}
+              {isLoading && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={8}>Loading students...</td></tr>}
+              {!isLoading && students.length === 0 && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={8}>No students found.</td></tr>}
               {!isLoading && students.map((student) => (
                 <tr key={student.id} className="border-b border-white/[0.02] hover:bg-white/[0.01] transition-colors">
                   <td className="px-6 py-4"><div className="w-4 h-4 rounded-full border-[1.5px] border-primary opacity-70"></div></td>
@@ -134,6 +185,16 @@ const Students = () => {
                       {student.status || 'Enrolled'}
                     </span>
                   </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => openPreview(student)} className="text-gray-500 hover:text-primary transition-colors p-1" type="button" title="Preview student">
+                        <Eye size={18} />
+                      </button>
+                      <button onClick={() => openEdit(student)} className="text-gray-500 hover:text-primary transition-colors p-1" type="button" title="Edit student">
+                        <Edit2 size={17} />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -148,6 +209,92 @@ const Students = () => {
           </div>
         </div>
       </Card>
+
+      {selectedStudent && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-[720px] p-7 relative">
+            <button onClick={() => setSelectedStudent(null)} className="absolute right-5 top-5 text-gray-400 hover:text-primary" type="button">
+              <X size={18} />
+            </button>
+            <div className="flex items-center gap-4 mb-6">
+              <img src={avatarFor(selectedStudent.fullName)} alt={selectedStudent.fullName} className="w-14 h-14 rounded-full object-cover grayscale" />
+              <div>
+                <h2 className="text-white text-[22px] font-semibold">{selectedStudent.fullName || 'Unnamed student'}</h2>
+                <p className="text-gray-500 text-[13px]">{selectedStudent.studentNumber || 'No student number'}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[13px]">
+              {[
+                ['Email', selectedStudent.email],
+                ['Mobile', selectedStudent.mobile],
+                ['Faculty', selectedStudent.faculty],
+                ['Program', selectedStudent.department],
+                ['Campus', selectedStudent.campus],
+                ['Status', selectedStudent.status],
+                ['WhatsApp', selectedStudent.whatsappSent ? 'Sent' : 'Pending'],
+                ['Enrolled', formatDate(selectedStudent.enrolledAt || selectedStudent.createdAt)],
+              ].map(([label, value]) => (
+                <div key={label} className="bg-main-bg border border-white/5 rounded-xl p-4">
+                  <p className="text-gray-500 text-[11px] uppercase mb-1">{label}</p>
+                  <p className="text-white">{value || 'Not provided'}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {editingStudent && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-[720px] p-7 relative">
+            <button onClick={() => setEditingStudent(null)} className="absolute right-5 top-5 text-gray-400 hover:text-primary" type="button">
+              <X size={18} />
+            </button>
+            <h2 className="text-white text-[22px] font-semibold mb-1">Edit Student Information</h2>
+            <p className="text-gray-500 text-[13px] mb-6">{editingStudent.studentNumber}</p>
+            <form onSubmit={handleEditSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                ['fullName', 'Full Name', 'text'],
+                ['email', 'Email', 'email'],
+                ['mobile', 'Mobile', 'tel'],
+                ['faculty', 'Faculty', 'text'],
+                ['department', 'Program', 'text'],
+                ['campus', 'Campus', 'text'],
+              ].map(([name, label, type]) => (
+                <label key={name} className="flex flex-col gap-2 text-white text-[13px] font-semibold">
+                  {label}
+                  <input
+                    name={name}
+                    type={type}
+                    value={editForm[name] || ''}
+                    onChange={updateEditForm}
+                    className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary"
+                  />
+                </label>
+              ))}
+              <label className="flex flex-col gap-2 text-white text-[13px] font-semibold">
+                Status
+                <select
+                  name="status"
+                  value={editForm.status || 'Enrolled'}
+                  onChange={updateEditForm}
+                  className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary"
+                >
+                  {['Enrolled', 'Active', 'Graduated', 'Suspended', 'Withdrawn'].map((item) => <option key={item}>{item}</option>)}
+                </select>
+              </label>
+              <div className="md:col-span-2 flex justify-end gap-3 mt-2">
+                <button type="button" onClick={() => setEditingStudent(null)} className="px-6 py-3 rounded-full border border-white/10 text-gray-400 text-[13px] font-semibold">
+                  Cancel
+                </button>
+                <button disabled={isSaving} type="submit" className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold disabled:opacity-50">
+                  {isSaving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      )}
     </PageLayout>
   );
 };

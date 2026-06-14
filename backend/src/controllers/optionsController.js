@@ -1,13 +1,15 @@
 import { readDb } from '../lib/db.js';
 import { sendJson } from '../lib/http.js';
 
+const fixedAdmissionFee = 25;
+
 export const getOptions = async (req, res) => {
   const db = await readDb();
   sendJson(res, 200, {
     faculties: db.programs.map((program) => ({
       id: program.id,
       title: program.title,
-      admissionFee: program.admissionFee,
+      admissionFee: fixedAdmissionFee,
       campus: program.campus,
       departments: program.departments
     })),

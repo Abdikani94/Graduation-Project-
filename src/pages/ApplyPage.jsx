@@ -26,14 +26,14 @@ const conditions = [
   'Should bring four (4) passport-size photos.',
   'Should bring the original Secondary School Leaving Certificate with two copies.',
   'For part-time registration, two years experience is recommended.',
-  'Should pay an Admission Fee of $25 for all programs, except Medicine $35 and Computer & IT $30.',
+  'Should pay a fixed Admission Fee of $25 for all programs.',
 ];
 
 const admissionRequirements = [
   ['High education completion', 'Submit evidence that you completed secondary school.'],
   ['Four passport pictures', 'Bring four clear passport-size photos with a white background.'],
   ['Have certificate high school', 'Bring the original high school certificate with two copies.'],
-  ['Pay fees of Admission', 'Pay the admission fee based on your selected faculty.'],
+  ['Pay fees of Admission', 'Pay the fixed $25 admission fee for any selected faculty.'],
 ];
 
 const faqs = [

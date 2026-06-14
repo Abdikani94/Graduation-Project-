@@ -50,6 +50,16 @@ const ContactMessages = () => {
   };
 
   const updateStatus = async (message, nextStatus) => {
+    const action = nextStatus === 'Resolved' ? 'mark this contact message as resolved' : 'cancel this contact message';
+    const confirmation = [
+      `Are you sure you want to ${action}?`,
+      '',
+      `From: ${message.name || 'Unknown sender'}`,
+      `Email: ${message.email || 'Not provided'}`,
+      `New status: ${nextStatus}`,
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
       await api.patch(`/contact-messages/${message.id}/status`, { status: nextStatus });
       setToast({ type: 'success', title: 'Saved', message: `Message marked ${nextStatus.toLowerCase()}.` });
@@ -60,7 +70,15 @@ const ContactMessages = () => {
   };
 
   const deleteMessage = async (message) => {
-    if (!window.confirm(`Delete message from ${message.name}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this contact message?',
+      '',
+      `From: ${message.name || 'Unknown sender'}`,
+      `Email: ${message.email || 'Not provided'}`,
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
       await api.delete(`/contact-messages/${message.id}`);
       setToast({ type: 'success', title: 'Deleted', message: 'Contact message deleted.' });

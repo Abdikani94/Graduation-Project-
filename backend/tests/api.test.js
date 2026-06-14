@@ -124,6 +124,8 @@ test('public applicant can submit an application', async () => {
   });
   assert.equal(response.status, 201);
   assert.equal(response.body.application.status, 'Pending');
+  assert.equal(response.body.application.admissionFee, 25);
+  assert.equal(response.body.payment.amount, 25);
   assert.equal(response.body.payment.status, 'Pending');
 });
 
@@ -157,4 +159,28 @@ test('public visitor can submit a contact message', async () => {
   });
   assert.equal(response.status, 201);
   assert.equal(response.body.contact.status, 'Pending');
+});
+
+test('admin cannot create an academic program shorter than 5 years', async () => {
+  const login = await request({
+    method: 'POST',
+    path: '/api/auth/login',
+    body: {
+      username: 'admin',
+      password: 'admin12345'
+    }
+  });
+
+  const response = await request({
+    method: 'POST',
+    path: '/api/programs/fac_engineering/departments',
+    token: login.body.token,
+    body: {
+      name: 'Short Program',
+      durationYears: 4
+    }
+  });
+
+  assert.equal(response.status, 422);
+  assert.match(response.body.error.message, /at least 5 years/);
 });

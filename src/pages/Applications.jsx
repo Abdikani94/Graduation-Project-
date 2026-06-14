@@ -71,6 +71,17 @@ const Applications = () => {
   const showSuccess = (message) => setToast({ type: 'success', title: 'Saved', message });
 
   const handleStatus = async (app, nextStatus) => {
+    const applicant = app.fullName || 'this applicant';
+    const action = nextStatus === 'Approved' ? 'approve' : 'reject';
+    const confirmation = [
+      `Are you sure you want to ${action} this application?`,
+      '',
+      `Applicant: ${applicant}`,
+      `Reference: ${app.reference || 'Not provided'}`,
+      `The application status will be changed to ${nextStatus}.`,
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     setIsSaving(true);
     try {
       await api.patch(`/applications/${app.id}/status`, { status: nextStatus });
@@ -84,7 +95,15 @@ const Applications = () => {
   };
 
   const handleDelete = async (app) => {
-    if (!window.confirm(`Delete application ${app.reference}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this person/application?',
+      '',
+      `Applicant: ${app.fullName || 'Unnamed applicant'}`,
+      `Reference: ${app.reference || 'Not provided'}`,
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     setIsSaving(true);
     try {
       await api.delete(`/applications/${app.id}`);
@@ -98,6 +117,7 @@ const Applications = () => {
   };
 
   const openEdit = (app) => {
+    setSelectedApplication(null);
     setEditingApplication(app);
     setEditForm({
       fullName: app.fullName || '',
@@ -121,7 +141,7 @@ const Applications = () => {
     try {
       await api.patch(`/applications/${editingApplication.id}`, editForm);
       setEditingApplication(null);
-      showSuccess('Application updated.');
+      showSuccess('Student information updated.');
       await loadApplications();
     } catch (error) {
       setToast({ type: 'error', title: 'Update failed', message: error.message });
@@ -261,6 +281,15 @@ const Applications = () => {
                 </div>
               ))}
             </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setSelectedApplication(null)}
+                className="px-6 py-3 rounded-full border border-white/10 text-gray-400 text-[13px] font-semibold"
+                type="button"
+              >
+                Close
+              </button>
+            </div>
           </Card>
         </div>
       )}
@@ -269,7 +298,8 @@ const Applications = () => {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-[640px] p-7 relative">
             <button onClick={() => setEditingApplication(null)} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
-            <h2 className="text-white text-[20px] font-semibold mb-6">Edit Application</h2>
+            <h2 className="text-white text-[20px] font-semibold mb-1">Edit Student Information</h2>
+            <p className="text-gray-500 text-[12px] mb-6">{editingApplication.reference}</p>
             <form onSubmit={handleEditSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 ['fullName', 'Full Name'],
@@ -291,7 +321,9 @@ const Applications = () => {
               </label>
               <div className="md:col-span-2 flex justify-end gap-3 mt-2">
                 <button type="button" onClick={() => setEditingApplication(null)} className="px-6 py-3 rounded-full border border-white/10 text-gray-400 text-[13px] font-semibold">Cancel</button>
-                <button disabled={isSaving} type="submit" className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold disabled:opacity-50">Save</button>
+                <button disabled={isSaving} type="submit" className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold disabled:opacity-50">
+                  {isSaving ? 'Saving...' : 'Save Changes'}
+                </button>
               </div>
             </form>
           </Card>
