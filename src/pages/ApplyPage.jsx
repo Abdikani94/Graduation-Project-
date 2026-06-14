@@ -54,6 +54,8 @@ const programs = [
 
 const today = new Date().toISOString().slice(0, 10);
 const apiBaseUrl = 'http://localhost:4000';
+const appointmentStartTime = '08:00';
+const appointmentEndTime = '17:00';
 
 const initialForm = {
   fullName: null,
@@ -463,6 +465,10 @@ function ApplyPage() {
           showError('Please enter a valid appointment time.');
           return false;
         }
+        if (form.appointmentTime < appointmentStartTime || form.appointmentTime > appointmentEndTime) {
+          showError('Appointment time must be between 8:00 AM and 5:00 PM.');
+          return false;
+        }
       }
     }
 
@@ -768,7 +774,7 @@ function ApplyPage() {
                   <div className="certificate-appointment">
                     <p className="appointment-helper">Qabso xilliga aad keeneyso certificate ka</p>
                     <Field label="Appointment Date" name="appointmentDate" type="date" value={form.appointmentDate} onChange={updateForm} min={today} />
-                    <Field label="Appointment Time" name="appointmentTime" type="time" value={form.appointmentTime} onChange={updateForm} step={60} />
+                    <Field label="Appointment Time" name="appointmentTime" type="time" value={form.appointmentTime} onChange={updateForm} min={appointmentStartTime} max={appointmentEndTime} step={60} />
                   </div>
                 )}
               </div>

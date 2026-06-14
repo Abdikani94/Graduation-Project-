@@ -39,6 +39,8 @@ const applicationFields = [
 const getBodyFields = (req) => (req.body?.fields ? req.body.fields : (req.body || {}));
 const getBodyFiles = (req) => (req.body?.files ? req.body.files : []);
 const today = () => new Date().toISOString().slice(0, 10);
+const appointmentStartTime = '08:00';
+const appointmentEndTime = '17:00';
 
 const requiredCreateFields = [
   'fullName',
@@ -188,6 +190,9 @@ export const createApplication = async (req, res) => {
     if (!isValidDate(fields.appointmentDate)) fail(422, 'Appointment date is invalid');
     if (!isValidTime(fields.appointmentTime)) fail(422, 'Appointment time is invalid');
     if (fields.appointmentDate < today()) fail(422, 'Appointment date cannot be in the past');
+    if (fields.appointmentTime < appointmentStartTime || fields.appointmentTime > appointmentEndTime) {
+      fail(422, 'Appointment time must be between 8:00 AM and 5:00 PM');
+    }
   }
   if (!personNamePattern.test(fields.emergencyName)) fail(422, 'Emergency Contact Name is invalid');
   if (!isValidPhone(fields.emergencyTell)) fail(422, 'Emergency phone is invalid');
