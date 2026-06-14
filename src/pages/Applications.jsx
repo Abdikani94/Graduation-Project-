@@ -270,13 +270,6 @@ const Applications = () => {
               >
                 Close
               </button>
-              <button
-                onClick={() => openEdit(selectedApplication)}
-                className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold"
-                type="button"
-              >
-                Edit Student Information
-              </button>
             </div>
           </Card>
         </div>
