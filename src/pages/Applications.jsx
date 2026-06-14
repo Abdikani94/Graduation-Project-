@@ -71,6 +71,17 @@ const Applications = () => {
   const showSuccess = (message) => setToast({ type: 'success', title: 'Saved', message });
 
   const handleStatus = async (app, nextStatus) => {
+    const applicant = app.fullName || 'this applicant';
+    const action = nextStatus === 'Approved' ? 'approve' : 'reject';
+    const confirmation = [
+      `Are you sure you want to ${action} this application?`,
+      '',
+      `Applicant: ${applicant}`,
+      `Reference: ${app.reference || 'Not provided'}`,
+      `The application status will be changed to ${nextStatus}.`,
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     setIsSaving(true);
     try {
       await api.patch(`/applications/${app.id}/status`, { status: nextStatus });
@@ -84,7 +95,15 @@ const Applications = () => {
   };
 
   const handleDelete = async (app) => {
-    if (!window.confirm(`Delete application ${app.reference}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this person/application?',
+      '',
+      `Applicant: ${app.fullName || 'Unnamed applicant'}`,
+      `Reference: ${app.reference || 'Not provided'}`,
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     setIsSaving(true);
     try {
       await api.delete(`/applications/${app.id}`);

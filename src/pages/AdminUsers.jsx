@@ -92,8 +92,18 @@ const AdminUsers = () => {
   };
 
   const toggleUserStatus = async (user) => {
+    const nextStatus = user.status === 'Active' ? 'Disabled' : 'Active';
+    const confirmation = [
+      `Are you sure you want to ${nextStatus === 'Disabled' ? 'disable' : 'enable'} this admin account?`,
+      '',
+      `Admin: ${user.name || 'Unnamed admin'}`,
+      `Email: ${user.email || 'Not provided'}`,
+      `New status: ${nextStatus}`,
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
-      await api.patch(`/admin-users/${user.id}`, { status: user.status === 'Active' ? 'Disabled' : 'Active' });
+      await api.patch(`/admin-users/${user.id}`, { status: nextStatus });
       setToast({ type: 'success', title: 'Saved', message: 'Admin status updated.' });
       await loadUsers();
     } catch (error) {
@@ -102,7 +112,15 @@ const AdminUsers = () => {
   };
 
   const deleteUser = async (user) => {
-    if (!window.confirm(`Delete admin ${user.name}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this admin user?',
+      '',
+      `Admin: ${user.name || 'Unnamed admin'}`,
+      `Email: ${user.email || 'Not provided'}`,
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
       await api.delete(`/admin-users/${user.id}`);
       setToast({ type: 'success', title: 'Deleted', message: 'Admin user deleted.' });

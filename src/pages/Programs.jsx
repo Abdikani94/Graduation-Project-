@@ -123,7 +123,15 @@ const Programs = () => {
 
   const handleDeleteFaculty = async (e, faculty) => {
     e.stopPropagation();
-    if (!window.confirm(`Delete ${faculty.title}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this faculty?',
+      '',
+      `Faculty: ${faculty.title || 'Untitled faculty'}`,
+      'All departments under this faculty will also be removed.',
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
       await api.delete(`/programs/${faculty.id}`);
       showSuccess('Faculty deleted.');
@@ -202,7 +210,15 @@ const Programs = () => {
   const deleteDept = async (index) => {
     if (!selectedFaculty) return;
     const department = selectedFaculty.departments[index];
-    if (!window.confirm(`Delete ${department.name}?`)) return;
+    const confirmation = [
+      'Are you sure you want to delete this department/program?',
+      '',
+      `Faculty: ${selectedFaculty.title || 'Not provided'}`,
+      `Department: ${department.name || 'Unnamed department'}`,
+      'This action cannot be undone.',
+    ].join('\n');
+
+    if (!window.confirm(confirmation)) return;
     try {
       await api.delete(`/programs/${selectedFaculty.id}/departments/${department.id}`);
       showSuccess('Department deleted.');
