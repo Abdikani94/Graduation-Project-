@@ -449,7 +449,7 @@ function LandingPage() {
               <fieldset className="full">
                 <legend>Type Of Contact</legend>
                 <div className="contact-options">
-                  {['Admission', 'Get discount', 'Problem enrollment'].map((type) => (
+                  {['Admission', 'Get discount', 'Problem enrollment','Other'].map((type) => (
                     <label key={type}>
                       <input checked={contactForm.type === type} name="type" onChange={updateContactForm} type="radio" value={type} />
                       {type}
