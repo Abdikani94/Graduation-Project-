@@ -39,11 +39,80 @@ const applicationFields = [
 const getBodyFields = (req) => (req.body?.fields ? req.body.fields : (req.body || {}));
 const getBodyFiles = (req) => (req.body?.files ? req.body.files : []);
 const today = () => new Date().toISOString().slice(0, 10);
+const appointmentStartTime = '08:00';
+const appointmentEndTime = '17:00';
 
-const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '');
-const isValidPhone = (phone) => /^\+?\d[\d\s-]{6,}$/.test(phone || '');
-const isValidDate = (date) => /^\d{4}-\d{2}-\d{2}$/.test(date || '');
-const isValidTime = (time) => /^\d{2}:\d{2}$/.test(time || '');
+const requiredCreateFields = [
+  'fullName',
+  'motherName',
+  'nationality',
+  'rollNumber',
+  'dateOfBirth',
+  'placeOfBirth',
+  'district',
+  'area',
+  'email',
+  'mobile',
+  'sex',
+  'maritalStatus',
+  'hasCertificate',
+  'emergencyName',
+  'emergencyTell',
+  'relationship',
+  'familyStudied',
+  'schoolName',
+  'schoolDistrict',
+  'graduationYear',
+  'percentage',
+  'heardFrom',
+  'modeOfStudy',
+  'paymentPlan',
+  'paymentMethod'
+];
+
+const optionValues = {
+  sex: ['Male', 'Female'],
+  maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
+  hasCertificate: ['Yes', 'No'],
+  relationship: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'],
+  familyStudied: ['Haa', 'Maya'],
+  heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
+  modeOfStudy: ['Full Time', 'Part Time'],
+  paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
+  paymentMethod: ['EVC PLUS', 'Zaad', 'eDahab', 'Cash Office']
+};
+
+const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
+const simpleTextPattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,/-]{1,99}$/;
+const idPattern = /^[A-Za-z0-9][A-Za-z0-9\s/-]{2,29}$/;
+const rollNumberPattern = /^[A-Za-z0-9][A-Za-z0-9/-]{2,29}$/;
+const normalizeField = (value) => String(value ?? '').trim();
+const isEmptyField = (value) => normalizeField(value) === '';
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeField(email)) && normalizeField(email).length <= 254;
+const isValidPhone = (phone) => {
+  const text = normalizeField(phone);
+  const digits = text.replace(/\D/g, '');
+  return /^\+?[\d\s-]{7,20}$/.test(text) && digits.length >= 7 && digits.length <= 15;
+};
+const isValidDate = (date) => {
+  const text = normalizeField(date);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
+  const [year, month, day] = text.split('-').map(Number);
+  const parsed = new Date(year, month - 1, day);
+  return parsed.getFullYear() === year && parsed.getMonth() === month - 1 && parsed.getDate() === day;
+};
+const isValidTime = (time) => /^\d{2}:\d{2}$/.test(normalizeField(time));
+const ageFromDate = (dateText) => {
+  const birthDate = new Date(`${dateText}T00:00:00`);
+  const currentDate = new Date(`${today()}T00:00:00`);
+  let age = currentDate.getFullYear() - birthDate.getFullYear();
+  const monthDifference = currentDate.getMonth() - birthDate.getMonth();
+  if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < birthDate.getDate())) age -= 1;
+  return age;
+};
+const requireOption = (fields, field, label) => {
+  if (!optionValues[field].includes(fields[field])) fail(422, `${label} is invalid`);
+};
 
 const generateReference = (db) => {
   const year = new Date().getFullYear();
@@ -80,14 +149,16 @@ const createStudentFromApplication = (db, application) => {
 };
 
 export const createApplication = async (req, res) => {
-  const fields = getBodyFields(req);
+  const fields = Object.fromEntries(
+    Object.entries(getBodyFields(req)).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])
+  );
   const files = getBodyFiles(req);
   const faculty = fields.faculty || fields.program;
   const department = fields.department || fields.programOfStudy;
   const passportFile = files.find((file) => ['photo', 'passportPhoto', 'passport'].includes(file.fieldName));
   const certificateFile = files.find((file) => ['certificate', 'certificateFile'].includes(file.fieldName));
 
-  const missing = ['fullName', 'email', 'mobile', 'hasCertificate'].filter((field) => !fields[field]);
+  const missing = requiredCreateFields.filter((field) => isEmptyField(fields[field]));
   if (!faculty) missing.push('program');
   if (!department) missing.push('department');
   if (fields.hasCertificate === 'Yes' && !certificateFile) missing.push('certificate');
@@ -96,16 +167,62 @@ export const createApplication = async (req, res) => {
     if (!fields.appointmentTime) missing.push('appointmentTime');
   }
   if (missing.length) fail(422, 'Required application fields are missing', missing);
+  if (!personNamePattern.test(fields.fullName)) fail(422, 'Full Name must contain only letters, spaces, apostrophes, hyphens, or periods');
+  if (!personNamePattern.test(fields.motherName)) fail(422, "Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods");
+  if (!simpleTextPattern.test(fields.nationality)) fail(422, 'Nationality is invalid');
+  if (fields.nationalId && !idPattern.test(fields.nationalId)) fail(422, 'National ID is optional, but if entered it must be 3-30 letters or numbers');
+  if (!rollNumberPattern.test(fields.rollNumber)) fail(422, 'Roll Number is invalid');
   if (!isValidEmail(fields.email)) fail(422, 'Please enter a valid email address');
   if (!isValidPhone(fields.mobile)) fail(422, 'Please enter a valid phone number');
-  if (!['Yes', 'No'].includes(fields.hasCertificate)) fail(422, 'Certificate status must be Yes or No');
+  if (!isValidDate(fields.dateOfBirth)) fail(422, 'Date of birth is invalid');
+  if (fields.dateOfBirth > today()) fail(422, 'Date of birth cannot be in the future');
+  {
+    const age = ageFromDate(fields.dateOfBirth);
+    if (age < 14 || age > 100) fail(422, 'Applicant age must be between 14 and 100 years');
+  }
+  if (!simpleTextPattern.test(fields.placeOfBirth)) fail(422, 'Place Of Birth is invalid');
+  if (!simpleTextPattern.test(fields.district)) fail(422, 'District is invalid');
+  if (!simpleTextPattern.test(fields.area)) fail(422, 'Area is invalid');
+  requireOption(fields, 'sex', 'Sex');
+  requireOption(fields, 'maritalStatus', 'Marital Status');
+  requireOption(fields, 'hasCertificate', 'Certificate status');
   if (fields.hasCertificate === 'No') {
     if (!isValidDate(fields.appointmentDate)) fail(422, 'Appointment date is invalid');
     if (!isValidTime(fields.appointmentTime)) fail(422, 'Appointment time is invalid');
     if (fields.appointmentDate < today()) fail(422, 'Appointment date cannot be in the past');
+    if (fields.appointmentTime < appointmentStartTime || fields.appointmentTime > appointmentEndTime) {
+      fail(422, 'Appointment time must be between 8:00 AM and 5:00 PM');
+    }
   }
+  if (!personNamePattern.test(fields.emergencyName)) fail(422, 'Emergency Contact Name is invalid');
+  if (!isValidPhone(fields.emergencyTell)) fail(422, 'Emergency phone is invalid');
+  requireOption(fields, 'relationship', 'Relationship');
+  requireOption(fields, 'familyStudied', 'Family Member Studied Here');
+  if (!simpleTextPattern.test(fields.schoolName)) fail(422, 'Secondary School Name is invalid');
+  if (!simpleTextPattern.test(fields.schoolDistrict)) fail(422, 'School District is invalid');
+  {
+    const graduationYear = Number(fields.graduationYear);
+    const currentYear = new Date().getFullYear();
+    if (!Number.isInteger(graduationYear) || graduationYear < 1970 || graduationYear > currentYear) {
+      fail(422, `Graduation year must be between 1970 and ${currentYear}`);
+    }
+  }
+  {
+    const percentage = Number(fields.percentage);
+    if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) fail(422, 'Percentage must be between 0 and 100');
+  }
+  requireOption(fields, 'heardFrom', 'How did you know about university');
+  requireOption(fields, 'modeOfStudy', 'Mode Of Study');
+  requireOption(fields, 'paymentPlan', 'Payment Plan');
+  requireOption(fields, 'paymentMethod', 'Payment Method');
 
   const result = await updateDb(async (db) => {
+    const selectedProgram = db.programs.find((item) => item.title === faculty);
+    if (!selectedProgram) fail(422, 'Faculty is invalid');
+    if (!selectedProgram.departments?.some((item) => item.name === department)) {
+      fail(422, 'Department must belong to the selected faculty');
+    }
+
     const reference = generateReference(db);
     const documents = {};
     if (passportFile) documents.passportPhoto = await saveApplicationFile(passportFile, reference, 'passportPhoto');
