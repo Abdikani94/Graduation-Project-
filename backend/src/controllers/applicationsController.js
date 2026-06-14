@@ -41,6 +41,7 @@ const getBodyFiles = (req) => (req.body?.files ? req.body.files : []);
 const today = () => new Date().toISOString().slice(0, 10);
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
+const fixedAdmissionFee = 25;
 
 const requiredCreateFields = [
   'fullName',
@@ -120,10 +121,7 @@ const generateReference = (db) => {
   return `JUM-${year}-${next}`;
 };
 
-const getProgramFee = (db, facultyTitle) => {
-  const program = db.programs.find((item) => item.title === facultyTitle);
-  return program?.admissionFee || 25;
-};
+const getProgramFee = () => fixedAdmissionFee;
 
 const createStudentFromApplication = (db, application) => {
   const existing = db.students.find((student) => student.applicationId === application.id);

@@ -124,6 +124,8 @@ test('public applicant can submit an application', async () => {
   });
   assert.equal(response.status, 201);
   assert.equal(response.body.application.status, 'Pending');
+  assert.equal(response.body.application.admissionFee, 25);
+  assert.equal(response.body.payment.amount, 25);
   assert.equal(response.body.payment.status, 'Pending');
 });
 

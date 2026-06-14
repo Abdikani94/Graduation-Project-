@@ -7,6 +7,7 @@ import Toast from '../components/Toast';
 import api from '../api/axios';
 
 const fallbackImage = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
+const fixedAdmissionFee = 25;
 
 const Programs = () => {
   const [programs, setPrograms] = useState([]);
@@ -29,7 +30,6 @@ const Programs = () => {
 
   // New Faculty Modal Form State
   const [facultyName, setFacultyName] = useState('');
-  const [fee, setFee] = useState('');
   const [, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const fileInputRef = useRef(null);
@@ -82,11 +82,11 @@ const Programs = () => {
 
   const handleSaveFaculty = async (e) => {
     e.preventDefault();
-    if (!facultyName || !fee) return;
+    if (!facultyName) return;
 
     const payload = {
       title: facultyName,
-      admissionFee: Number(String(fee).replace(/[^0-9.]/g, '')),
+      admissionFee: fixedAdmissionFee,
       image: imagePreview || editingFaculty?.image || fallbackImage,
     };
 
@@ -107,7 +107,6 @@ const Programs = () => {
 
   const handleCancelFaculty = () => {
     setFacultyName('');
-    setFee('');
     setSelectedImage(null);
     setImagePreview('');
     setEditingFaculty(null);
@@ -118,7 +117,6 @@ const Programs = () => {
     e.stopPropagation();
     setEditingFaculty(faculty);
     setFacultyName(faculty.title || '');
-    setFee(String(faculty.admissionFee || ''));
     setImagePreview(faculty.image || '');
     setIsModalOpen(true);
   };
@@ -347,9 +345,9 @@ const Programs = () => {
                 <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Fee (Admission)</label>
                 <input
                   type="text"
-                  value={fee}
-                  onChange={(e) => setFee(e.target.value)}
-                  className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors"
+                  value={`$${fixedAdmissionFee}`}
+                  readOnly
+                  className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none opacity-80 cursor-not-allowed"
                   required
                 />
               </div>

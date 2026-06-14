@@ -3,6 +3,7 @@ import { sendCsv, sendJson } from '../lib/http.js';
 import { countBy, toCsv, topCounts } from '../lib/query.js';
 
 const colors = ['#f97316', '#22c55e', '#9b51e0', '#3b82f6', '#fb923c', '#ef4444'];
+const fixedAdmissionFee = 25;
 
 const filterByDate = (items, query) => {
   const from = query.from ? new Date(query.from) : null;
@@ -69,9 +70,9 @@ export const getReportSummary = async (req, res) => {
     const programApps = applications.filter((item) => item.faculty === program.title);
     return {
       faculty: program.title,
-      fee: program.admissionFee,
+      fee: fixedAdmissionFee,
       applicants: programApps.length,
-      estimated: programApps.length * Number(program.admissionFee || 0)
+      estimated: programApps.length * fixedAdmissionFee
     };
   });
 

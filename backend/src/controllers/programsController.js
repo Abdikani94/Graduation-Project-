@@ -3,28 +3,31 @@ import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 
+const fixedAdmissionFee = 25;
+const withFixedAdmissionFee = (program) => ({ ...program, admissionFee: fixedAdmissionFee });
+
 export const listPrograms = async (req, res) => {
   const db = await readDb();
-  let programs = [...db.programs];
+  let programs = db.programs.map(withFixedAdmissionFee);
   programs = programs.filter((item) => matchesText(item, ['title', 'campus'], req.query.search));
   const summary = {
     totalPrograms: db.programs.reduce((sum, item) => sum + item.departments.length, 0),
     totalFaculties: db.programs.length,
-    totalAdmissionFees: db.programs.reduce((sum, item) => sum + Number(item.admissionFee || 0), 0)
+    totalAdmissionFees: db.programs.length * fixedAdmissionFee
   };
   sendJson(res, 200, { data: programs, summary });
 };
 
 export const createProgram = async (req, res) => {
-  const { title, admissionFee, campus = 'Main Campus', image = '', departments = [] } = req.body || {};
-  if (!title || admissionFee === undefined) fail(422, 'Faculty title and admission fee are required');
+  const { title, campus = 'Main Campus', image = '', departments = [] } = req.body || {};
+  if (!title) fail(422, 'Faculty title is required');
 
   const program = await updateDb((db) => {
     const now = new Date().toISOString();
     const item = {
       id: createId('fac'),
       title,
-      admissionFee: Number(admissionFee),
+      admissionFee: fixedAdmissionFee,
       campus,
       image,
       departments: departments.map((department) => ({
@@ -55,7 +58,7 @@ export const updateProgram = async (req, res) => {
     for (const key of ['title', 'campus', 'image']) {
       if (req.body[key] !== undefined) found[key] = req.body[key];
     }
-    if (req.body.admissionFee !== undefined) found.admissionFee = Number(req.body.admissionFee);
+    found.admissionFee = fixedAdmissionFee;
     found.updatedAt = new Date().toISOString();
     addActivity(db, req, {
       action: 'Updated Faculty',
