@@ -38,7 +38,7 @@ const validApplication = (overrides = {}) => ({
   schoolName: 'Jamhuriya Secondary School',
   schoolDistrict: 'Hodan',
   graduationYear: '2022',
-  percentage: '86',
+  percentage: 'A',
   heardFrom: 'Social Media',
   program: 'Computer Science & IT',
   department: 'Computer Application',
