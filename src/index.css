@@ -3710,6 +3710,166 @@ textarea {
   }
 }
 
+/* Functional homepage faculty/program section */
+.public-page .home-program-panel {
+  align-items: stretch;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 253, 0.96)) !important;
+  display: grid;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.public-page .home-faculty-tabs {
+  align-self: stretch;
+  background: #f8fbfd !important;
+  border: 1px solid var(--just-card-border);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1rem;
+}
+
+.public-page .home-faculty-tabs button {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--just-card-border);
+  border-radius: 16px;
+  color: var(--just-text) !important;
+  cursor: pointer;
+  display: flex;
+  font-weight: 800;
+  gap: 0.75rem;
+  min-height: 52px;
+  padding: 0.85rem 1rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  width: 100%;
+}
+
+.public-page .home-faculty-tabs button:hover {
+  border-color: rgba(20, 184, 166, 0.42);
+  box-shadow: 0 10px 26px rgba(15, 35, 63, 0.08);
+  transform: translateY(-1px);
+}
+
+.public-page .home-faculty-tabs button.active {
+  background: linear-gradient(135deg, var(--just-blue), #1f5f73) !important;
+  border-color: transparent;
+  color: #ffffff !important;
+  box-shadow: 0 16px 34px rgba(22, 50, 92, 0.2);
+}
+
+.public-page .home-faculty-tabs button span {
+  align-items: center;
+  background: #e8f6f1 !important;
+  border-radius: 999px;
+  color: var(--just-green);
+  display: inline-flex;
+  flex: 0 0 34px;
+  font-size: 0.78rem;
+  font-weight: 900;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.public-page .home-faculty-tabs button.active span {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.public-page .home-faculty-card {
+  animation: facultyFadeIn 220ms ease both;
+}
+
+.public-page .home-faculty-description {
+  color: var(--just-muted) !important;
+}
+
+.public-page .home-program-list {
+  color: var(--just-text) !important;
+}
+
+.public-page .home-program-list span {
+  background: #f8fbfd;
+  border: 1px solid var(--just-card-border);
+  border-radius: 999px;
+  color: var(--just-text) !important;
+  padding: 0.55rem 0.8rem;
+}
+
+.public-page .home-program-list i {
+  background: var(--just-green) !important;
+  border: 0 !important;
+  height: 0.55rem !important;
+  width: 0.55rem !important;
+}
+
+.public-page .home-faculty-image {
+  border-color: var(--just-blue) !important;
+  box-shadow: 0 20px 45px rgba(15, 35, 63, 0.13);
+}
+
+.public-page .home-faculty-image img {
+  aspect-ratio: 16 / 8;
+  height: auto !important;
+  min-height: 270px;
+}
+
+.public-page .home-faculty-image > div {
+  background: linear-gradient(135deg, var(--just-blue), #1f5f73) !important;
+  color: #ffffff !important;
+}
+
+.public-page .home-faculty-image > div span {
+  color: #ffffff !important;
+}
+
+@keyframes facultyFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .public-page .home-program-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .public-page .home-faculty-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-page .home-faculty-tabs button {
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 560px) {
+  .public-page .home-faculty-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .public-page .home-faculty-image img {
+    min-height: 210px;
+  }
+
+  .public-page .home-faculty-image > div {
+    position: static;
+    border-radius: 0 !important;
+  }
+}
+
 /* Final admin responsive polish */
 @media (min-width: 901px) {
   .admin-shell {

@@ -24,15 +24,26 @@ import team from '../images/team.jpg';
 const faculties = [
   {
     number: '01',
-    name: 'Faculty of Business',
-    image: agriculture,
-    programs: ['BBA in Accounting', 'BBA in Management'],
+    name: 'Business',
+    title: 'Faculty of Economics and Management',
+    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80',
+    alt: 'Business students discussing strategy and management',
+    description: 'Build strong foundations in leadership, accounting, administration, finance, and practical business decision-making.',
+    programs: [
+      'Business Administration',
+      'Public Administration',
+      'Banking & Finance',
+      'Accounting',
+      'Economics',
+    ],
   },
   {
     number: '02',
-    name: 'Faculty Computer',
-    title: 'Kulliyadda Kumbiyuuterka Iyo Tiknoolijiyadda',
+    name: 'Computer Science',
+    title: 'Faculty of Computer Science and Information Technology',
     image: computer,
+    alt: 'Computer science students working in a technology lab',
+    description: 'Study software, networking, multimedia, and applied computing through practical labs and modern technology projects.',
     programs: [
       'B.Sc. in Computer Application',
       'B.Sc. in Computer Networking and Security',
@@ -41,21 +52,30 @@ const faculties = [
   },
   {
     number: '03',
-    name: 'Faculty Eng',
+    name: 'Engineering',
+    title: 'Faculty of Engineering',
     image: engineering,
-    programs: ['Civil Engineering', 'Electrical Engineering'],
+    alt: 'Engineering students studying design and infrastructure',
+    description: 'Prepare for professional engineering work with strong training in design, infrastructure, systems, and applied science.',
+    programs: ['B.Sc. in Civil Engineering', 'B.Sc. in Electrical Engineering', 'B.Sc. in Biomedical Engineering'],
   },
   {
     number: '04',
-    name: 'Faculty Health',
+    name: 'Health Science',
+    title: 'Faculty of Medicine and Health Science',
     image: medicine,
-    programs: ['Public Health', 'Clinical Laboratory Science'],
+    alt: 'Health science students in a medical learning environment',
+    description: 'Develop the clinical, laboratory, public health, and patient-care knowledge needed for modern healthcare service.',
+    programs: ['MBBS', 'B.Sc. in Nursing', 'B.Sc. in Midwifery', 'B.Sc. in Public Health', 'B.Sc. in Medical Laboratory Science'],
   },
   {
     number: '05',
-    name: 'Faculty Education',
+    name: 'Agro-Veterinary',
+    title: 'Faculty of Agriculture and Veterinary Science',
     image: team,
-    programs: ['Education Management', 'English Language'],
+    alt: 'Students collaborating in an academic classroom',
+    description: 'Learn agricultural science, animal health, food systems, and community development for sustainable local impact.',
+    programs: ['B.Sc. in Agriculture', 'B.Sc. in Veterinary Science'],
   },
 ];
 
@@ -104,10 +124,11 @@ function SectionTitle({ children }) {
 
 function LandingPage() {
   const [activeNav, setActiveNav] = useState('home');
+  const [activeFacultyIndex, setActiveFacultyIndex] = useState(1);
   const [contactForm, setContactForm] = useState(initialContactForm);
   const [contactToast, setContactToast] = useState(null);
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
-  const activeFaculty = faculties[1];
+  const activeFaculty = faculties[activeFacultyIndex];
   const navClass = (item) => `site-nav-link ${activeNav === item ? 'active' : ''}`;
 
   const showContactToast = (type, message, title) => {
@@ -251,19 +272,26 @@ function LandingPage() {
           <SectionTitle>
             Our <span>faculties</span> and <br /> Programs of our <span>university</span>
           </SectionTitle>
-          <div className="program-panel">
-            <aside className="faculty-tabs">
-              {faculties.map((faculty) => (
-                <button className={faculty.name === activeFaculty.name ? 'active' : ''} key={faculty.name}>
-                  <span />
+          <div className="program-panel home-program-panel">
+            <aside className="faculty-tabs home-faculty-tabs" aria-label="University faculties">
+              {faculties.map((faculty, index) => (
+                <button
+                  className={index === activeFacultyIndex ? 'active' : ''}
+                  key={faculty.name}
+                  onClick={() => setActiveFacultyIndex(index)}
+                  type="button"
+                  aria-pressed={index === activeFacultyIndex}
+                >
+                  <span>{faculty.number}</span>
                   {faculty.name}
                 </button>
               ))}
             </aside>
-            <article className="min-w-0 flex-1">
+            <article className="home-faculty-card min-w-0 flex-1" key={activeFaculty.name}>
               <div className="number-pill">{activeFaculty.number}</div>
               <h3 className="mt-7 max-w-xl text-3xl font-bold leading-tight sm:text-4xl">{activeFaculty.title}</h3>
-              <div className="mt-5 flex flex-wrap gap-4 text-xs font-semibold text-white/85">
+              <p className="home-faculty-description mt-4 max-w-2xl text-sm leading-7">{activeFaculty.description}</p>
+              <div className="home-program-list mt-5 flex flex-wrap gap-4 text-xs font-semibold text-white/85">
                 {activeFaculty.programs.map((program) => (
                   <span key={program} className="inline-flex items-center gap-2">
                     <i className="h-4 w-4 rounded-full border border-white/20 bg-[#2D368D]" />
@@ -271,11 +299,8 @@ function LandingPage() {
                   </span>
                 ))}
               </div>
-              <div className="relative mt-7 overflow-hidden rounded-[28px] border-4 border-[#2D368D]">
-                <img src={computer} alt="Computer faculty students" className="h-72 w-full object-cover" />
-                <div className="absolute bottom-0 left-0 rounded-tr-2xl bg-[#2D368D] px-7 py-4 text-sm font-bold">
-                  Admission Fee <span className="ml-3 text-lg">$30</span>
-                </div>
+              <div className="home-faculty-image relative mt-7 overflow-hidden rounded-[28px] border-4 border-[#2D368D]">
+                <img src={activeFaculty.image} alt={activeFaculty.alt} className="h-72 w-full object-cover" />
               </div>
             </article>
           </div>

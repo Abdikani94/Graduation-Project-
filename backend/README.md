@@ -76,4 +76,4 @@ Protected routes need:
 Authorization: Bearer <token>
 ```
 
-With the included `.env`, application data is stored in MongoDB under the `jamhuriya_admission` database. Uploaded application files are stored under `backend/uploads/applications`.
+With the included `.env`, application data is stored in MongoDB under the `jamhuriyya_admission` database. Uploaded application files are stored under `backend/uploads/applications`.

@@ -56,6 +56,7 @@ const today = new Date().toISOString().slice(0, 10);
 const apiBaseUrl = 'http://localhost:4000';
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
+const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-' , 'C+', 'C', 'C-'];
 
 const initialForm = {
   fullName: null,
@@ -120,6 +121,20 @@ function Field({ label, name, type = 'text', value, onChange, placeholder, min, 
         inputMode={inputMode}
         step={step}
       />
+    </label>
+  );
+}
+
+function SelectField({ label, name, value, onChange, options, placeholder = 'Select grade' }) {
+  return (
+    <label className="apply-field">
+      <span>{label}</span>
+      <select name={name} value={value ?? ''} onChange={onChange}>
+        <option value="" disabled>{placeholder}</option>
+        {options.map((option) => (
+          <option key={option} value={option}>{option}</option>
+        ))}
+      </select>
     </label>
   );
 }
@@ -208,7 +223,7 @@ const requiredFieldsByStep = {
     ['schoolName', 'Secondary School Name'],
     ['schoolDistrict', 'School District'],
     ['graduationYear', 'Graduation Year'],
-    ['percentage', 'Percentage'],
+    ['percentage', 'Passing Grade'],
     ['heardFrom', 'How did you know about university'],
   ],
   3: [
@@ -374,14 +389,13 @@ function ApplyPage() {
 
     if (stepIndex === 2) {
       const graduationYear = Number(form.graduationYear);
-      const percentage = Number(form.percentage);
       const currentYear = new Date().getFullYear();
       if (!Number.isInteger(graduationYear) || graduationYear < 1970 || graduationYear > currentYear) {
         showError(`Graduation year must be between 1970 and ${currentYear}.`);
         return false;
       }
-      if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) {
-        showError('Percentage must be between 0 and 100.');
+      if (!gradeOptions.includes(form.percentage)) {
+        showError('Please select a valid passing grade.');
         return false;
       }
     }
@@ -620,7 +634,7 @@ function ApplyPage() {
         ['Secondary School', displayValue(form.schoolName)],
         ['School District', displayValue(form.schoolDistrict)],
         ['Graduation Year', displayValue(form.graduationYear)],
-        ['Percentage', form.percentage ? `${form.percentage}%` : 'Not provided'],
+        ['Passing Grade', displayValue(form.percentage, 'Not selected')],
         ['Heard From', displayValue(form.heardFrom, 'Not selected')],
       ],
     },
@@ -794,7 +808,7 @@ function ApplyPage() {
               <Field label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} maxLength={100} />
               <Field label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} maxLength={100} />
               <Field label="Graduation Year" name="graduationYear" type="number" value={form.graduationYear} onChange={updateForm} min="1970" max={String(new Date().getFullYear())} inputMode="numeric" />
-              <Field label="Percentage (%)" name="percentage" type="number" value={form.percentage} onChange={updateForm} min="0" max="100" step="0.01" inputMode="decimal" />
+              <SelectField label="Passing Grade" name="percentage" value={form.percentage} onChange={updateForm} options={gradeOptions} />
               <OptionGroup className="wide" label="How did you know about university?" name="heardFrom" value={form.heardFrom} options={['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify']} onChange={updateForm} />
             </div>
           </section>

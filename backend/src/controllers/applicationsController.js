@@ -42,6 +42,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
 const fixedAdmissionFee = 25;
+const gradeOptions = ['A', 'A-', 'B+', 'B', 'B-'];
 
 const requiredCreateFields = [
   'fullName',
@@ -206,8 +207,7 @@ export const createApplication = async (req, res) => {
     }
   }
   {
-    const percentage = Number(fields.percentage);
-    if (!Number.isFinite(percentage) || percentage < 0 || percentage > 100) fail(422, 'Percentage must be between 0 and 100');
+    if (!gradeOptions.includes(fields.percentage)) fail(422, 'Passing grade must be A, A-, B+, B, or B-');
   }
   requireOption(fields, 'heardFrom', 'How did you know about university');
   requireOption(fields, 'modeOfStudy', 'Mode Of Study');
