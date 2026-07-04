@@ -80,6 +80,8 @@ export const updateStudent = async (req, res) => {
     fail(422, 'Discount percentage is invalid');
   }
 
+  const isDiscountUpdate = req.body?.discountReason !== undefined || req.body?.discountPercentage !== undefined;
+
   const student = await updateDb((db) => {
     const found = db.students.find((item) => item.id === req.params.id || item.studentNumber === req.params.id);
     if (!found) fail(404, 'Student not found');
@@ -91,7 +93,12 @@ export const updateStudent = async (req, res) => {
       found.discountPercentage = regionalDiscountPercentage;
     }
     found.updatedAt = new Date().toISOString();
-    addActivity(db, req, {
+    addActivity(db, req, isDiscountUpdate ? {
+      action: 'Applied Discount',
+      afterAction: `${found.discountReason} - ${found.discountPercentage}%`,
+      applicantPerson: found.fullName,
+      module: 'Discount'
+    } : {
       action: 'Updated Student',
       beforeAction: before,
       afterAction: found.status,

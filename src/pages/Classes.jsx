@@ -6,15 +6,14 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
 
-const currentUser = JSON.parse(localStorage.getItem('authUser') || 'null');
-const isAdmin = currentUser?.role === 'Admin';
-
 const emptyForm = { name: '', faculty: '', department: '', capacity: '' };
 
 const statusClass = (status) =>
   status === 'Full' ? 'text-red-500 bg-red-500/10 border-red-500/20' : 'text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20';
 
 const Classes = () => {
+  const currentUser = JSON.parse(localStorage.getItem('authUser') || 'null');
+  const isAdmin = currentUser?.role === 'Admin';
   const [classes, setClasses] = useState([]);
   const [summary, setSummary] = useState({ total: 0, open: 0, full: 0 });
   const [programs, setPrograms] = useState([]);

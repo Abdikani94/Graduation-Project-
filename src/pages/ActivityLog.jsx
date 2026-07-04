@@ -95,7 +95,7 @@ const ActivityLog = () => {
               backgroundPosition: 'right 16px center'
             }}
           >
-            {['All Modules', 'Applications', 'Programs', 'Students', 'Payments', 'Admin Users', 'Contacts', 'Settings'].map((item) => <option key={item}>{item}</option>)}
+            {['All Modules', 'Applications', 'Programs', 'Students', 'Classes', 'Payments', 'Discount', 'Admin Users', 'Contacts', 'Settings'].map((item) => <option key={item}>{item}</option>)}
           </select>
         </div>
         <button onClick={exportLog} className="bg-primary hover:bg-opacity-90 text-white rounded-xl px-6 py-3.5 text-[13px] font-medium transition-colors ml-auto whitespace-nowrap cursor-pointer">

@@ -39,7 +39,7 @@ if (nodeEnv === 'production' && jwtSecret === insecureDefaultJwtSecret) {
 
 export const env = {
   host: process.env.HOST || '127.0.0.1',
-  port: toNumber(process.env.PORT, 4000),
+  port: toNumber(process.env.PORT, 5000),
   nodeEnv,
   dbDriver: process.env.DB_DRIVER || (process.env.MONGODB_URI ? 'mongodb' : 'json'),
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
