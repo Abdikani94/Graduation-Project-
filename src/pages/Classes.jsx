@@ -229,7 +229,7 @@ const Classes = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
+          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] max-h-[90vh] overflow-y-auto rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
             <button onClick={closeModal} className="absolute right-8 top-8 w-8 h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all cursor-pointer" type="button">
               <X size={16} />
             </button>

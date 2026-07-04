@@ -318,7 +318,7 @@ const Applications = () => {
 
       {selectedApplication && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[620px] p-7 relative">
+          <Card className="w-full max-w-[620px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={() => setSelectedApplication(null)} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">{selectedApplication.fullName}</h2>
             <p className="text-gray-500 text-[12px] mb-6">{selectedApplication.reference}</p>
@@ -354,7 +354,7 @@ const Applications = () => {
 
       {editingApplication && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[640px] p-7 relative">
+          <Card className="w-full max-w-[640px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={() => setEditingApplication(null)} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">Edit Student Information</h2>
             <p className="text-gray-500 text-[12px] mb-6">{editingApplication.reference}</p>
@@ -409,7 +409,7 @@ const Applications = () => {
 
       {approvingApp && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[560px] p-7 relative">
+          <Card className="w-full max-w-[560px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={closeApprove} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">Approve Application</h2>
             <p className="text-gray-500 text-[12px] mb-6">{approvingApp.fullName} - {approvingApp.reference}</p>

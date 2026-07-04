@@ -212,7 +212,7 @@ const Students = () => {
 
       {selectedStudent && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[720px] p-7 relative">
+          <Card className="w-full max-w-[720px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={() => setSelectedStudent(null)} className="absolute right-5 top-5 text-gray-400 hover:text-primary" type="button">
               <X size={18} />
             </button>
@@ -246,7 +246,7 @@ const Students = () => {
 
       {editingStudent && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[720px] p-7 relative">
+          <Card className="w-full max-w-[720px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={() => setEditingStudent(null)} className="absolute right-5 top-5 text-gray-400 hover:text-primary" type="button">
               <X size={18} />
             </button>

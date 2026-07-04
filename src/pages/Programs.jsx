@@ -327,7 +327,7 @@ const Programs = () => {
       {/* New Faculty Modal overlay */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
+          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] max-h-[90vh] overflow-y-auto rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
             {/* Close Button */}
             <button
               onClick={handleCancelFaculty}
@@ -411,7 +411,7 @@ const Programs = () => {
       {/* New Department Modal overlay */}
       {isDeptModalOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
+          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] max-h-[90vh] overflow-y-auto rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
             {/* Close Button */}
             <button
               onClick={handleCancelDept}
@@ -500,7 +500,7 @@ const Programs = () => {
       {/* Faculty Detail Info Card Modal */}
       {isDetailModalOpen && selectedFaculty && (
         <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[620px] rounded-[28px] overflow-hidden relative flex flex-col animate-fade-in font-sans shadow-2xl">
+          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[620px] max-h-[85vh] rounded-[28px] overflow-hidden relative flex flex-col animate-fade-in font-sans shadow-2xl">
             {/* Float Close Button */}
             <button
               onClick={handleCloseDetailModal}
@@ -516,7 +516,7 @@ const Programs = () => {
             </div>
 
             {/* Modal Content */}
-            <div className="p-8 flex flex-col flex-1 min-h-0">
+            <div className="p-8 flex flex-col flex-1 min-h-0 overflow-y-auto">
               <h2 className="text-white text-[24px] font-bold tracking-tight mb-2 font-jakarta">{selectedFaculty.title}</h2>
               <div className="flex items-center gap-4 text-gray-400 text-[13px] font-medium mb-6">
                 <span className="flex items-center gap-1.5"><Calendar size={14} className="text-primary" /> Established: 2012</span>

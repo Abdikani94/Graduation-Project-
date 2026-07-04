@@ -218,7 +218,7 @@ const AdminUsers = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[640px] p-7 relative">
+          <Card className="w-full max-w-[640px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={closeModal} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-6">{editingUser ? 'Edit Admin' : 'Add Admin'}</h2>
             <form onSubmit={saveUser} className="grid grid-cols-1 md:grid-cols-2 gap-4">
