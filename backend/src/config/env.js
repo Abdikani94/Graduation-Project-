@@ -27,13 +27,23 @@ const toNumber = (value, fallback) => {
   return Number.isFinite(parsed) ? parsed : fallback;
 };
 
+const insecureDefaultJwtSecret = 'development-only-secret';
+const nodeEnv = process.env.NODE_ENV || 'development';
+const jwtSecret = process.env.JWT_SECRET || insecureDefaultJwtSecret;
+
+if (nodeEnv === 'production' && jwtSecret === insecureDefaultJwtSecret) {
+  throw new Error(
+    'Refusing to start: JWT_SECRET is not set. Set a strong, random JWT_SECRET in the environment before running in production.'
+  );
+}
+
 export const env = {
   host: process.env.HOST || '127.0.0.1',
   port: toNumber(process.env.PORT, 4000),
-  nodeEnv: process.env.NODE_ENV || 'development',
+  nodeEnv,
   dbDriver: process.env.DB_DRIVER || (process.env.MONGODB_URI ? 'mongodb' : 'json'),
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  jwtSecret: process.env.JWT_SECRET || 'development-only-secret',
+  jwtSecret,
   tokenExpiresInSeconds: toNumber(process.env.TOKEN_EXPIRES_IN_SECONDS, 60 * 60 * 24),
   maxBodyBytes: toNumber(process.env.MAX_BODY_BYTES, 15 * 1024 * 1024),
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017',

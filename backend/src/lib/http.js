@@ -15,12 +15,17 @@ export const fail = (status, message, details) => {
 };
 
 export const setCorsHeaders = (req, res) => {
+  const isWildcard = env.corsOrigin === '*';
   const origin = req.headers.origin;
-  const allowedOrigin = env.corsOrigin === '*' ? (origin || '*') : env.corsOrigin;
+  const allowedOrigin = isWildcard ? (origin || '*') : env.corsOrigin;
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  // Never combine a wildcard/reflected origin with credentials - only the single
+  // explicitly configured origin is trusted enough to receive this header.
+  if (!isWildcard) {
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
 };
 
 export const sendJson = (res, status, payload) => {

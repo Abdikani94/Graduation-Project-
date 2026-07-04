@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Check,
@@ -122,6 +123,7 @@ const initialForm = {
   department: null,
   modeOfStudy: null,
   paymentPlan: null,
+  integrityDeclaration: null,
   paymentMethod: null,
   paymentPhone: null,
   paymentAmount: null,
@@ -388,6 +390,7 @@ const requiredFieldsByStep = {
     ['department', 'Department'],
     ['modeOfStudy', 'Mode Of Study'],
     ['paymentPlan', 'Payment Plan'],
+    ['integrityDeclaration', 'Statement of Integrity'],
     ['paymentMethod', 'Payment Method'],
   ],
 };
@@ -870,6 +873,7 @@ function ApplyPage() {
         ['Department', displayValue(form.department, 'Not selected')],
         ['Mode Of Study', displayValue(form.modeOfStudy, 'Not selected')],
         ['Payment Plan', displayValue(form.paymentPlan, 'Not selected')],
+        ['Statement of Integrity', form.integrityDeclaration === 'Yes' ? 'Accepted' : 'Not accepted'],
         ['Payment Method', displayValue(form.paymentMethod, 'Not selected')],
         ...paymentReviewItems,
       ],
@@ -1065,6 +1069,11 @@ function ApplyPage() {
             <div className="apply-form-grid mt-form">
               <OptionGroup label="Mode Of Study" name="modeOfStudy" value={form.modeOfStudy} options={['Full Time', 'Part Time']} onChange={updateForm} />
               <OptionGroup label="Payment Plan" name="paymentPlan" value={form.paymentPlan} options={['Admission fee only', 'Semester payment', 'Full year payment']} onChange={updateForm} />
+              <label className="integrity-declaration">
+                <AlertTriangle size={20} />
+                <input checked={form.integrityDeclaration === 'Yes'} name="integrityDeclaration" onChange={updateForm} type="checkbox" value="Yes" />
+                <span><strong>Statement of Integrity:</strong> I declare that the information provided in this application is true and complete, and I understand that any incomplete or false information may result in delay or cancellation of my enrollment.</span>
+              </label>
               <OptionGroup className="wide" label="Payment Method" name="paymentMethod" value={form.paymentMethod} options={['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal']} onChange={updateForm} />
               <PaymentMethodDetails method={form.paymentMethod} form={form} onChange={updateForm} receipt={paymentReceipt} onReceiptChange={handlePaymentReceipt} />
             </div>

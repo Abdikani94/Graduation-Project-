@@ -4,6 +4,11 @@ import { hashPassword } from '../lib/crypto.js';
 import { matchesText, paginate, sortNewest, toPublicUser } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 
+const allowedRoles = new Set(['Admin', 'Officer']);
+const allowedStatuses = new Set(['Active', 'Disabled']);
+const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '');
+const minPasswordLength = 8;
+
 const withAdminStats = (db, user) => {
   const activities = db.activities.filter((item) => item.adminId === user.id);
   return {
@@ -37,6 +42,9 @@ export const listAdminUsers = async (req, res) => {
 export const createAdminUser = async (req, res) => {
   const { name, username, email, password, role = 'Officer', campus = 'Main Campus' } = req.body || {};
   if (!name || !username || !email || !password) fail(422, 'Name, username, email, and password are required');
+  if (!isValidEmail(email)) fail(422, 'Please enter a valid email address');
+  if (password.length < minPasswordLength) fail(422, `Password must be at least ${minPasswordLength} characters`);
+  if (!allowedRoles.has(role)) fail(422, 'Role must be Admin or Officer');
 
   const user = await updateDb((db) => {
     if (db.users.some((item) => item.email.toLowerCase() === email.toLowerCase())) {
@@ -72,6 +80,13 @@ export const createAdminUser = async (req, res) => {
 };
 
 export const updateAdminUser = async (req, res) => {
+  if (req.body?.email !== undefined && !isValidEmail(req.body.email)) fail(422, 'Please enter a valid email address');
+  if (req.body?.role !== undefined && !allowedRoles.has(req.body.role)) fail(422, 'Role must be Admin or Officer');
+  if (req.body?.status !== undefined && !allowedStatuses.has(req.body.status)) fail(422, 'Status must be Active or Disabled');
+  if (req.body?.password && req.body.password.length < minPasswordLength) {
+    fail(422, `Password must be at least ${minPasswordLength} characters`);
+  }
+
   const user = await updateDb((db) => {
     const found = db.users.find((item) => item.id === req.params.id);
     if (!found) fail(404, 'Admin user not found');

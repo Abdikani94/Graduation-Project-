@@ -7,7 +7,7 @@ import Toast from '../components/Toast';
 import api from '../api/axios';
 
 const avatarFor = (name) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Student')}&background=894EEF&color=fff`;
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Student')}&background=2D368D&color=fff`;
 
 const formatDate = (value) => value ? new Date(value).toLocaleDateString() : 'Not provided';
 

@@ -12,7 +12,7 @@ const formatDate = (value) => {
 };
 
 const avatarFor = (name) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Applicant')}&background=894EEF&color=fff`;
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Applicant')}&background=2D368D&color=fff`;
 
 const statusClass = (status) => {
   if (status === 'Approved') return 'text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20';

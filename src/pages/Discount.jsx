@@ -11,7 +11,7 @@ const discountPercentages = [20, 25, 30, 100];
 const regionalDiscountPercentage = 20;
 
 const avatarFor = (name) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Student')}&background=894EEF&color=fff`;
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Student')}&background=2D368D&color=fff`;
 
 const Discount = () => {
   const [studentId, setStudentId] = useState('');

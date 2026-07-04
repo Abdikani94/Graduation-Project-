@@ -2,8 +2,14 @@ import { readDb, updateDb } from '../lib/db.js';
 import { fail, sendJson } from '../lib/http.js';
 import { signToken, verifyPassword } from '../lib/crypto.js';
 import { toPublicUser } from '../lib/query.js';
+import { checkRateLimit } from '../lib/rateLimit.js';
 
 export const login = async (req, res) => {
+  const clientKey = req.socket?.remoteAddress || 'unknown';
+  if (!checkRateLimit(`login:${clientKey}`, { max: 10, windowMs: 15 * 60 * 1000 })) {
+    fail(429, 'Too many login attempts. Please try again in a few minutes.');
+  }
+
   const { username, email, password } = req.body || {};
   const loginName = username || email;
   if (!loginName || !password) fail(422, 'Username and password are required');
