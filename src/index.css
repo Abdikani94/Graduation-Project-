@@ -300,6 +300,7 @@ body {
 .public-page .contact-form input,
 .public-page .contact-form textarea,
 .apply-page .apply-field input,
+.apply-page .apply-phone-field,
 .apply-page .apply-options label,
 .apply-page .program-box label,
 .apply-page .photo-upload,
@@ -2003,6 +2004,48 @@ body {
   color: rgba(255, 255, 255, 0.32);
 }
 
+.apply-phone-field {
+  background: rgba(7, 2, 17, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 13px;
+  display: flex;
+  min-height: 48px;
+  overflow: hidden;
+}
+
+.apply-phone-field:focus-within {
+  border-color: #2D368D;
+  box-shadow: 0 0 0 4px rgba(45, 54, 141, 0.14);
+}
+
+.apply-phone-prefix {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.86);
+  display: flex;
+  flex-shrink: 0;
+  font-weight: 800;
+  padding: 0 0.9rem;
+  user-select: none;
+}
+
+.apply-phone-field input {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  flex: 1;
+  font: inherit;
+  min-width: 0;
+  outline: none;
+  padding: 0.85rem 1rem 0.85rem 0.75rem;
+  width: auto;
+}
+
+.apply-phone-field input::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
 .apply-combobox {
   position: relative;
 }
@@ -2936,6 +2979,7 @@ body {
 }
 
 .apply-page .apply-field input,
+.apply-page .apply-phone-field,
 .apply-page .apply-options label,
 .apply-page .program-box label,
 .apply-page .photo-upload,
@@ -3265,6 +3309,7 @@ textarea {
 .public-page .contact-form input,
 .public-page .contact-form textarea,
 .apply-page .apply-field input,
+.apply-page .apply-phone-field,
 .apply-page .apply-options label,
 .apply-page .program-box label,
 .apply-page .photo-upload,
@@ -4218,4 +4263,15 @@ textarea {
     font-size: 12px !important;
     min-height: 42px !important;
   }
+}
+
+.apply-page .apply-phone-field input {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.apply-page .apply-phone-prefix {
+  background: rgba(16, 35, 63, 0.05) !important;
+  border-right: 1px solid #eeeeee !important;
+  color: var(--just-text) !important;
 }

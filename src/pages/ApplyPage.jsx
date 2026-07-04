@@ -106,12 +106,12 @@ const initialForm = {
   district: null,
   area: null,
   email: null,
-  mobile: null,
+  mobile: '+252',
   sex: null,
   maritalStatus: null,
   campus: null,
   emergencyName: null,
-  emergencyTell: null,
+  emergencyTell: '+252',
   relationship: null,
   familyStudied: null,
   schoolName: null,
@@ -125,7 +125,7 @@ const initialForm = {
   paymentPlan: null,
   integrityDeclaration: null,
   paymentMethod: null,
-  paymentPhone: null,
+  paymentPhone: '+252',
   paymentAmount: null,
   paymentTransactionId: null,
   cardHolderName: null,
@@ -166,6 +166,32 @@ function Field({ label, name, type = 'text', value, onChange, placeholder, min, 
         inputMode={inputMode}
         step={step}
       />
+    </label>
+  );
+}
+
+function PhoneField({ label, name, value, onChange, placeholder, maxLength }) {
+  const localNumber = (value || '').replace(/^\+252/, '');
+
+  const handleChange = (event) => {
+    onChange({ target: { name, value: `+252${event.target.value}`, type: 'text', checked: false } });
+  };
+
+  return (
+    <label className="apply-field">
+      <span>{label}</span>
+      <div className="apply-phone-field">
+        <span className="apply-phone-prefix">+252</span>
+        <input
+          name={name}
+          type="tel"
+          value={localNumber}
+          onChange={handleChange}
+          placeholder={placeholder || '61 1234567'}
+          maxLength={maxLength}
+          inputMode="tel"
+        />
+      </div>
     </label>
   );
 }
@@ -295,7 +321,7 @@ function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange
           </>
         )}
         {mobileMoneyMethods.includes(method) && (
-          <Field label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} placeholder="Phone number used for payment" inputMode="tel" maxLength={20} />
+          <PhoneField label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={16} />
         )}
         <Field label="Payment Amount" name="paymentAmount" value={form.paymentAmount} onChange={onChange} placeholder="Amount paid" type="number" min="0" inputMode="numeric" />
         {mobileMoneyMethods.includes(method) && (
@@ -363,6 +389,7 @@ const requiredFieldsByStep = {
     ['fullName', 'Full Name'],
     ['motherName', "Mother's Name"],
     ['nationality', 'Nationality'],
+    ['nationalId', 'National ID'],
     ['rollNumber', 'Roll Number'],
     ['dateOfBirth', 'Date Of Birth'],
     ['placeOfBirth', 'Place Of Birth'],
@@ -482,7 +509,7 @@ function ApplyPage() {
       ...(name === 'program' ? { department: null } : {}),
       ...(name === 'hasCertificate' && nextValue === 'Yes' ? { appointmentDate: null, appointmentTime: null } : {}),
       ...(name === 'paymentMethod' ? {
-        paymentPhone: null,
+        paymentPhone: '+252',
         paymentAmount: null,
         paymentTransactionId: null,
         cardHolderName: null,
@@ -605,8 +632,8 @@ function ApplyPage() {
         showError('Nationality must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
         return false;
       }
-      if (!isEmpty(form.nationalId) && !idPattern.test(normalizeValue(form.nationalId))) {
-        showError('National ID is optional, but if entered it must be 3-30 letters or numbers.');
+      if (!idPattern.test(normalizeValue(form.nationalId))) {
+        showError('National ID is required and must be 3-30 letters or numbers.');
         return false;
       }
       if (!rollNumberPattern.test(normalizeValue(form.rollNumber))) {
@@ -984,7 +1011,7 @@ function ApplyPage() {
                 <Field label="Place Of Birth" name="placeOfBirth" value={form.placeOfBirth} onChange={updateForm} placeholder="Enter your place of birth" maxLength={100} />
                 <Field label="District" name="district" value={form.district} onChange={updateForm} placeholder="Enter your district" maxLength={100} />
                 <Field label="Your Email" name="email" type="email" value={form.email} onChange={updateForm} placeholder="yourmail@gmail.com" maxLength={254} inputMode="email" />
-                <Field label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} placeholder="1123 1234567" maxLength={20} inputMode="tel" />
+                <PhoneField label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} maxLength={16} />
                 <Field label="Area" name="area" value={form.area} onChange={updateForm} placeholder="Enter your area" maxLength={100} />
                 <OptionGroup label="Sex" name="sex" value={form.sex} options={['Male', 'Female']} onChange={updateForm} />
                 <OptionGroup className="wide" label="Marital Status" name="maritalStatus" value={form.maritalStatus} options={['Single', 'Marriage', 'Divorced', 'Widowed']} onChange={updateForm} />
@@ -1032,7 +1059,7 @@ function ApplyPage() {
             <p className="apply-note"><Check size={14} /> Add a trusted contact and secondary school details.</p>
             <div className="apply-form-grid">
               <Field label="Emergency Contact Name" name="emergencyName" value={form.emergencyName} onChange={updateForm} placeholder="Name" maxLength={80} />
-              <Field label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} placeholder="Phone number" maxLength={20} inputMode="tel" />
+              <PhoneField label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} maxLength={16} />
               <OptionGroup className="wide" label="Relationship to applicant" name="relationship" value={form.relationship} options={['Mother', 'Father', 'Brother', 'Sister', 'Other specify']} onChange={updateForm} />
               <OptionGroup className="wide" label="Majiraa qof kamida qoyskaaga oo Jaamacad dhigta?" name="familyStudied" value={form.familyStudied} options={['Haa', 'Maya']} onChange={updateForm} />
               <SearchableSelectField label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} options={secondarySchoolNames} placeholder="Search for your school" />
