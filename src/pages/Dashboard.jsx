@@ -27,7 +27,7 @@ const emptyDashboard = {
 };
 
 const avatarFor = (name) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Applicant')}&background=894EEF&color=fff`;
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Applicant')}&background=2D368D&color=fff`;
 
 const timeAgo = (value) => {
   if (!value) return 'Recently';
@@ -59,15 +59,17 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const CustomBarShape = (props) => {
   const { fill, x, y, width, height, radius } = props;
+  if (!height || height <= 0) return null;
+  const r = Math.max(Math.min(radius[0], height / 2, width / 2), 0);
   return (
     <g>
       <path
-        d={`M ${x},${y + radius[0]} 
-            a ${radius[0]},${radius[0]} 0 0 1 ${radius[0]},-${radius[0]} 
-            h ${width - 2 * radius[0]} 
-            a ${radius[0]},${radius[0]} 0 0 1 ${radius[0]},${radius[0]} 
-            v ${height - radius[0]} 
-            h -${width} 
+        d={`M ${x},${y + r}
+            a ${r},${r} 0 0 1 ${r},-${r}
+            h ${width - 2 * r}
+            a ${r},${r} 0 0 1 ${r},${r}
+            v ${height - r}
+            h -${width}
             Z`}
         fill={fill}
       />

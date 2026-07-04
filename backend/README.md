@@ -25,16 +25,16 @@ When startup succeeds, the terminal prints:
 
 ```text
 MongoDB connected: mongodb://localhost:27017/jamhuriya_admission
-Server is running on port 4000
-API URL: http://127.0.0.1:4000
+Server is running on port 5000
+API URL: http://127.0.0.1:5000
 ```
 
-If you see `Port 4000 is already in use`, another backend server is already running on that port. Use the existing server, stop it, or change `PORT` in `backend/.env`.
+If you see `Port 5000 is already in use`, another backend server is already running on that port. Use the existing server, stop it, or change `PORT` in `backend/.env`.
 
 API base URL:
 
 ```text
-http://127.0.0.1:4000
+http://127.0.0.1:5000
 ```
 
 Default admin login:

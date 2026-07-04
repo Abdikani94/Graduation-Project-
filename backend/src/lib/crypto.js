@@ -42,12 +42,20 @@ export const verifyToken = (token) => {
   const parts = token.split('.');
   if (parts.length !== 3) return null;
   const [encodedHeader, encodedBody, signature] = parts;
-  const expected = crypto
-    .createHmac('sha256', env.jwtSecret)
-    .update(`${encodedHeader}.${encodedBody}`)
-    .digest('base64url');
-  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
-  const payload = JSON.parse(base64UrlDecode(encodedBody));
-  if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
-  return payload;
+
+  try {
+    const expected = crypto
+      .createHmac('sha256', env.jwtSecret)
+      .update(`${encodedHeader}.${encodedBody}`)
+      .digest('base64url');
+    const signatureBuffer = Buffer.from(signature);
+    const expectedBuffer = Buffer.from(expected);
+    if (signatureBuffer.length !== expectedBuffer.length) return null;
+    if (!crypto.timingSafeEqual(signatureBuffer, expectedBuffer)) return null;
+    const payload = JSON.parse(base64UrlDecode(encodedBody));
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
 };

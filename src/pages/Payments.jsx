@@ -6,7 +6,7 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
 
-const methods = ['Method', 'EVC PLUS', 'Zaad', 'eDahab', 'Bank', 'Cash', 'Card'];
+const methods = ['Method', 'EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal'];
 const money = (value, currency = 'USD') => `${currency === 'USD' ? '$' : ''}${Number(value || 0).toLocaleString()}`;
 const formatDate = (value) => value ? new Date(value).toLocaleDateString() : 'Not provided';
 
@@ -52,10 +52,10 @@ const Payments = () => {
 
   const getMethodBadge = (method) => {
     switch (method) {
-      case 'EVC PLUS':
+      case 'EVC Plus':
         return (
           <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20 inline-flex items-center justify-center">
-            EVC PLUS
+            EVC Plus
           </span>
         );
       case 'Zaad':
@@ -68,6 +68,18 @@ const Payments = () => {
         return (
           <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#fb923c] bg-[#fb923c]/10 border-[#fb923c]/20 inline-flex items-center justify-center">
             eDahab
+          </span>
+        );
+      case 'Card':
+        return (
+          <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#B8790A] bg-[#FBAB19]/10 border-[#FBAB19]/30 inline-flex items-center justify-center">
+            Card
+          </span>
+        );
+      case 'Sahal':
+        return (
+          <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#0ea5e9] bg-[#0ea5e9]/10 border-[#0ea5e9]/20 inline-flex items-center justify-center">
+            Sahal
           </span>
         );
       default:

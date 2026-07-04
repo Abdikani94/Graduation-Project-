@@ -56,6 +56,7 @@ const requiredCreateFields = [
   'fullName',
   'motherName',
   'nationality',
+  'nationalId',
   'rollNumber',
   'dateOfBirth',
   'placeOfBirth',
@@ -182,7 +183,7 @@ export const createApplication = async (req, res) => {
   if (!personNamePattern.test(fields.fullName)) fail(422, 'Full Name must contain only letters, spaces, apostrophes, hyphens, or periods');
   if (!personNamePattern.test(fields.motherName)) fail(422, "Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods");
   if (!simpleTextPattern.test(fields.nationality)) fail(422, 'Nationality is invalid');
-  if (fields.nationalId && !idPattern.test(fields.nationalId)) fail(422, 'National ID is optional, but if entered it must be 3-30 letters or numbers');
+  if (!idPattern.test(fields.nationalId)) fail(422, 'National ID is required and must be 3-30 letters or numbers');
   if (!rollNumberPattern.test(fields.rollNumber)) fail(422, 'Roll Number is invalid');
   if (!isValidEmail(fields.email)) fail(422, 'Please enter a valid email address');
   if (!isValidPhone(fields.mobile)) fail(422, 'Please enter a valid phone number');

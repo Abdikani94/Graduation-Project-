@@ -108,7 +108,7 @@ const faqs = [
   'When will admission results be announced?',
 ];
 
-const apiBaseUrl = 'http://localhost:4000';
+const apiBaseUrl = 'http://localhost:5000';
 
 const initialContactForm = {
   name: null,
@@ -239,7 +239,7 @@ function LandingPage() {
 
         <a
           aria-label="Open support chat"
-          className="fixed bottom-7 right-7 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-[#2D368D] shadow-[0_0_32px_rgba(141,77,244,0.8)]"
+          className="fixed bottom-7 right-7 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-[#2D368D] shadow-[0_0_28px_rgba(45,54,141,0.45)]"
           href="#faq"
         >
           <MessageCircle size={21} />
@@ -328,7 +328,7 @@ function LandingPage() {
           <div className="welcome-card">
             <div className="flex-1 p-8 sm:p-12">
               <div className="mb-8 flex items-center gap-8">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-lime-300 text-lg font-extrabold text-[#170828]">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FBAB19] text-lg font-extrabold text-[#182B49]">
                   03
                 </span>
                 <div className="h-1 w-40 rounded-full bg-white/30">

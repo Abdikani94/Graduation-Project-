@@ -233,7 +233,6 @@ body {
   box-shadow: 0 10px 25px rgba(24, 43, 73, 0.05);
 }
 
-.public-page .stats-panel::after,
 .public-page .network-map::before,
 .public-page .timeline::before,
 .public-page .home-requirements-section .requirements::before,
@@ -246,6 +245,10 @@ body {
 .apply-page .apply-requirements-logo::after {
   border-color: #eeeeee !important;
   background: #eeeeee !important;
+}
+
+.public-page .stats-panel::after {
+  display: none;
 }
 
 .public-page .faculty-tabs {
@@ -297,6 +300,7 @@ body {
 .public-page .contact-form input,
 .public-page .contact-form textarea,
 .apply-page .apply-field input,
+.apply-page .apply-phone-field,
 .apply-page .apply-options label,
 .apply-page .program-box label,
 .apply-page .photo-upload,
@@ -563,7 +567,7 @@ body {
 .btn-primary {
   background: #2D368D;
   color: white;
-  box-shadow: 0 18px 45px rgba(141, 77, 244, 0.3);
+  box-shadow: 0 18px 45px rgba(45, 54, 141, 0.3);
 }
 
 .btn-ghost {
@@ -723,7 +727,7 @@ body {
   align-items: center;
   background: #2D368D;
   border-radius: 999px;
-  box-shadow: 0 0 0 18px rgba(141, 77, 244, 0.2);
+  box-shadow: 0 0 0 18px rgba(45, 54, 141, 0.2);
   display: flex;
   height: 72px;
   justify-content: center;
@@ -1246,7 +1250,7 @@ body {
 .contact-form input:focus,
 .contact-form textarea:focus {
   border-color: #2D368D;
-  box-shadow: 0 0 0 4px rgba(141, 77, 244, 0.14);
+  box-shadow: 0 0 0 4px rgba(45, 54, 141, 0.14);
 }
 
 .contact-form input::placeholder,
@@ -1278,7 +1282,7 @@ body {
 }
 
 .contact-options label:hover {
-  border-color: rgba(141, 77, 244, 0.35);
+  border-color: rgba(45, 54, 141, 0.35);
   box-shadow: 0 10px 25px rgba(18, 7, 37, 0.06);
   color: #23113f;
   transform: translateY(-1px);
@@ -1297,7 +1301,7 @@ body {
 .contact-options label:has(input:checked) {
   background: #f2ebff;
   border-color: #2D368D;
-  box-shadow: inset 0 0 0 1px rgba(141, 77, 244, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(45, 54, 141, 0.18);
   color: #2D368D;
   font-weight: 900;
 }
@@ -1307,7 +1311,7 @@ body {
   background: linear-gradient(135deg, #2D368D 0%, #17346f 100%);
   border: 0;
   border-radius: 999px;
-  box-shadow: 0 18px 38px rgba(141, 77, 244, 0.26);
+  box-shadow: 0 18px 38px rgba(45, 54, 141, 0.26);
   color: white;
   cursor: pointer;
   display: inline-flex;
@@ -1325,7 +1329,7 @@ body {
 
 .contact-submit:hover:not(:disabled),
 .contact-submit:focus-visible:not(:disabled) {
-  box-shadow: 0 22px 48px rgba(141, 77, 244, 0.34);
+  box-shadow: 0 22px 48px rgba(45, 54, 141, 0.34);
   outline: none;
   transform: translateY(-2px);
 }
@@ -1699,7 +1703,7 @@ body {
 
 .apply-step span {
   align-items: center;
-  background: rgba(141, 77, 244, 0.16);
+  background: rgba(45, 54, 141, 0.16);
   border-radius: 999px;
   color: #11B67A;
   display: flex;
@@ -1933,6 +1937,43 @@ body {
   opacity: 0.75;
 }
 
+.integrity-declaration {
+  align-items: flex-start;
+  background: rgba(251, 171, 25, 0.1);
+  border: 1px solid rgba(251, 171, 25, 0.45);
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  gap: 0.75rem;
+  grid-column: 1 / -1;
+  padding: 1rem 1.1rem;
+}
+
+.integrity-declaration svg {
+  color: #b8790a;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.integrity-declaration input[type="checkbox"] {
+  accent-color: #fbab19;
+  cursor: pointer;
+  flex-shrink: 0;
+  height: 18px;
+  margin-top: 0.15rem;
+  width: 18px;
+}
+
+.integrity-declaration span {
+  color: var(--just-text);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.integrity-declaration strong {
+  color: #b8790a;
+}
+
 .appointment-helper {
   color: #f2e9ff;
   font-size: 0.86rem;
@@ -1956,10 +1997,52 @@ body {
 
 .apply-field input:focus {
   border-color: #2D368D;
-  box-shadow: 0 0 0 4px rgba(141, 77, 244, 0.14);
+  box-shadow: 0 0 0 4px rgba(45, 54, 141, 0.14);
 }
 
 .apply-field input::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.apply-phone-field {
+  background: rgba(7, 2, 17, 0.58);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 13px;
+  display: flex;
+  min-height: 48px;
+  overflow: hidden;
+}
+
+.apply-phone-field:focus-within {
+  border-color: #2D368D;
+  box-shadow: 0 0 0 4px rgba(45, 54, 141, 0.14);
+}
+
+.apply-phone-prefix {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.86);
+  display: flex;
+  flex-shrink: 0;
+  font-weight: 800;
+  padding: 0 0.9rem;
+  user-select: none;
+}
+
+.apply-phone-field input {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  flex: 1;
+  font: inherit;
+  min-width: 0;
+  outline: none;
+  padding: 0.85rem 1rem 0.85rem 0.75rem;
+  width: auto;
+}
+
+.apply-phone-field input::placeholder {
   color: rgba(255, 255, 255, 0.32);
 }
 
@@ -2081,8 +2164,8 @@ body {
 
 .apply-options label:has(input:checked),
 .program-box label:has(input:checked) {
-  background: rgba(141, 77, 244, 0.18);
-  border-color: rgba(141, 77, 244, 0.72);
+  background: rgba(45, 54, 141, 0.18);
+  border-color: rgba(45, 54, 141, 0.72);
   color: white;
 }
 
@@ -2203,7 +2286,7 @@ body {
 
 .upload-file-badge {
   align-items: center;
-  background: rgba(141, 77, 244, 0.18);
+  background: rgba(45, 54, 141, 0.18);
   border: 1px solid rgba(192, 140, 255, 0.42);
   border-radius: 18px;
   color: #f2e9ff;
@@ -2231,8 +2314,8 @@ body {
 }
 
 .program-box.selected {
-  border-color: rgba(141, 77, 244, 0.8);
-  box-shadow: inset 0 0 0 1px rgba(141, 77, 244, 0.28);
+  border-color: rgba(45, 54, 141, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(45, 54, 141, 0.28);
 }
 
 .program-box > label {
@@ -2896,6 +2979,7 @@ body {
 }
 
 .apply-page .apply-field input,
+.apply-page .apply-phone-field,
 .apply-page .apply-options label,
 .apply-page .program-box label,
 .apply-page .photo-upload,
@@ -3225,6 +3309,7 @@ textarea {
 .public-page .contact-form input,
 .public-page .contact-form textarea,
 .apply-page .apply-field input,
+.apply-page .apply-phone-field,
 .apply-page .apply-options label,
 .apply-page .program-box label,
 .apply-page .photo-upload,
@@ -4178,4 +4263,15 @@ textarea {
     font-size: 12px !important;
     min-height: 42px !important;
   }
+}
+
+.apply-page .apply-phone-field input {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.apply-page .apply-phone-prefix {
+  background: rgba(16, 35, 63, 0.05) !important;
+  border-right: 1px solid #eeeeee !important;
+  color: var(--just-text) !important;
 }
