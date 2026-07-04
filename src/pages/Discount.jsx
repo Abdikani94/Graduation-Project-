@@ -16,6 +16,7 @@ const avatarFor = (name) =>
 const Discount = () => {
   const [studentId, setStudentId] = useState('');
   const [foundStudent, setFoundStudent] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [reason, setReason] = useState('');
   const [percentage, setPercentage] = useState('');
@@ -47,18 +48,32 @@ const Discount = () => {
     }
   };
 
+  const selectStudent = (student) => {
+    setFoundStudent(student);
+    setSearchResults([]);
+    setReason(student.discountReason || '');
+    setPercentage(student.discountPercentage ? String(student.discountPercentage) : '');
+  };
+
   const handleSearch = async (event) => {
     event.preventDefault();
-    if (!studentId.trim()) return;
+    const query = studentId.trim();
+    if (!query) return;
     setIsSearching(true);
     setFoundStudent(null);
+    setSearchResults([]);
     try {
-      const result = await api.get(`/students/${studentId.trim()}`);
-      setFoundStudent(result.student);
-      setReason(result.student.discountReason || '');
-      setPercentage(result.student.discountPercentage ? String(result.student.discountPercentage) : '');
+      const result = await api.get('/students', { search: query, limit: 10 });
+      const matches = result.data || [];
+      if (matches.length === 0) {
+        setToast({ type: 'error', title: 'Student not found', message: `No student matches "${query}".` });
+      } else if (matches.length === 1) {
+        selectStudent(matches[0]);
+      } else {
+        setSearchResults(matches);
+      }
     } catch (error) {
-      setToast({ type: 'error', title: 'Student not found', message: error.message });
+      setToast({ type: 'error', title: 'Search failed', message: error.message });
     } finally {
       setIsSearching(false);
     }
@@ -104,13 +119,33 @@ const Discount = () => {
               onChange={(event) => setStudentId(event.target.value)}
               type="text"
               className="w-full bg-main-bg border border-white/5 text-white rounded-xl py-3.5 pl-[44px] pr-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500"
-              placeholder="Enter Student ID (e.g. JUST-2026-0001) ..."
+              placeholder="Enter Student Name or ID (e.g. JUST-2026-0001) ..."
             />
           </div>
           <button disabled={isSearching} type="submit" className="bg-primary hover:bg-opacity-90 text-white rounded-full px-8 py-3.5 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50">
             {isSearching ? 'Searching...' : 'Search'}
           </button>
         </form>
+
+        {searchResults.length > 1 && (
+          <div className="border-t border-white/5 pt-6 flex flex-col gap-2">
+            <p className="text-gray-500 text-[12px] font-medium">Multiple students match "{studentId.trim()}" - select one:</p>
+            {searchResults.map((student) => (
+              <button
+                key={student.id}
+                type="button"
+                onClick={() => selectStudent(student)}
+                className="flex items-center gap-4 p-3 bg-main-bg border border-white/5 rounded-xl hover:border-primary transition-colors text-left cursor-pointer"
+              >
+                <img src={avatarFor(student.fullName)} alt={student.fullName} className="w-9 h-9 rounded-full object-cover grayscale" />
+                <div>
+                  <p className="text-white text-[14px] font-medium">{student.fullName}</p>
+                  <p className="text-gray-500 text-[11px]">{student.studentNumber} - {student.faculty} / {student.department}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
 
         {foundStudent && (
           <div className="border-t border-white/5 pt-6 flex flex-col gap-6">
