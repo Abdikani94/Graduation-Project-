@@ -38,6 +38,7 @@ const applicationFields = [
   'cardNumber',
   'cardExpiry',
   'cardCVV',
+  'classId',
   'hasCertificate',
   'appointmentDate',
   'appointmentTime'
@@ -131,7 +132,7 @@ const generateReference = (db) => {
 
 const getProgramFee = () => fixedAdmissionFee;
 
-const createStudentFromApplication = (db, application) => {
+const createStudentFromApplication = (db, application, classItem) => {
   const existing = db.students.find((student) => student.applicationId === application.id);
   if (existing) return existing;
   const student = {
@@ -144,6 +145,10 @@ const createStudentFromApplication = (db, application) => {
     faculty: application.faculty,
     department: application.department,
     campus: application.campus,
+    classId: classItem?.id || null,
+    className: classItem?.name || null,
+    discountReason: null,
+    discountPercentage: null,
     status: 'Enrolled',
     whatsappSent: false,
     enrolledAt: new Date().toISOString(),
@@ -320,6 +325,17 @@ export const updateApplication = async (req, res) => {
     if (!found) fail(404, 'Application not found');
     const before = { ...found };
 
+    let selectedClass;
+    if (req.body?.classId !== undefined && req.body.classId !== null && req.body.classId !== '') {
+      selectedClass = (db.classes || []).find((item) => item.id === req.body.classId);
+      if (!selectedClass) fail(404, 'Class not found');
+      const targetFaculty = req.body.faculty || found.faculty;
+      const targetDepartment = req.body.programOfStudy || req.body.department || found.department;
+      if (selectedClass.faculty !== targetFaculty || selectedClass.department !== targetDepartment) {
+        fail(422, 'The selected class does not belong to this applicant\'s faculty and department');
+      }
+    }
+
     for (const [key, value] of Object.entries(req.body || {})) {
       if (!allowedFields.has(key)) continue;
       if (key === 'program') found.faculty = value;
@@ -340,6 +356,10 @@ export const updateApplication = async (req, res) => {
       student.faculty = found.faculty;
       student.department = found.department;
       student.campus = found.campus;
+      if (selectedClass) {
+        student.classId = selectedClass.id;
+        student.className = selectedClass.name;
+      }
       student.updatedAt = found.updatedAt;
     }
 
@@ -367,6 +387,25 @@ export const updateApplicationStatus = async (req, res) => {
     const application = db.applications.find((item) => item.id === req.params.id || item.reference === req.params.id);
     if (!application) fail(404, 'Application not found');
     const before = application.status;
+
+    let classItem = null;
+    if (status === 'Approved') {
+      const alreadyStudent = db.students.find((student) => student.applicationId === application.id);
+      if (!alreadyStudent) {
+        const classId = req.body?.classId || application.classId;
+        if (!classId) fail(422, 'A class must be selected to approve this application');
+        classItem = (db.classes || []).find((item) => item.id === classId);
+        if (!classItem) fail(404, 'Class not found');
+        if (classItem.faculty !== application.faculty || classItem.department !== application.department) {
+          fail(422, 'The selected class does not belong to this applicant\'s faculty and department');
+        }
+        const enrolled = db.students.filter((student) => student.classId === classItem.id).length;
+        if (enrolled >= classItem.capacity) {
+          fail(422, 'The selected class is full. Create a new class before approving this application.');
+        }
+      }
+    }
+
     application.status = status;
     application.notes = note || application.notes;
     application.reviewedBy = req.user.id;
@@ -374,7 +413,7 @@ export const updateApplicationStatus = async (req, res) => {
 
     let student = null;
     if (status === 'Approved') {
-      student = createStudentFromApplication(db, application);
+      student = createStudentFromApplication(db, application, classItem);
     }
 
     addActivity(db, req, {

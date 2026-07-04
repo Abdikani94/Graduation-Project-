@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, UserPlus, Users, Briefcase, TrendingUp, BookOpen, MessageCircle, History, Users2, FileText, Settings, LogOut
+  LayoutDashboard, UserPlus, Users, Briefcase, TrendingUp, BookOpen, MessageCircle, History, Users2, FileText, Settings, LogOut, GraduationCap, Percent
 } from 'lucide-react';
 import Card from './Card';
 import logo from '../images/logo.jpg';
@@ -23,7 +23,9 @@ const Sidebar = () => {
           <NavItem to="/dashboard" icon={LayoutDashboard}>Dashboard</NavItem>
           <NavItem to="/applications" icon={UserPlus}>Applications</NavItem>
           <NavItem to="/students" icon={Users}>Students</NavItem>
+          <NavItem to="/classes" icon={GraduationCap}>Classes</NavItem>
           <NavItem to="/payments" icon={Briefcase}>Payments</NavItem>
+          <NavItem to="/discount" icon={Percent}>Discount</NavItem>
         </div>
 
         <div className="flex flex-col gap-1">

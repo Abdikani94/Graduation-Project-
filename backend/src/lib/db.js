@@ -6,7 +6,7 @@ import { env } from '../config/env.js';
 import { createSeedData } from '../data/seed-data.js';
 import { hashPassword } from './crypto.js';
 
-const collections = ['users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities'];
+const collections = ['users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities', 'classes'];
 let mongoClient;
 let mongoDatabase;
 let mongoConnectionLogged = false;
@@ -46,7 +46,9 @@ const ensureJsonDb = async () => {
 const readJsonDb = async () => {
   await ensureJsonDb();
   const raw = await fs.readFile(env.dbFile, 'utf8');
-  return JSON.parse(raw);
+  const data = JSON.parse(raw);
+  data.classes = data.classes || [];
+  return data;
 };
 
 const writeJsonDb = async (data) => {

@@ -9,6 +9,8 @@ import AdminUsers from './pages/AdminUsers';
 import Programs from './pages/Programs';
 import Login from './pages/Login';
 import Payments from './pages/Payments';
+import Classes from './pages/Classes';
+import Discount from './pages/Discount';
 import ActivityLog from './pages/ActivityLog';
 import AdminReport from './pages/AdminReport';
 import Settings from './pages/Settings';
@@ -31,7 +33,9 @@ const AdminLayout = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/students" element={<Students />} />
+          <Route path="/classes" element={<Classes />} />
           <Route path="/payments" element={<Payments />} />
+          <Route path="/discount" element={<Discount />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/programs" element={<Programs />} />
           <Route path="/contact-messages" element={<ContactMessages />} />

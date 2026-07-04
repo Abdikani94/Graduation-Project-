@@ -35,6 +35,12 @@ const Applications = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState(null);
+  const [approvingApp, setApprovingApp] = useState(null);
+  const [approveClasses, setApproveClasses] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState('');
+  const [isLoadingApproveClasses, setIsLoadingApproveClasses] = useState(false);
+  const [editClasses, setEditClasses] = useState([]);
+  const [isLoadingEditClasses, setIsLoadingEditClasses] = useState(false);
 
   const loadApplications = async () => {
     setIsLoading(true);
@@ -72,9 +78,8 @@ const Applications = () => {
 
   const handleStatus = async (app, nextStatus) => {
     const applicant = app.fullName || 'this applicant';
-    const action = nextStatus === 'Approved' ? 'approve' : 'reject';
     const confirmation = [
-      `Are you sure you want to ${action} this application?`,
+      'Are you sure you want to reject this application?',
       '',
       `Applicant: ${applicant}`,
       `Reference: ${app.reference || 'Not provided'}`,
@@ -89,6 +94,48 @@ const Applications = () => {
       await loadApplications();
     } catch (error) {
       setToast({ type: 'error', title: 'Action failed', message: error.message });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const openApprove = async (app) => {
+    setApprovingApp(app);
+    setSelectedClassId('');
+    setApproveClasses([]);
+    setIsLoadingApproveClasses(true);
+    try {
+      const result = await api.get('/classes', { faculty: app.faculty, department: app.department, status: 'Open', limit: 100 });
+      const openClasses = result.data || [];
+      setApproveClasses(openClasses);
+      if (app.classId && openClasses.some((item) => item.id === app.classId)) {
+        setSelectedClassId(app.classId);
+      } else if (openClasses.length === 1) {
+        setSelectedClassId(openClasses[0].id);
+      }
+    } catch (error) {
+      setToast({ type: 'error', title: 'Classes error', message: error.message });
+    } finally {
+      setIsLoadingApproveClasses(false);
+    }
+  };
+
+  const closeApprove = () => {
+    setApprovingApp(null);
+    setApproveClasses([]);
+    setSelectedClassId('');
+  };
+
+  const confirmApprove = async () => {
+    if (!approvingApp || !selectedClassId) return;
+    setIsSaving(true);
+    try {
+      await api.patch(`/applications/${approvingApp.id}/status`, { status: 'Approved', classId: selectedClassId });
+      showSuccess(`${approvingApp.fullName || 'Applicant'} approved and assigned to class.`);
+      closeApprove();
+      await loadApplications();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Approval failed', message: error.message });
     } finally {
       setIsSaving(false);
     }
@@ -116,7 +163,7 @@ const Applications = () => {
     }
   };
 
-  const openEdit = (app) => {
+  const openEdit = async (app) => {
     setSelectedApplication(null);
     setEditingApplication(app);
     setEditForm({
@@ -128,7 +175,18 @@ const Applications = () => {
       campus: app.campus || '',
       paymentStatus: app.paymentStatus || 'Pending',
       notes: app.notes || '',
+      classId: app.classId || '',
     });
+    setEditClasses([]);
+    setIsLoadingEditClasses(true);
+    try {
+      const result = await api.get('/classes', { faculty: app.faculty, department: app.department, limit: 100 });
+      setEditClasses(result.data || []);
+    } catch (error) {
+      setToast({ type: 'error', title: 'Classes error', message: error.message });
+    } finally {
+      setIsLoadingEditClasses(false);
+    }
   };
 
   const handleEditSubmit = async (event) => {
@@ -139,7 +197,7 @@ const Applications = () => {
     }
     setIsSaving(true);
     try {
-      await api.patch(`/applications/${editingApplication.id}`, editForm);
+      await api.patch(`/applications/${editingApplication.id}`, { ...editForm, classId: editForm.classId || null });
       setEditingApplication(null);
       showSuccess('Student information updated.');
       await loadApplications();
@@ -233,7 +291,7 @@ const Applications = () => {
                     <button onClick={() => openEdit(app)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="Edit">
                       <Edit2 size={17} />
                     </button>
-                    <button disabled={isSaving} onClick={() => handleStatus(app, 'Approved')} className="text-gray-500 hover:text-[#00A451] transition-colors p-1 disabled:opacity-40" type="button" title="Approve">
+                    <button disabled={isSaving || app.status === 'Approved'} onClick={() => openApprove(app)} className="text-gray-500 hover:text-[#00A451] transition-colors p-1 disabled:opacity-40" type="button" title="Approve">
                       <Check size={17} />
                     </button>
                     <button disabled={isSaving} onClick={() => handleStatus(app, 'Rejected')} className="text-gray-500 hover:text-red-500 transition-colors p-1 disabled:opacity-40" type="button" title="Reject">
@@ -316,6 +374,25 @@ const Applications = () => {
                 </label>
               ))}
               <label className="md:col-span-2 flex flex-col gap-2 text-white text-[13px] font-semibold">
+                Class ({editingApplication.faculty} / {editingApplication.department})
+                <select
+                  value={editForm.classId || ''}
+                  onChange={(event) => setEditForm((form) => ({ ...form, classId: event.target.value }))}
+                  disabled={isLoadingEditClasses}
+                  className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary disabled:opacity-60"
+                >
+                  <option value="">{isLoadingEditClasses ? 'Loading classes...' : 'No class assigned'}</option>
+                  {editClasses.map((classItem) => (
+                    <option key={classItem.id} value={classItem.id}>
+                      {classItem.name} ({classItem.enrolled}/{classItem.capacity}{classItem.status === 'Full' ? ' - Full' : ''})
+                    </option>
+                  ))}
+                </select>
+                {!isLoadingEditClasses && editClasses.length === 0 && (
+                  <span className="text-[#d97706] text-[12px] font-normal">No classes exist yet for this department. Create one on the Classes page.</span>
+                )}
+              </label>
+              <label className="md:col-span-2 flex flex-col gap-2 text-white text-[13px] font-semibold">
                 Notes
                 <textarea value={editForm.notes || ''} onChange={(event) => setEditForm((form) => ({ ...form, notes: event.target.value }))} className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary min-h-[90px]" />
               </label>
@@ -326,6 +403,53 @@ const Applications = () => {
                 </button>
               </div>
             </form>
+          </Card>
+        </div>
+      )}
+
+      {approvingApp && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="w-full max-w-[560px] p-7 relative">
+            <button onClick={closeApprove} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
+            <h2 className="text-white text-[20px] font-semibold mb-1">Approve Application</h2>
+            <p className="text-gray-500 text-[12px] mb-6">{approvingApp.fullName} - {approvingApp.reference}</p>
+
+            {isLoadingApproveClasses && <p className="text-gray-400 text-[13px]">Loading available classes...</p>}
+
+            {!isLoadingApproveClasses && approveClasses.length === 0 && (
+              <p className="text-red-400 text-[13px] leading-relaxed">
+                No open classes available in {approvingApp.department} ({approvingApp.faculty}). An Admin must create a new class before this application can be approved.
+              </p>
+            )}
+
+            {!isLoadingApproveClasses && approveClasses.length > 0 && (
+              <label className="flex flex-col gap-2 text-white text-[13px] font-semibold">
+                Assign to Class
+                <select
+                  value={selectedClassId}
+                  onChange={(event) => setSelectedClassId(event.target.value)}
+                  className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary"
+                >
+                  <option value="" disabled>Select a class</option>
+                  {approveClasses.map((classItem) => (
+                    <option key={classItem.id} value={classItem.id}>
+                      {classItem.name} ({classItem.enrolled}/{classItem.capacity})
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button onClick={closeApprove} className="px-6 py-3 rounded-full border border-white/10 text-gray-400 text-[13px] font-semibold" type="button">
+                Cancel
+              </button>
+              {approveClasses.length > 0 && (
+                <button disabled={isSaving || !selectedClassId} onClick={confirmApprove} className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold disabled:opacity-50" type="button">
+                  {isSaving ? 'Approving...' : 'Approve & Assign'}
+                </button>
+              )}
+            </div>
           </Card>
         </div>
       )}
