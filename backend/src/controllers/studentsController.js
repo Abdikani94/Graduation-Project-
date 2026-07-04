@@ -3,13 +3,18 @@ import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 
+const discountReasons = ['Regional', 'Financial Assistance', 'Scholarship', 'Other'];
+const discountPercentages = [20, 25, 30, 100];
+const regionalDiscountPercentage = 20;
+
 export const listStudents = async (req, res) => {
   const db = await readDb();
   let items = sortNewest(db.students);
-  const { search, faculty, campus } = req.query;
+  const { search, faculty, campus, hasDiscount } = req.query;
 
   if (faculty && faculty !== 'All Faculties') items = items.filter((item) => item.faculty === faculty);
   if (campus && campus !== 'All Campuses') items = items.filter((item) => item.campus === campus);
+  if (hasDiscount === 'true') items = items.filter((item) => Boolean(item.discountPercentage));
   items = items.filter((item) => matchesText(item, ['fullName', 'email', 'mobile', 'studentNumber', 'department'], search));
 
   const summary = {
@@ -44,6 +49,10 @@ export const createStudent = async (req, res) => {
       faculty: faculty || '',
       department: department || '',
       campus,
+      classId: req.body.classId || null,
+      className: req.body.className || null,
+      discountReason: null,
+      discountPercentage: null,
       status,
       whatsappSent: Boolean(req.body.whatsappSent),
       enrolledAt: req.body.enrolledAt || now,
@@ -64,12 +73,22 @@ export const createStudent = async (req, res) => {
 };
 
 export const updateStudent = async (req, res) => {
+  if (req.body?.discountReason !== undefined && req.body.discountReason !== null && !discountReasons.includes(req.body.discountReason)) {
+    fail(422, 'Discount reason is invalid');
+  }
+  if (req.body?.discountPercentage !== undefined && req.body.discountPercentage !== null && !discountPercentages.includes(Number(req.body.discountPercentage))) {
+    fail(422, 'Discount percentage is invalid');
+  }
+
   const student = await updateDb((db) => {
     const found = db.students.find((item) => item.id === req.params.id || item.studentNumber === req.params.id);
     if (!found) fail(404, 'Student not found');
     const before = found.status;
-    for (const key of ['fullName', 'email', 'mobile', 'faculty', 'department', 'campus', 'status', 'whatsappSent']) {
+    for (const key of ['fullName', 'email', 'mobile', 'faculty', 'department', 'campus', 'status', 'whatsappSent', 'classId', 'className', 'discountReason', 'discountPercentage']) {
       if (req.body[key] !== undefined) found[key] = req.body[key];
+    }
+    if (found.discountReason === 'Regional') {
+      found.discountPercentage = regionalDiscountPercentage;
     }
     found.updatedAt = new Date().toISOString();
     addActivity(db, req, {
