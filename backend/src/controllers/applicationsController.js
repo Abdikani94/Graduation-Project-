@@ -31,6 +31,13 @@ const applicationFields = [
   'modeOfStudy',
   'paymentPlan',
   'paymentMethod',
+  'paymentPhone',
+  'paymentAmount',
+  'paymentTransactionId',
+  'cardHolderName',
+  'cardNumber',
+  'cardExpiry',
+  'cardCVV',
   'hasCertificate',
   'appointmentDate',
   'appointmentTime'
@@ -81,7 +88,7 @@ const optionValues = {
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
-  paymentMethod: ['EVC PLUS', 'Zaad', 'eDahab', 'Cash Office']
+  paymentMethod: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal']
 };
 
 const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
@@ -156,6 +163,7 @@ export const createApplication = async (req, res) => {
   const department = fields.department || fields.programOfStudy;
   const passportFile = files.find((file) => ['photo', 'passportPhoto', 'passport'].includes(file.fieldName));
   const certificateFile = files.find((file) => ['certificate', 'certificateFile'].includes(file.fieldName));
+  const receiptFile = files.find((file) => ['paymentReceipt', 'receipt'].includes(file.fieldName));
 
   const missing = requiredCreateFields.filter((field) => isEmptyField(fields[field]));
   if (!faculty) missing.push('program');
@@ -225,6 +233,7 @@ export const createApplication = async (req, res) => {
     const documents = {};
     if (passportFile) documents.passportPhoto = await saveApplicationFile(passportFile, reference, 'passportPhoto');
     if (certificateFile) documents.certificate = await saveApplicationFile(certificateFile, reference, 'certificate');
+    if (receiptFile) documents.paymentReceipt = await saveApplicationFile(receiptFile, reference, 'paymentReceipt');
 
     const now = new Date().toISOString();
     const application = {
@@ -254,7 +263,7 @@ export const createApplication = async (req, res) => {
         amount: application.admissionFee,
         currency: db.settings.currency || 'USD',
         method: application.paymentMethod,
-        transactionCode: fields.transactionCode || '',
+        transactionCode: fields.paymentTransactionId || fields.transactionCode || '',
         status: 'Pending',
         createdAt: now,
         updatedAt: now
