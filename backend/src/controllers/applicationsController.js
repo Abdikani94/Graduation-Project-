@@ -3,6 +3,7 @@ import { fail, sendCsv, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest, toCsv } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 import { saveApplicationFile } from '../utils/files.js';
+import { generateStudentNumber } from '../utils/studentNumber.js';
 
 const applicationFields = [
   'fullName',
@@ -139,7 +140,7 @@ const createStudentFromApplication = (db, application, classItem) => {
   const student = {
     id: createId('stu'),
     applicationId: application.id,
-    studentNumber: `JUST-${new Date().getFullYear()}-${String(db.students.length + 1).padStart(4, '0')}`,
+    studentNumber: generateStudentNumber(db, application.department),
     fullName: application.fullName,
     email: application.email,
     mobile: application.mobile,
