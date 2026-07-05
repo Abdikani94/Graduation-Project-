@@ -2133,14 +2133,22 @@ body {
 .apply-options input,
 .program-box input {
   appearance: none;
-  background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+  -webkit-appearance: none;
+  background: #ffffff;
+  border: 2px solid rgba(45, 54, 141, 0.4);
   border-radius: 6px;
   flex: 0 0 auto;
   height: 18px;
   margin: 0;
   position: relative;
   width: 18px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.apply-options input:hover,
+.program-box input:hover {
+  border-color: var(--just-blue);
 }
 
 .apply-options input:checked,
@@ -4274,4 +4282,119 @@ textarea {
   background: rgba(16, 35, 63, 0.05) !important;
   border-right: 1px solid #eeeeee !important;
   color: var(--just-text) !important;
+}
+
+/* =========================================================================
+   GLOBAL THEME HARDENING (JUST light theme)
+   Neutralises the last dark-theme leftovers so nothing renders white-on-white
+   or dark-on-dark. Scoped to `.admin-content`; appended last so it wins the
+   cascade. Uses `~=` (exact token match) so tint variants like `bg-[#00A451]/10`
+   and hover-only classes are NOT affected.
+   ========================================================================= */
+
+/* --- 1. Translucent-white surfaces become a visible soft surface --------- */
+.admin-content [class~="bg-white/5"],
+.admin-content [class~="bg-white/10"],
+.admin-content [class~="bg-white/[0.03]"],
+.admin-content [class~="bg-white/[0.04]"] {
+  background-color: #eef2f7 !important;
+  border-color: var(--just-border) !important;
+}
+
+.admin-content [class~="hover:bg-white/5"]:hover,
+.admin-content [class~="hover:bg-white/10"]:hover,
+.admin-content [class~="hover:bg-white/20"]:hover,
+.admin-content [class~="hover:bg-white/30"]:hover {
+  background-color: #e6edf5 !important;
+}
+
+/* Settings toggle knob stays white; the OFF track is now the visible surface
+   from the rule above, and the ON track uses Tailwind's peer-checked:bg-primary. */
+
+/* --- 2. Text stays light on SOLID brand-coloured surfaces ---------------- */
+/* Guards against the global `text-white -> dark` remap making badge/chip/icon
+   text unreadable on saturated blue / green / gold. `~=` excludes the /10
+   /20 tint pills (which correctly use dark brand text on a pale wash). */
+.admin-content [class~="bg-[#2D368D]"],
+.admin-content [class~="bg-[#00A451]"],
+.admin-content [class~="bg-[#FBAB19]"],
+.admin-content [class~="bg-[#0ea5e9]"],
+.admin-content [class~="bg-[#f97316]"],
+.admin-content [class~="bg-[#fb923c]"],
+.admin-content [class~="bg-[#d97706]"],
+.admin-content .bg-primary,
+.admin-content .bg-brand-green,
+.admin-content [class~="bg-[#2D368D]"] *,
+.admin-content [class~="bg-[#00A451]"] *,
+.admin-content [class~="bg-[#FBAB19]"] *,
+.admin-content [class~="bg-[#0ea5e9]"] *,
+.admin-content [class~="bg-[#f97316]"] *,
+.admin-content [class~="bg-[#fb923c]"] *,
+.admin-content [class~="bg-[#d97706]"] *,
+.admin-content .bg-primary :where(span, p, h1, h2, h3, h4, strong, small),
+.admin-content .bg-brand-green :where(span, p, h1, h2, h3, h4, strong, small) {
+  color: #ffffff !important;
+}
+
+/* --- 3. Dark chart tooltip / dark cards become light --------------------- */
+.admin-content [class~="bg-[#130f1e]"] {
+  background: #ffffff !important;
+  border-color: var(--just-card-border) !important;
+  box-shadow: var(--just-card-shadow) !important;
+}
+
+/* --- 4. Checkboxes & radios: visible, JUST-branded ----------------------- */
+/* The generic `.admin-content input` rule above styles ALL inputs like text
+   fields (14px radius, inset shadow); reset that for checkable controls so
+   they render as proper native controls tinted with the brand colour. */
+.admin-content input[type="checkbox"]:not(.sr-only),
+.admin-content input[type="radio"]:not(.sr-only) {
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  accent-color: var(--just-blue);
+  width: 16px !important;
+  height: 16px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.admin-content input[type="radio"]:not(.sr-only) {
+  border-radius: 50% !important;
+}
+
+/* --- 5. File inputs: themed selector button ------------------------------ */
+.admin-content input[type="file"] {
+  padding: 8px !important;
+  cursor: pointer;
+}
+
+.admin-content input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--just-blue), #1f5f73);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.admin-content input[type="file"]::file-selector-button:hover {
+  filter: saturate(1.1) brightness(1.05);
+}
+
+/* --- 6. Safety net: any remaining pure-white text on a light surface ------ */
+/* `.text-white` is already remapped, but catch inline-styled / arbitrary
+   white text that isn't sitting on a coloured surface handled in section 2. */
+.admin-content .text-white\/70,
+.admin-content .text-white\/80,
+.admin-content .text-white\/90 {
+  color: var(--just-muted) !important;
 }

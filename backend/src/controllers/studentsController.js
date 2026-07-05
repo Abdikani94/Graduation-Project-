@@ -2,6 +2,7 @@ import { createId, readDb, updateDb } from '../lib/db.js';
 import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
+import { generateStudentNumber } from '../utils/studentNumber.js';
 
 const discountReasons = ['Regional', 'Financial Assistance', 'Scholarship', 'Other'];
 const discountPercentages = [20, 25, 30, 100];
@@ -42,7 +43,7 @@ export const createStudent = async (req, res) => {
     const item = {
       id: createId('stu'),
       applicationId: req.body.applicationId || '',
-      studentNumber: req.body.studentNumber || `JUST-${new Date().getFullYear()}-${String(db.students.length + 1).padStart(4, '0')}`,
+      studentNumber: req.body.studentNumber || generateStudentNumber(db, department || faculty),
       fullName,
       email,
       mobile,
