@@ -20,6 +20,62 @@ const statusClass = (status) => {
   return 'text-[#d97706] bg-[#d97706]/10 border-[#d97706]/20';
 };
 
+// Every field a student submits during application. Values map 1:1 to the
+// backend application record, whose PATCH endpoint already whitelists them.
+const EDIT_SECTIONS = [
+  {
+    title: 'Personal Information',
+    fields: [
+      { key: 'fullName', label: 'Full Name' },
+      { key: 'motherName', label: "Mother's Name" },
+      { key: 'nationality', label: 'Nationality' },
+      { key: 'nationalId', label: 'National ID' },
+      { key: 'rollNumber', label: 'Roll Number' },
+      { key: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
+      { key: 'placeOfBirth', label: 'Place of Birth' },
+      { key: 'district', label: 'District' },
+      { key: 'area', label: 'Area' },
+      { key: 'email', label: 'Email', type: 'email' },
+      { key: 'mobile', label: 'Mobile' },
+      { key: 'sex', label: 'Sex', options: ['Male', 'Female'] },
+      { key: 'maritalStatus', label: 'Marital Status', options: ['Single', 'Marriage', 'Divorced', 'Widowed'] },
+      { key: 'campus', label: 'Campus' },
+    ],
+  },
+  {
+    title: 'Emergency Contact & School',
+    fields: [
+      { key: 'emergencyName', label: 'Emergency Contact Name' },
+      { key: 'emergencyTell', label: 'Emergency Phone' },
+      { key: 'relationship', label: 'Relationship', options: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'] },
+      { key: 'familyStudied', label: 'Family Studied Here', options: ['Haa', 'Maya'] },
+      { key: 'schoolName', label: 'Secondary School' },
+      { key: 'schoolDistrict', label: 'School District' },
+      { key: 'graduationYear', label: 'Graduation Year' },
+      { key: 'percentage', label: 'Passing Grade', options: ['A', 'A-', 'B+', 'B', 'B-'] },
+      { key: 'heardFrom', label: 'Heard About Us From', options: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'] },
+    ],
+  },
+  {
+    title: 'Program & Payment',
+    fields: [
+      { key: 'faculty', label: 'Faculty' },
+      { key: 'department', label: 'Program' },
+      { key: 'modeOfStudy', label: 'Mode of Study', options: ['Full Time', 'Part Time'] },
+      { key: 'paymentPlan', label: 'Payment Plan', options: ['Admission fee only', 'Semester payment', 'Full year payment'] },
+      { key: 'paymentMethod', label: 'Payment Method', options: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal'] },
+      { key: 'paymentPhone', label: 'Payment Phone' },
+      { key: 'paymentAmount', label: 'Payment Amount' },
+      { key: 'paymentTransactionId', label: 'Transaction ID' },
+      { key: 'paymentStatus', label: 'Payment Status', options: ['Pending', 'Paid', 'Failed'] },
+    ],
+  },
+];
+
+const EDIT_FIELD_KEYS = EDIT_SECTIONS.flatMap((section) => section.fields.map((field) => field.key));
+
+const editInputClass = 'bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary w-full';
+
 const Applications = () => {
   const [applications, setApplications] = useState([]);
   const [summary, setSummary] = useState({ total: 0, approved: 0, pending: 0, rejected: 0 });
@@ -167,12 +223,7 @@ const Applications = () => {
     setSelectedApplication(null);
     setEditingApplication(app);
     setEditForm({
-      fullName: app.fullName || '',
-      email: app.email || '',
-      mobile: app.mobile || '',
-      faculty: app.faculty || '',
-      department: app.department || '',
-      campus: app.campus || '',
+      ...Object.fromEntries(EDIT_FIELD_KEYS.map((key) => [key, app[key] ?? ''])),
       paymentStatus: app.paymentStatus || 'Pending',
       notes: app.notes || '',
       classId: app.classId || '',
@@ -354,50 +405,72 @@ const Applications = () => {
 
       {editingApplication && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[640px] max-h-[90vh] overflow-y-auto p-7 relative">
+          <Card className="w-full max-w-[760px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={() => setEditingApplication(null)} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">Edit Student Information</h2>
             <p className="text-gray-500 text-[12px] mb-6">{editingApplication.reference}</p>
-            <form onSubmit={handleEditSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                ['fullName', 'Full Name'],
-                ['email', 'Email'],
-                ['mobile', 'Mobile'],
-                ['faculty', 'Faculty'],
-                ['department', 'Program'],
-                ['campus', 'Campus'],
-                ['paymentStatus', 'Payment Status'],
-              ].map(([key, label]) => (
-                <label key={key} className="flex flex-col gap-2 text-white text-[13px] font-semibold">
-                  {label}
-                  <input value={editForm[key] || ''} onChange={(event) => setEditForm((form) => ({ ...form, [key]: event.target.value }))} className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary" />
-                </label>
+            <form onSubmit={handleEditSubmit} className="flex flex-col gap-7">
+              {EDIT_SECTIONS.map((section) => (
+                <div key={section.title} className="flex flex-col gap-4">
+                  <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.06em] border-b border-border-color pb-2">{section.title}</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {section.fields.map(({ key, label, type, options }) => (
+                      <label key={key} className="flex flex-col gap-2 text-text-dark text-[13px] font-semibold">
+                        {label}
+                        {options ? (
+                          <select
+                            value={editForm[key] ?? ''}
+                            onChange={(event) => setEditForm((form) => ({ ...form, [key]: event.target.value }))}
+                            className={editInputClass}
+                          >
+                            <option value="">{`Select ${label.toLowerCase()}`}</option>
+                            {(editForm[key] && !options.includes(editForm[key]) ? [editForm[key], ...options] : options).map((option) => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type={type || 'text'}
+                            value={editForm[key] ?? ''}
+                            onChange={(event) => setEditForm((form) => ({ ...form, [key]: event.target.value }))}
+                            className={editInputClass}
+                          />
+                        )}
+                      </label>
+                    ))}
+                  </div>
+                </div>
               ))}
-              <label className="md:col-span-2 flex flex-col gap-2 text-white text-[13px] font-semibold">
-                Class ({editingApplication.faculty} / {editingApplication.department})
-                <select
-                  value={editForm.classId || ''}
-                  onChange={(event) => setEditForm((form) => ({ ...form, classId: event.target.value }))}
-                  disabled={isLoadingEditClasses}
-                  className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary disabled:opacity-60"
-                >
-                  <option value="">{isLoadingEditClasses ? 'Loading classes...' : 'No class assigned'}</option>
-                  {editClasses.map((classItem) => (
-                    <option key={classItem.id} value={classItem.id}>
-                      {classItem.name} ({classItem.enrolled}/{classItem.capacity}{classItem.status === 'Full' ? ' - Full' : ''})
-                    </option>
-                  ))}
-                </select>
-                {!isLoadingEditClasses && editClasses.length === 0 && (
-                  <span className="text-[#d97706] text-[12px] font-normal">No classes exist yet for this department. Create one on the Classes page.</span>
-                )}
-              </label>
-              <label className="md:col-span-2 flex flex-col gap-2 text-white text-[13px] font-semibold">
-                Notes
-                <textarea value={editForm.notes || ''} onChange={(event) => setEditForm((form) => ({ ...form, notes: event.target.value }))} className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary min-h-[90px]" />
-              </label>
-              <div className="md:col-span-2 flex justify-end gap-3 mt-2">
-                <button type="button" onClick={() => setEditingApplication(null)} className="px-6 py-3 rounded-full border border-white/10 text-gray-400 text-[13px] font-semibold">Cancel</button>
+
+              <div className="flex flex-col gap-4">
+                <h3 className="text-primary text-[12px] font-bold uppercase tracking-[0.06em] border-b border-border-color pb-2">Enrollment</h3>
+                <label className="flex flex-col gap-2 text-text-dark text-[13px] font-semibold">
+                  Class ({editingApplication.faculty} / {editingApplication.department})
+                  <select
+                    value={editForm.classId || ''}
+                    onChange={(event) => setEditForm((form) => ({ ...form, classId: event.target.value }))}
+                    disabled={isLoadingEditClasses}
+                    className={`${editInputClass} disabled:opacity-60`}
+                  >
+                    <option value="">{isLoadingEditClasses ? 'Loading classes...' : 'No class assigned'}</option>
+                    {editClasses.map((classItem) => (
+                      <option key={classItem.id} value={classItem.id}>
+                        {classItem.name} ({classItem.enrolled}/{classItem.capacity}{classItem.status === 'Full' ? ' - Full' : ''})
+                      </option>
+                    ))}
+                  </select>
+                  {!isLoadingEditClasses && editClasses.length === 0 && (
+                    <span className="text-[#d97706] text-[12px] font-normal">No classes exist yet for this department. Create one on the Classes page.</span>
+                  )}
+                </label>
+                <label className="flex flex-col gap-2 text-text-dark text-[13px] font-semibold">
+                  Notes
+                  <textarea value={editForm.notes || ''} onChange={(event) => setEditForm((form) => ({ ...form, notes: event.target.value }))} className={`${editInputClass} min-h-[90px]`} />
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-3 mt-1">
+                <button type="button" onClick={() => setEditingApplication(null)} className="px-6 py-3 rounded-full border border-border-color text-text-muted text-[13px] font-semibold hover:bg-main-bg transition-colors">Cancel</button>
                 <button disabled={isSaving} type="submit" className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold disabled:opacity-50">
                   {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
