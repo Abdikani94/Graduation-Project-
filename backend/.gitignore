@@ -1,0 +1,7 @@
+.env
+node_modules/
+data/database.json
+uploads/*
+!uploads/.gitkeep
+*.err
+*.log

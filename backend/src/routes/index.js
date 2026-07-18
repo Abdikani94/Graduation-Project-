@@ -7,7 +7,8 @@ import {
   getApplication,
   listApplications,
   updateApplication,
-  updateApplicationStatus
+  updateApplicationStatus,
+  submitPaidApplication
 } from '../controllers/applicationsController.js';
 import { getDashboard } from '../controllers/dashboardController.js';
 import { getOptions } from '../controllers/optionsController.js';
@@ -28,6 +29,8 @@ import { exportReportCsv, getReportSummary } from '../controllers/reportsControl
 import { createAdminUser, deleteAdminUser, listAdminUsers, updateAdminUser } from '../controllers/adminUsersController.js';
 import { getSettings, updateSettings } from '../controllers/settingsController.js';
 import { exportActivityCsv, listActivity } from '../controllers/activityController.js';
+import { initiate, preview, receipt, status } from '../controllers/paymentController.js';
+import { requirePaymentAuth } from '../middleware/paymentAuth.js';
 
 export const registerRoutes = (router) => {
   router.get('/health', (req, res) => {
@@ -49,6 +52,7 @@ export const registerRoutes = (router) => {
   router.delete('/api/programs/:programId/departments/:departmentId', requireAuth(deleteDepartment, ['Admin']));
 
   router.post('/api/applications', createApplication);
+  router.post('/api/applications/:id/submit', requirePaymentAuth(submitPaidApplication));
   router.get('/api/applications', requireAuth(listApplications, ['Admin', 'Officer']));
   router.get('/api/applications/export/csv', requireAuth(exportApplicationsCsv, ['Admin', 'Officer']));
   router.get('/api/applications/:id', requireAuth(getApplication, ['Admin', 'Officer']));
@@ -69,6 +73,10 @@ export const registerRoutes = (router) => {
   router.delete('/api/classes/:id', requireAuth(deleteClass, ['Admin']));
 
   router.get('/api/payments', requireAuth(listPayments, ['Admin', 'Officer']));
+  router.post('/api/payments/preview', requirePaymentAuth(preview));
+  router.post('/api/payments/initiate', requirePaymentAuth(initiate));
+  router.get('/api/payments/:referenceId/status', requirePaymentAuth(status));
+  router.get('/api/payments/:referenceId/receipt', requirePaymentAuth(receipt));
   router.post('/api/payments', requireAuth(createPayment, ['Admin', 'Officer']));
   router.get('/api/payments/export/csv', requireAuth(exportPaymentsCsv, ['Admin', 'Officer']));
   router.patch('/api/payments/:id', requireAuth(updatePayment, ['Admin', 'Officer']));

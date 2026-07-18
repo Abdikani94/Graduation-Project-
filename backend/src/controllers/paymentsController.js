@@ -5,7 +5,20 @@ import { addActivity } from '../services/audit.js';
 
 export const listPayments = async (req, res) => {
   const db = await readDb();
-  let items = sortNewest(db.payments);
+  let items = sortNewest(db.payments).map((item) => ({
+    id: item.id,
+    applicationId: item.applicationId,
+    reference: item.reference || item.registrationReference || '',
+    paymentReference: item.referenceId || '',
+    amount: Number(item.amount || 0),
+    currency: item.currency,
+    method: item.method || item.paymentMethod,
+    transactionCode: item.transactionCode || item.providerTransactionId || '',
+    status: item.status,
+    payerPhone: item.payerPhoneMasked || '',
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt
+  }));
   const { search, method, status } = req.query;
 
   if (method && method !== 'Method') items = items.filter((item) => item.method === method);
@@ -13,7 +26,7 @@ export const listPayments = async (req, res) => {
   items = items.filter((item) => matchesText(item, ['reference', 'method', 'transactionCode', 'status'], search));
 
   const today = new Date().toISOString().slice(0, 10);
-  const paid = db.payments.filter((item) => item.status === 'Paid');
+  const paid = db.payments.filter((item) => ['Paid', 'SUCCESS'].includes(item.status));
   const summary = {
     totalCollected: paid.reduce((sum, item) => sum + Number(item.amount || 0), 0),
     todayCollected: paid

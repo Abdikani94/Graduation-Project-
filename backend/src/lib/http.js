@@ -15,10 +15,18 @@ export const fail = (status, message, details) => {
 };
 
 export const setCorsHeaders = (req, res) => {
-  const isWildcard = env.corsOrigin === '*';
+  const configuredOrigins = env.corsOrigin.split(',').map((item) => item.trim()).filter(Boolean);
+  const isWildcard = configuredOrigins.includes('*');
   const origin = req.headers.origin;
-  const allowedOrigin = isWildcard ? (origin || '*') : env.corsOrigin;
+  const isLocalDevelopmentOrigin = env.nodeEnv !== 'production' && /^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || '');
+  const isConfiguredOrigin = Boolean(origin && configuredOrigins.includes(origin));
+  const allowedOrigin = isWildcard
+    ? (origin || '*')
+    : isConfiguredOrigin || isLocalDevelopmentOrigin
+      ? origin
+      : configuredOrigins[0];
   res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   // Never combine a wildcard/reflected origin with credentials - only the single

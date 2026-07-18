@@ -4,6 +4,7 @@ import { matchesText, paginate, sortNewest, toCsv } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 import { saveApplicationFile } from '../utils/files.js';
 import { generateStudentNumber } from '../utils/studentNumber.js';
+import { signToken } from '../lib/crypto.js';
 
 const applicationFields = [
   'fullName',
@@ -250,19 +251,24 @@ export const createApplication = async (req, res) => {
       faculty,
       department,
       admissionFee: getProgramFee(db, faculty),
-      paymentStatus: 'Pending',
-      status: 'Pending',
+      paymentStatus: 'UNPAID',
+      status: fields.paymentMethod === 'EVC Plus' ? 'DRAFT' : 'Pending',
       documents,
       notes: '',
       reviewedBy: null,
       createdAt: now,
       updatedAt: now
     };
+    if (application.paymentMethod === 'EVC Plus') {
+      application.paymentPhone = null;
+      application.paymentAmount = null;
+      application.paymentTransactionId = null;
+    }
 
     db.applications.unshift(application);
 
     let payment = null;
-    if (application.paymentMethod) {
+    if (application.paymentMethod && application.paymentMethod !== 'EVC Plus') {
       payment = {
         id: createId('pay'),
         applicationId: application.id,
@@ -279,17 +285,55 @@ export const createApplication = async (req, res) => {
     }
 
     addActivity(db, req, {
-      action: 'Submitted Application',
-      afterAction: 'Pending',
+      action: application.status === 'DRAFT' ? 'Created Application Draft' : 'Submitted Application',
+      afterAction: application.status,
       applicantPerson: application.fullName,
       applicationReference: application.reference,
       module: 'Applications'
     });
 
-    return { application, payment };
+    const paymentAccessToken = signToken({
+      sub: application.id,
+      type: 'application_payment',
+      applicationId: application.id
+    }, 60 * 60);
+
+    return { application, payment, paymentAccessToken };
   });
 
   sendJson(res, 201, result);
+};
+
+export const submitPaidApplication = async (req, res) => {
+  const result = await updateDb((db) => {
+    const application = db.applications.find((item) => item.id === req.params.id || item.reference === req.params.id);
+    if (!application) fail(404, 'Application not found');
+    if (req.paymentOwner.role === 'Applicant' && req.paymentOwner.applicationId !== application.id) {
+      fail(403, 'You are not authorized to submit this application');
+    }
+    if (application.status !== 'DRAFT') {
+      return { application, payment: db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS') || null };
+    }
+    const payment = db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS');
+    if (!payment) fail(409, 'A confirmed payment is required before submitting this application.');
+    application.status = 'Pending';
+    application.paymentStatus = 'PAID';
+    application.paymentMethod = 'EVC Plus';
+    application.paymentPhone = payment.payerPhoneMasked;
+    application.paymentAmount = payment.amount;
+    application.paymentTransactionId = payment.providerTransactionId || '';
+    application.updatedAt = new Date().toISOString();
+    addActivity(db, req, {
+      action: 'Submitted Paid Application',
+      beforeAction: 'DRAFT',
+      afterAction: 'Pending',
+      applicantPerson: application.fullName,
+      applicationReference: application.reference,
+      module: 'Applications'
+    });
+    return { application, payment };
+  });
+  sendJson(res, 200, result);
 };
 
 export const listApplications = async (req, res) => {

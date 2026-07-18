@@ -50,5 +50,19 @@ export const env = {
   mongodbDbName: process.env.MONGODB_DB_NAME || 'jamhuriya_admission',
   mongoConnectTimeoutMs: toNumber(process.env.MONGO_CONNECT_TIMEOUT_MS, 5000),
   dbFile: process.env.DB_FILE || path.join(ROOT_DIR, 'data', 'database.json'),
-  uploadDir: process.env.UPLOAD_DIR || path.join(ROOT_DIR, 'uploads')
+  uploadDir: process.env.UPLOAD_DIR || path.join(ROOT_DIR, 'uploads'),
+  waafiEnv: process.env.WAAFI_ENV === 'production' ? 'production' : 'sandbox',
+  waafiSandboxUrl: process.env.WAAFI_SANDBOX_URL || 'https://sandbox.waafipay.com/asm',
+  waafiProductionUrl: process.env.WAAFI_PRODUCTION_URL || 'https://api.waafipay.net/asm',
+  waafiMerchantUid: process.env.WAAFI_MERCHANT_UID || '',
+  waafiApiUserId: process.env.WAAFI_API_USER_ID || '',
+  waafiApiKey: process.env.WAAFI_API_KEY || '',
+  waafiPaymentMethod: process.env.WAAFI_PAYMENT_METHOD || 'MWALLET_ACCOUNT',
+  waafiCurrency: process.env.WAAFI_CURRENCY || 'USD',
+  waafiMerchantDisplayName: process.env.WAAFI_MERCHANT_DISPLAY_NAME || process.env.WAAFI_MERCHANT_NAME || 'Online Registration System',
+  waafiMerchantPhone: process.env.WAAFI_MERCHANT_PHONE || '',
+  waafiMinimumAmount: toNumber(process.env.WAAFI_MINIMUM_AMOUNT, 1),
+  waafiMaximumAmount: toNumber(process.env.WAAFI_MAXIMUM_AMOUNT, 1000),
+  waafiRequestTimeoutMs: toNumber(process.env.WAAFI_REQUEST_TIMEOUT_MS, 30000),
+  waafiPhoneEncryptionKey: process.env.WAAFI_PHONE_ENCRYPTION_KEY || jwtSecret
 };

@@ -61,6 +61,14 @@ const writeJsonDb = async (data) => {
 
 const ensureMongoDb = async () => {
   const database = await getMongoDatabase();
+  await Promise.all([
+    database.collection('payments').createIndex({ referenceId: 1 }, { unique: true, sparse: true }),
+    database.collection('payments').createIndex({ requestId: 1 }, { unique: true, sparse: true }),
+    database.collection('payments').createIndex(
+      { applicationId: 1, userId: 1, idempotencyKey: 1 },
+      { unique: true, sparse: true }
+    )
+  ]);
   const userCount = await database.collection('users').countDocuments();
   if (userCount === 0) {
     await writeMongoDb(createSeedData({ hashPassword }));
