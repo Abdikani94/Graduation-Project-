@@ -214,7 +214,7 @@ export const createSeedData = ({ hashPassword }) => {
         email: 'admin@jamhuriya.edu.so',
         passwordHash: hashPassword('admin12345'),
         role: 'Admin',
-        permissions: ['admission_period.view', 'admission_period.create', 'admission_period.update', 'admission_period.open', 'admission_period.close', 'admission_period.pause', 'admission_period.resume', 'admission_period.extend', 'admission_period.reopen', 'admission_period.cancel', 'admission_period.archive', 'admission_period.view_audit_log'],
+        permissions: ['admission_period.view', 'admission_period.create', 'admission_period.update', 'admission_period.open', 'admission_period.close', 'admission_period.pause', 'admission_period.resume', 'admission_period.extend', 'admission_period.reopen', 'admission_period.cancel', 'admission_period.archive', 'admission_period.view_audit_log', 'scheduled_message.view', 'scheduled_message.create', 'scheduled_message.update', 'scheduled_message.schedule', 'scheduled_message.send_now', 'scheduled_message.cancel', 'scheduled_message.retry', 'scheduled_message.view_results', 'scheduled_message.manage_templates'],
         campus: 'Main Campus',
         status: 'Active',
         createdAt: isoDaysAgo(90),

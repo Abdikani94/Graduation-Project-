@@ -6,6 +6,7 @@ import { saveApplicationFile } from '../utils/files.js';
 import { generateStudentNumber } from '../utils/studentNumber.js';
 import { assertOpenForApplication } from './admissionPeriodsController.js';
 import { signToken } from '../lib/crypto.js';
+import { createApplicationSubmittedNotification, scheduleSmsNotification } from '../services/smsService.js';
 
 const applicationFields = [
   'fullName',
@@ -314,10 +315,19 @@ export const createApplication = async (req, res) => {
       applicationId: application.id
     }, 60 * 60);
 
-    return { application, payment, paymentAccessToken };
+    const smsNotification = application.status === 'Pending'
+      ? createApplicationSubmittedNotification(db, application)
+      : null;
+    return { application, payment, paymentAccessToken, smsNotification };
   });
 
-  sendJson(res, 201, result);
+  scheduleSmsNotification(result.smsNotification?.status === 'PENDING' ? result.smsNotification.id : null);
+  sendJson(res, 201, {
+    application: result.application,
+    payment: result.payment,
+    paymentAccessToken: result.paymentAccessToken,
+    smsStatus: result.smsNotification?.status || null
+  });
 };
 
 export const submitPaidApplication = async (req, res) => {
@@ -328,7 +338,8 @@ export const submitPaidApplication = async (req, res) => {
       fail(403, 'You are not authorized to submit this application');
     }
     if (application.status !== 'DRAFT') {
-      return { application, payment: db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS') || null };
+      const smsNotification = (db.smsNotifications || []).find((item) => item.idempotencyKey === `APPLICATION_SUBMITTED:${application.id}`) || null;
+      return { application, payment: db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS') || null, smsNotification };
     }
     const admissionPeriod = assertOpenForApplication(db, application);
     if (application.admissionPeriodId && application.admissionPeriodId !== admissionPeriod.id) fail(409, 'The admission period for this application is no longer active.');
@@ -349,9 +360,11 @@ export const submitPaidApplication = async (req, res) => {
       applicationReference: application.reference,
       module: 'Applications'
     });
-    return { application, payment };
+    const smsNotification = createApplicationSubmittedNotification(db, application);
+    return { application, payment, smsNotification };
   });
-  sendJson(res, 200, result);
+  scheduleSmsNotification(result.smsNotification?.status === 'PENDING' ? result.smsNotification.id : null);
+  sendJson(res, 200, { application: result.application, payment: result.payment, smsStatus: result.smsNotification?.status || null });
 };
 
 export const listApplications = async (req, res) => {

@@ -19,12 +19,22 @@ process.env.WAAFI_MAXIMUM_AMOUNT = '1000';
 process.env.WAAFI_REQUEST_TIMEOUT_MS = '20';
 process.env.MAX_STORED_FILE_BYTES = '256';
 process.env.FILE_STORAGE_DIR = path.join(tmpDir, 'centralized-files');
+// Tests must never contact the real Xaliye6 provider.
+process.env.SMS_ENABLED = 'false';
 
 const { createApp } = await import('../src/app.js');
 const { closeDb, ensureDb, readDb, updateDb } = await import('../src/lib/db.js');
 const { setWaafiTransportForTests } = await import('../src/providers/waafiPayProvider.js');
 const { normalizeSomaliEvcPhone } = await import('../src/validators/phoneValidator.js');
 const { parseAmountToMinor } = await import('../src/validators/paymentValidator.js');
+const { env } = await import('../src/config/env.js');
+const {
+  createApplicationSubmittedNotification,
+  normalizeSomaliPhoneNumber,
+  processSmsNotification,
+  setSmsTransportForTests
+} = await import('../src/services/smsService.js');
+const { processCampaign } = await import('../src/services/scheduledMessageService.js');
 
 await ensureDb();
 
@@ -718,4 +728,167 @@ test('frontend has no EVC PIN input field', async () => {
   assert.equal(/type=["']password["']/i.test(source), false);
   const applyPage = await fs.readFile(new URL('../../frontend/src/pages/ApplyPage.jsx', import.meta.url), 'utf8');
   assert.match(applyPage, /confirmedEvcPayment\?\.status !== 'SUCCESS'/);
+});
+
+test('Somali SMS phone numbers normalize to international format and invalid numbers are rejected', () => {
+  assert.equal(normalizeSomaliPhoneNumber('0618833500'), '+252618833500');
+  assert.equal(normalizeSomaliPhoneNumber('618833500'), '+252618833500');
+  assert.equal(normalizeSomaliPhoneNumber('252618833500'), '+252618833500');
+  assert.equal(normalizeSomaliPhoneNumber('+252618833500'), '+252618833500');
+  assert.throws(() => normalizeSomaliPhoneNumber(''));
+  assert.throws(() => normalizeSomaliPhoneNumber('12345'));
+});
+
+test('application SMS is persistent, idempotent, uses the stored phone, and sends the exact Xaliye6 payload', async () => {
+  env.smsEnabled = true;
+  let providerCall;
+  setSmsTransportForTests(async (url, options) => {
+    providerCall = { url, payload: JSON.parse(options.body) };
+    return { ok: true, status: 200, json: async () => ({ success: true, messageId: 'SMS-TEST-1' }) };
+  });
+  const application = {
+    id: `app_sms_${crypto.randomUUID()}`, reference: `JUM-SMS-${crypto.randomUUID().slice(0, 8)}`,
+    fullName: 'SMS Test Student', mobile: '0618833500', status: 'Pending'
+  };
+  const notification = await updateDb((db) => {
+    db.applications.unshift(application);
+    const first = createApplicationSubmittedNotification(db, application);
+    const duplicate = createApplicationSubmittedNotification(db, application);
+    assert.equal(duplicate.id, first.id);
+    return first;
+  });
+  const sent = await processSmsNotification(notification.id);
+  assert.equal(sent.status, 'SENT');
+  assert.equal(sent.attemptCount, 1);
+  assert.equal(providerCall.url, 'https://api.xaliye6.online/sendSMS');
+  assert.deepEqual(providerCall.payload, {
+    mobile: '+252618833500',
+    message: 'Codsigaaga Diiwaangelinta si Guul leh ayaa loo gudbiyey. Mahadsanid.'
+  });
+  const persisted = await readDb();
+  assert.equal(persisted.smsNotifications.find((item) => item.id === notification.id).status, 'SENT');
+});
+
+test('SMS failure never removes the saved application and Admin-only monitoring is protected', async () => {
+  env.smsEnabled = true;
+  setSmsTransportForTests(async () => { throw new Error('network unavailable'); });
+  const application = {
+    id: `app_sms_fail_${crypto.randomUUID()}`, reference: `JUM-SMS-FAIL-${crypto.randomUUID().slice(0, 8)}`,
+    fullName: 'SMS Failure Student', mobile: '618833501', status: 'Pending'
+  };
+  const notification = await updateDb((db) => {
+    db.applications.unshift(application);
+    return createApplicationSubmittedNotification(db, application);
+  });
+  const failed = await processSmsNotification(notification.id);
+  assert.equal(failed.status, 'FAILED');
+  assert.equal((await readDb()).applications.some((item) => item.id === application.id), true);
+
+  const forbidden = await request({ path: '/api/sms-notifications', token: fileUserToken });
+  assert.equal(forbidden.status, 403);
+  const allowed = await request({ path: '/api/sms-notifications?status=FAILED', token: fileAdminToken });
+  assert.equal(allowed.status, 200);
+  assert.ok(allowed.body.data.some((item) => item.id === notification.id));
+  env.smsEnabled = false;
+  setSmsTransportForTests(null);
+});
+
+test('application approval remains separate and does not create a scheduled SMS campaign', async () => {
+  const suffix = crypto.randomUUID().slice(0, 8);
+  const applicationId = `app_approval_sms_${suffix}`;
+  const classId = `class_approval_sms_${suffix}`;
+  await updateDb((db) => {
+    db.classes.unshift({ id: classId, name: 'CNS Approval Test', faculty: 'Computer Science & IT', department: 'Computer Application', capacity: 50 });
+    db.applications.unshift({
+      id: applicationId, reference: `JUM-APPROVAL-${suffix}`, fullName: 'Approved SMS Student',
+      email: `approval-${suffix}@example.com`, mobile: '0618833502', faculty: 'Computer Science & IT',
+      department: 'Computer Application', campus: 'Main Campus', status: 'Pending', notes: '', classId,
+      createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+    });
+  });
+  const approved = await request({ method: 'PATCH', path: `/api/applications/${applicationId}/status`, token: fileAdminToken,
+    body: { status: 'Approved', classId } });
+  assert.equal(approved.status, 200, approved.body?.error?.message);
+  assert.equal(approved.body.application.status, 'Approved');
+  assert.equal(approved.body.smsStatus, undefined);
+  const db = await readDb();
+  assert.equal(db.smsCampaigns.some((item) => item.applicationId === applicationId), false);
+  assert.equal(db.smsNotifications.some((item) => item.idempotencyKey === `APPLICATION_APPROVED:${applicationId}`), false);
+});
+
+test('scheduled message APIs are Admin-only and validate placeholders and future server time', async () => {
+  const forbidden = await request({ path: '/api/scheduled-messages', token: fileUserToken });
+  assert.equal(forbidden.status, 403);
+  const unsupported = await request({ method: 'POST', path: '/api/scheduled-messages/preview', token: fileAdminToken,
+    body: { messageContent: 'Hello {{unsupported_value}}', targetAudience: 'All students' } });
+  assert.equal(unsupported.status, 422);
+  const past = await request({ method: 'POST', path: '/api/scheduled-messages', token: fileAdminToken, body: {
+    title: 'Past campaign', messageType: 'Custom Message', messageContent: 'Hello students', targetAudience: 'All students',
+    action: 'schedule', scheduledAt: new Date(Date.now() - 60_000).toISOString()
+  }});
+  assert.equal(past.status, 422);
+});
+
+test('Admin previews class and individual audiences with personalized recipient counts', async () => {
+  const marker = crypto.randomUUID().slice(0, 8); const classId = `scheduled_class_${marker}`;
+  await updateDb((db) => {
+    db.classes.unshift({ id: classId, name: 'CS Scheduled A', faculty: 'Computer Science & IT', department: 'Computer Application', capacity: 50, startDate: '2026-09-01', startTime: '08:00' });
+    db.students.unshift(
+      { id: `scheduled_valid_${marker}`, studentNumber: `JUST-${marker}-1`, fullName: 'Valid Scheduled Student', mobile: '0618833503', faculty: 'Computer Science & IT', department: 'Computer Application', campus: 'Campus 3', classId, className: 'CS Scheduled A', status: 'Enrolled', createdAt: new Date().toISOString() },
+      { id: `scheduled_invalid_${marker}`, studentNumber: `JUST-${marker}-2`, fullName: 'Invalid Scheduled Student', mobile: 'invalid', faculty: 'Computer Science & IT', department: 'Computer Application', campus: 'Campus 3', classId, className: 'CS Scheduled A', status: 'Enrolled', createdAt: new Date().toISOString() }
+    );
+  });
+  const response = await request({ method: 'POST', path: '/api/scheduled-messages/preview', token: fileAdminToken, body: {
+    messageContent: 'Hello {{student_name}}, class {{class_name}} starts {{class_start_date}}.',
+    targetAudience: 'Students in a selected class', targetFilters: { classId }
+  }});
+  assert.equal(response.status, 200, response.body?.error?.message);
+  assert.equal(response.body.totalRecipients, 2); assert.equal(response.body.validRecipients, 1); assert.equal(response.body.invalidRecipients, 1);
+  assert.match(response.body.recipients[0].personalizedMessage, /CS Scheduled A/);
+  assert.equal(response.body.recipients.some((item) => /{{/.test(item.personalizedMessage)), false);
+
+  const individual = await request({ method: 'POST', path: '/api/scheduled-messages/preview', token: fileAdminToken, body: {
+    messageContent: 'Individual message for {{student_id}}', targetAudience: 'Individually selected students', selectedStudentIds: [`scheduled_valid_${marker}`]
+  }});
+  assert.equal(individual.body.totalRecipients, 1);
+});
+
+test('scheduled campaign waits, sends in background batches once, and isolates recipient failures', async () => {
+  env.smsEnabled = true; env.smsBatchSize = 1; env.smsBatchDelayMs = 0;
+  let calls = 0;
+  setSmsTransportForTests(async (_url, options) => {
+    calls += 1; const payload = JSON.parse(options.body);
+    if (payload.mobile.endsWith('504')) throw new Error('temporary network failure');
+    return { ok: true, status: 200, json: async () => ({ success: true, messageId: `MSG-${calls}` }) };
+  });
+  const marker = crypto.randomUUID().slice(0, 8); const ids = [`batch_a_${marker}`, `batch_b_${marker}`];
+  await updateDb((db) => db.students.unshift(
+    { id: ids[0], studentNumber: `BATCH-${marker}-A`, fullName: 'Batch Success', mobile: '0618833505', faculty: 'Engineering', department: 'Civil Engineering', campus: 'Campus 2', status: 'Enrolled', createdAt: new Date().toISOString() },
+    { id: ids[1], studentNumber: `BATCH-${marker}-B`, fullName: 'Batch Failure', mobile: '0618833504', faculty: 'Engineering', department: 'Civil Engineering', campus: 'Campus 2', status: 'Enrolled', createdAt: new Date().toISOString() }
+  ));
+  const future = new Date(Date.now() + 3600_000).toISOString();
+  const created = await request({ method: 'POST', path: '/api/scheduled-messages', token: fileAdminToken, body: {
+    title: `Batch test ${marker}`, messageType: 'Orientation', messageContent: 'Welcome {{student_name}} ({{student_id}})',
+    targetAudience: 'Individually selected students', selectedStudentIds: ids, scheduledAt: future, action: 'schedule'
+  }});
+  assert.equal(created.status, 201, created.body?.error?.message); assert.equal(created.body.campaign.status, 'Scheduled'); assert.equal(calls, 0);
+  const campaignId = created.body.campaign.id;
+  await processCampaign(campaignId, { force: true });
+  let db = await readDb(); let campaign = db.smsCampaigns.find((item) => item.id === campaignId);
+  assert.equal(calls, 2); assert.equal(campaign.status, 'Partially Sent'); assert.equal(campaign.successfulCount, 1); assert.equal(campaign.failedCount, 1);
+  await processCampaign(campaignId, { force: true });
+  assert.equal(calls, 2, 'a completed campaign must not send successful recipients twice');
+  assert.ok(db.activities.some((item) => item.module === 'Scheduled Student Messages' && item.metadata?.campaignId === campaignId));
+  env.smsEnabled = false; setSmsTransportForTests(null);
+});
+
+test('cancelled scheduled campaign is never processed', async () => {
+  const future = new Date(Date.now() + 3600_000).toISOString();
+  const created = await request({ method: 'POST', path: '/api/scheduled-messages', token: fileAdminToken, body: {
+    title: 'Cancelled campaign', messageType: 'General Announcement', messageContent: 'This must not send.',
+    targetAudience: 'All students', scheduledAt: future, action: 'schedule'
+  }});
+  const cancelled = await request({ method: 'POST', path: `/api/scheduled-messages/${created.body.campaign.id}/cancel`, token: fileAdminToken, body: { reason: 'Test cancellation' } });
+  assert.equal(cancelled.body.campaign.status, 'Cancelled');
+  assert.equal(await processCampaign(created.body.campaign.id, { force: true }), null);
 });

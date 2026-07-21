@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, UserPlus, Users, Briefcase, TrendingUp, BookOpen, MessageCircle, History, Users2, FileText, Settings, LogOut, GraduationCap, Percent, FolderArchive, CalendarCheck, X
+  LayoutDashboard, UserPlus, Users, Briefcase, TrendingUp, BookOpen, MessageCircle, History, Users2, FileText, Settings, LogOut, GraduationCap, Percent, FolderArchive, CalendarCheck, MessageSquareText, MessagesSquare, X
 } from 'lucide-react';
 import Card from './Card';
 import logo from '../images/logo.jpg';
@@ -46,6 +46,8 @@ const Sidebar = ({ open = false, onClose = () => {} }) => {
           <NavItem onClick={onClose} to="/contact-messages" icon={MessageCircle}>Contact Messages</NavItem>
           <NavItem onClick={onClose} to="/file-storage" icon={FolderArchive}>File Storage</NavItem>
           {currentUser.role === 'Admin' && <NavItem onClick={onClose} to="/admission-periods" icon={CalendarCheck}>Admission Periods</NavItem>}
+          {currentUser.role === 'Admin' && <NavItem onClick={onClose} to="/sms-notifications" icon={MessageSquareText}>SMS Notifications</NavItem>}
+          {currentUser.role === 'Admin' && <NavItem onClick={onClose} to="/scheduled-messages" icon={MessagesSquare}>Scheduled Student Messages</NavItem>}
           <NavItem onClick={onClose} to="/activity-log" icon={History}>Activity Log</NavItem>
           <NavItem onClick={onClose} to="/admin-users" icon={Users2}>Admin Users</NavItem>
           <NavItem onClick={onClose} to="/admin-report" icon={FileText}>Admin Report</NavItem>

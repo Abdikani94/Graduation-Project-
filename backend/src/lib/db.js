@@ -8,9 +8,10 @@ import { hashPassword } from './crypto.js';
 
 const collections = [
   'users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities', 'classes',
-  'files', 'fileShares', 'fileActivities', 'notifications', 'admissionPeriods', 'admissionPeriodActivities'
+  'files', 'fileShares', 'fileActivities', 'notifications', 'smsNotifications', 'smsCampaigns', 'smsCampaignRecipients', 'smsTemplates', 'admissionPeriods', 'admissionPeriodActivities'
 ];
 const admissionPeriodPermissions = ['admission_period.view', 'admission_period.create', 'admission_period.update', 'admission_period.open', 'admission_period.close', 'admission_period.pause', 'admission_period.resume', 'admission_period.extend', 'admission_period.reopen', 'admission_period.cancel', 'admission_period.archive', 'admission_period.view_audit_log'];
+const scheduledMessagePermissions = ['scheduled_message.view', 'scheduled_message.create', 'scheduled_message.update', 'scheduled_message.schedule', 'scheduled_message.send_now', 'scheduled_message.cancel', 'scheduled_message.retry', 'scheduled_message.view_results', 'scheduled_message.manage_templates'];
 const defaultSettings = {
   universityName: 'Jamhuriya University',
   supportEmail: 'support@jamhuriya.edu.so',
@@ -69,7 +70,7 @@ const normalizeData = (data = {}) => {
     if (!Array.isArray(normalized[collection])) normalized[collection] = [];
   }
   for (const user of normalized.users) {
-    if (user.role === 'Admin' && !Array.isArray(user.permissions)) user.permissions = [...admissionPeriodPermissions];
+    if (user.role === 'Admin') user.permissions = [...new Set([...(user.permissions || []), ...admissionPeriodPermissions, ...scheduledMessagePermissions])];
   }
   return normalized;
 };
@@ -138,7 +139,13 @@ const ensureMongoDb = async () => {
     database.collection('files').createIndex({ approvalStatus: 1, isArchived: 1, createdAt: -1 }),
     database.collection('fileShares').createIndex({ fileId: 1, sharedWithUserId: 1 }),
     database.collection('fileActivities').createIndex({ fileId: 1, createdAt: -1 }),
-    database.collection('notifications').createIndex({ userId: 1, read: 1, createdAt: -1 })
+    database.collection('notifications').createIndex({ userId: 1, read: 1, createdAt: -1 }),
+    database.collection('smsNotifications').createIndex({ idempotencyKey: 1 }, { unique: true, sparse: true }),
+    database.collection('smsNotifications').createIndex({ status: 1, nextRetryAt: 1, createdAt: -1 })
+    ,database.collection('smsCampaigns').createIndex({ status: 1, scheduledAt: 1, archived: 1 })
+    ,database.collection('smsCampaignRecipients').createIndex({ idempotencyKey: 1 }, { unique: true, sparse: true })
+    ,database.collection('smsCampaignRecipients').createIndex({ campaignId: 1, status: 1 })
+    ,database.collection('smsTemplates').createIndex({ key: 1 }, { unique: true, sparse: true })
     ,database.collection('admissionPeriods').createIndex({ status: 1, openingDatetime: 1, closingDatetime: 1 })
     ,database.collection('admissionPeriods').createIndex({ academicYear: 1, intakeName: 1, facultyId: 1, programId: 1 })
     ,database.collection('admissionPeriodActivities').createIndex({ admissionPeriodId: 1, createdAt: -1 })

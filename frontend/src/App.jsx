@@ -23,6 +23,8 @@ import ProgramFeesPage from './pages/ProgramFeesPage';
 import AdmissionsPage from './pages/AdmissionsPage';
 import FileStorage from './pages/FileStorage';
 import AdmissionPeriods from './pages/AdmissionPeriods';
+import SmsNotifications from './pages/SmsNotifications';
+import ScheduledMessages from './pages/ScheduledMessages';
 
 const AdminLayout = () => {
   const token = localStorage.getItem('authToken');
@@ -52,6 +54,8 @@ const AdminLayout = () => {
           <Route path="/contact-messages" element={<ContactMessages />} />
           <Route path="/file-storage" element={<FileStorage />} />
           <Route path="/admission-periods" element={currentUser.role === 'Admin' ? <AdmissionPeriods /> : <Navigate to="/dashboard" replace />} />
+          <Route path="/sms-notifications" element={currentUser.role === 'Admin' ? <SmsNotifications /> : <Navigate to="/dashboard" replace />} />
+          <Route path="/scheduled-messages" element={currentUser.role === 'Admin' ? <ScheduledMessages /> : <Navigate to="/dashboard" replace />} />
           <Route path="/activity-log" element={<ActivityLog />} />
           <Route path="/admin-users" element={<AdminUsers />} />
           <Route path="/admin-report" element={<AdminReport />} />

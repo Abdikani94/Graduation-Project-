@@ -3,9 +3,13 @@ import { env } from './config/env.js';
 import { createApp } from './app.js';
 import { ensureDb } from './lib/db.js';
 import { startAdmissionPeriodScheduler } from './services/admissionPeriodScheduler.js';
+import { startSmsScheduler } from './services/smsService.js';
+import { startScheduledMessageScheduler } from './services/scheduledMessageService.js';
 
 await ensureDb();
 startAdmissionPeriodScheduler(env.admissionPeriodSchedulerMs);
+startSmsScheduler(env.smsSchedulerMs);
+startScheduledMessageScheduler(env.smsSchedulerMs);
 
 const server = http.createServer(createApp());
 
