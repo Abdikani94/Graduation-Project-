@@ -52,7 +52,7 @@ const EDIT_SECTIONS = [
       { key: 'schoolName', label: 'Secondary School' },
       { key: 'schoolDistrict', label: 'School District' },
       { key: 'graduationYear', label: 'Graduation Year' },
-      { key: 'percentage', label: 'Passing Grade', options: ['A', 'A-', 'B+', 'B', 'B-'] },
+      { key: 'percentage', label: 'Passing Grade', options: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'] },
       { key: 'heardFrom', label: 'Heard About Us From', options: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'] },
     ],
   },

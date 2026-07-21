@@ -3,14 +3,13 @@ import {
   ArrowRight,
   Check,
   ChevronDown,
-  Mail,
-  MapPin,
   MessageCircle,
-  Phone,
   Play,
   Send,
 } from 'lucide-react';
 import Toast from '../components/Toast';
+import PublicNav from '../components/PublicNav';
+import PublicFooter from '../components/PublicFooter';
 import agriculture from '../images/agriculture.jpg';
 import computer from '../images/FcaultyComputer.jpg';
 import engineering from '../images/engineering.jpg';
@@ -26,8 +25,8 @@ const faculties = [
     number: '01',
     name: 'Business',
     title: 'Faculty of Economics and Management',
-    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80',
-    alt: 'Business students discussing strategy and management',
+    image: 'https://i.pinimg.com/736x/c6/b4/34/c6b434d082daf34cbb8deea330c9ddfd.jpg',
+    alt: 'Business professionals reviewing documents together around a meeting table',
     description: 'Build strong foundations in leadership, accounting, administration, finance, and practical business decision-making.',
     programs: [
       'Business Administration',
@@ -41,8 +40,8 @@ const faculties = [
     number: '02',
     name: 'Computer Science',
     title: 'Faculty of Computer Science and Information Technology',
-    image: computer,
-    alt: 'Computer science students working in a technology lab',
+    image: 'https://i.pinimg.com/736x/96/d1/cc/96d1cc416bfc7a2a0a16feb235f1defa.jpg',
+    alt: 'Software developer working with source code across multiple computer screens',
     description: 'Study software, networking, multimedia, and applied computing through practical labs and modern technology projects.',
     programs: [
       'B.Sc. in Computer Application',
@@ -54,8 +53,8 @@ const faculties = [
     number: '03',
     name: 'Engineering',
     title: 'Faculty of Engineering',
-    image: engineering,
-    alt: 'Engineering students studying design and infrastructure',
+    image: 'https://i.pinimg.com/736x/c0/97/c5/c097c581971d49090f5096b4d4f8d1de.jpg',
+    alt: 'Civil engineers reviewing a bridge design in a professional planning session',
     description: 'Prepare for professional engineering work with strong training in design, infrastructure, systems, and applied science.',
     programs: ['B.Sc. in Civil Engineering', 'B.Sc. in Electrical Engineering', 'B.Sc. in Biomedical Engineering'],
   },
@@ -63,8 +62,8 @@ const faculties = [
     number: '04',
     name: 'Health Science',
     title: 'Faculty of Medicine and Health Science',
-    image: medicine,
-    alt: 'Health science students in a medical learning environment',
+    image: 'https://i.pinimg.com/736x/e7/2a/c8/e72ac869065166ab50ed62d420b05d43.jpg',
+    alt: 'Medical doctor wearing a white coat and stethoscope in a clinical setting',
     description: 'Develop the clinical, laboratory, public health, and patient-care knowledge needed for modern healthcare service.',
     programs: ['MBBS', 'B.Sc. in Nursing', 'B.Sc. in Midwifery', 'B.Sc. in Public Health', 'B.Sc. in Medical Laboratory Science'],
   },
@@ -72,8 +71,8 @@ const faculties = [
     number: '05',
     name: 'Agro-Veterinary',
     title: 'Faculty of Agriculture and Veterinary Science',
-    image: team,
-    alt: 'Students collaborating in an academic classroom',
+    image: 'https://images.pexels.com/photos/27421346/pexels-photo-27421346.jpeg?auto=compress&cs=tinysrgb&w=1600',
+    alt: 'Veterinary professional treating livestock during animal-health fieldwork',
     description: 'Learn agricultural science, animal health, food systems, and community development for sustainable local impact.',
     programs: ['B.Sc. in Agriculture', 'B.Sc. in Veterinary Science'],
   },
@@ -101,11 +100,26 @@ const requirements = [
 ];
 
 const faqs = [
-  'Who can apply to Jamhuriya University?',
-  'Which documents are required for online admission?',
-  'Can I track my admission status online?',
-  'How do I pay the admission fee?',
-  'When will admission results be announced?',
+  {
+    question: 'Who can apply to Jamhuriya University?',
+    answer: 'Applicants who have completed secondary school may apply. You must provide valid personal and school information and select an available faculty and department. Two years of work experience is recommended for part-time applicants.',
+  },
+  {
+    question: 'Which documents are required for online admission?',
+    answer: 'Upload one clear passport photo and your secondary-school certificate in PDF, JPG, PNG, or WEBP format. If your certificate is not yet available, choose an appointment date and time to bring it to the admissions office. You may also be asked to bring the original certificate, two copies, and four passport-size photos during verification.',
+  },
+  {
+    question: 'Can I track my admission status online?',
+    answer: 'A public status-tracking page is not currently available. Keep the application reference number shown after submission and give it to the admissions office when requesting an update. Admissions staff record each application as Pending, Approved, or Rejected after review.',
+  },
+  {
+    question: 'How do I pay the admission fee?',
+    answer: 'Select a payment plan and payment method in the application. For EVC Plus, enter the payer phone number and approve the secure prompt on that phone; never enter your EVC PIN on this website. The application can continue only after the payment provider confirms the transaction successfully.',
+  },
+  {
+    question: 'When will admission results be announced?',
+    answer: 'Results are issued after the admissions team verifies the submitted information, documents, and payment. Review time can vary, so keep your application reference number and contact the admissions office for the latest decision or missing-document request.',
+  },
 ];
 
 const apiBaseUrl = 'http://localhost:5000';
@@ -123,13 +137,11 @@ function SectionTitle({ children }) {
 }
 
 function LandingPage() {
-  const [activeNav, setActiveNav] = useState('home');
   const [activeFacultyIndex, setActiveFacultyIndex] = useState(1);
   const [contactForm, setContactForm] = useState(initialContactForm);
   const [contactToast, setContactToast] = useState(null);
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const activeFaculty = faculties[activeFacultyIndex];
-  const navClass = (item) => `site-nav-link ${activeNav === item ? 'active' : ''}`;
 
   const showContactToast = (type, message, title) => {
     setContactToast({ type, message, title });
@@ -191,42 +203,31 @@ function LandingPage() {
   };
 
   return (
-    <div className="public-page min-h-screen overflow-hidden bg-white text-text-dark">
+    <div className="public-page home-page min-h-screen overflow-hidden bg-white text-text-dark">
       <Toast toast={contactToast} onClose={() => setContactToast(null)} />
-      <header className="hero-pattern relative min-h-screen px-5 pb-24 pt-8 sm:px-8 lg:px-12">
-        <nav className="mx-auto flex max-w-5xl items-center justify-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 p-1 shadow-[0_0_30px_rgba(139,78,239,0.55)]">
-            <img src={logo} alt="Jamhuriya University logo" className="h-full w-full rounded-full object-cover" />
-          </div>
-          <div className="site-nav">
-            <a className={navClass('home')} href="#home" onClick={() => setActiveNav('home')}>Home</a>
-            <a className={navClass('apply')} href="/apply" onClick={() => setActiveNav('apply')}>Apply</a>
-            <a className={navClass('contact')} href="#contact" onClick={() => setActiveNav('contact')}>Contact</a>
-            <a className={navClass('login')} href="/login" onClick={() => setActiveNav('login')}>Login</a>
-          </div>
-        </nav>
-
-        <section id="home" className="mx-auto flex max-w-5xl flex-col items-center pt-16 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-[#F5F5F5] px-4 py-2 text-xs text-text-dark">
+      <PublicNav active="home" />
+      <header className="home-hero hero-pattern relative px-5 sm:px-8 lg:px-12">
+        <section id="home" className="home-hero-content mx-auto flex max-w-5xl flex-col items-center text-center">
+          <div className="home-hero-badge inline-flex items-center gap-2 rounded-full bg-[#F5F5F5] px-4 py-2 text-xs text-text-dark">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
             Admissions open - class of 2026
           </div>
-          <h1 className="mt-8 max-w-4xl text-5xl font-extrabold leading-tight tracking-normal sm:text-7xl lg:text-8xl">
+          <h1 className="home-hero-title max-w-4xl font-extrabold tracking-normal">
             We <span className="serif italic text-[#11B67A]">Educate</span> Students
             <br />
             That Shape <span className="serif italic text-[#11B67A]">Tomorrow</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-sm leading-7 text-white/55 sm:text-base">
+          <p className="home-hero-description max-w-2xl">
             Five world-class faculties. One ambitious community. Apply online in minutes and join
             Jamhuriya University of Science & Technology, East Africa's leading university.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="home-hero-actions flex flex-wrap justify-center">
             <a href="/apply" className="btn-primary">
               Apply Now <ArrowRight size={16} />
             </a>
             <a href="#programs" className="btn-ghost">Explore Programs</a>
           </div>
-          <div className="mt-10 flex flex-wrap justify-center gap-5 text-xs font-semibold text-white">
+          <div className="home-hero-stats flex flex-wrap justify-center font-semibold">
             <span>5,000+ Students</span>
             <span className="text-white/55">.</span>
             <span>20+ Programs</span>
@@ -416,15 +417,12 @@ function LandingPage() {
           </SectionTitle>
           <div className="mx-auto mt-12 max-w-3xl space-y-4">
             {faqs.map((faq) => (
-              <details className="faq-item" key={faq}>
+              <details className="faq-item" key={faq.question}>
                 <summary>
-                  {faq}
+                  {faq.question}
                   <ChevronDown size={18} />
                 </summary>
-                <p>
-                  Applicants can complete registration online, upload documents, pay admission fees, and track
-                  decisions through the student portal.
-                </p>
+                <p>{faq.answer}</p>
               </details>
             ))}
           </div>
@@ -508,45 +506,7 @@ function LandingPage() {
         </section>
       </main>
 
-      <footer className="footer-panel">
-        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
-          <div>
-            <div className="flex items-center gap-3">
-              <img src={logo} alt="Jamhuriya University logo" className="h-12 w-12 rounded-full object-cover" />
-              <div>
-                <p className="font-bold text-emerald-300">Jamhuriya University</p>
-                <p className="text-xs text-white/45">of Science and Technology (JUST)</p>
-              </div>
-            </div>
-            <p className="mt-8 text-xs font-bold tracking-wide text-white/80">EST. 2010 . MOGADISHU</p>
-            <p className="mt-5 text-sm font-semibold text-white/70">Excellence in Education, Innovation in Practice</p>
-            <div className="mt-8 space-y-3 text-sm text-white/55">
-              <p className="flex items-center gap-3"><MapPin size={16} /> KM 5 Road, Mogadishu, Somalia</p>
-              <p className="flex items-center gap-3"><Mail size={16} /> info@jamhuriya.edu.so</p>
-              <p className="flex items-center gap-3"><Phone size={16} /> +252 61 XXX XXXX</p>
-            </div>
-          </div>
-          {[
-            ['UNIVERSITY', 'About', 'Programs', 'Apply', 'Contact'],
-            ['FACULTIES', 'Medicine & Health', 'Computer Science & IT', 'Engineering', 'Economics & Management'],
-            ['RESOURCES', 'Student Portal', 'Library', 'Research', 'Career Service'],
-          ].map(([title, ...links]) => (
-            <div key={title}>
-              <h3 className="text-sm font-extrabold tracking-wider">{title}</h3>
-              <ul className="mt-6 space-y-4 text-sm text-white/50">
-                {links.map((link) => <li key={link}>{link}</li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="mx-auto mt-20 flex max-w-6xl flex-wrap justify-between gap-5 text-xs text-white/60">
-          <p>@2026 Jamhuriya University of Science & Technology. All rights reserved.</p>
-          <p>Privacy &nbsp;&nbsp; Terms &nbsp;&nbsp; Cookies</p>
-        </div>
-        <div className="pointer-events-none select-none text-center text-[12vw] font-black leading-none text-white/[0.035]">
-          JAMHURIYA
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }

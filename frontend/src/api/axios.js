@@ -66,6 +66,20 @@ const api = {
     link.remove();
     URL.revokeObjectURL(href);
   },
+  fileBlob: async (path) => {
+    const token = localStorage.getItem('authToken');
+    const response = await fetch(buildUrl(path), {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data?.error?.message || 'Unable to access file');
+    }
+    return {
+      blob: await response.blob(),
+      disposition: response.headers.get('content-disposition') || '',
+    };
+  },
 };
 
 export { API_BASE_URL };

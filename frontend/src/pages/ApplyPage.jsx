@@ -6,15 +6,15 @@ import {
   Check,
   ChevronDown,
   ImagePlus,
-  Mail,
-  MapPin,
-  Phone,
   UploadCloud,
 } from 'lucide-react';
 import Toast from '../components/Toast';
 import EvcPaymentFlow from '../components/EvcPaymentFlow';
+import PublicNav from '../components/PublicNav';
+import PublicFooter from '../components/PublicFooter';
 import logo from '../images/logo.jpg';
 import secondarySchoolNames from '../data/secondarySchools';
+import api from '../api/axios';
 
 const steps = [
   ['01', 'Requirement'],
@@ -40,11 +40,26 @@ const admissionRequirements = [
 ];
 
 const faqs = [
-  'Who can apply to Jamhuriya University?',
-  'Which documents are required for online admission?',
-  'Can I track my admission status online?',
-  'How do I pay the admission fee?',
-  'When will admission results be announced?',
+  {
+    question: 'Who can apply to Jamhuriya University?',
+    answer: 'Applicants who have completed secondary school may apply. You must provide valid personal and school information and select an available faculty and department. Two years of work experience is recommended for part-time applicants.',
+  },
+  {
+    question: 'Which documents are required for online admission?',
+    answer: 'Upload one clear passport photo and your secondary-school certificate in PDF, JPG, PNG, or WEBP format. If your certificate is not yet available, choose an appointment date and time to bring it to the admissions office. You may also be asked to bring the original certificate, two copies, and four passport-size photos during verification.',
+  },
+  {
+    question: 'Can I track my admission status online?',
+    answer: 'A public status-tracking page is not currently available. Keep the application reference number shown after submission and give it to the admissions office when requesting an update. Admissions staff record each application as Pending, Approved, or Rejected after review.',
+  },
+  {
+    question: 'How do I pay the admission fee?',
+    answer: 'Select a payment plan and payment method in the application. For EVC Plus, enter the payer phone number and approve the secure prompt on that phone; never enter your EVC PIN on this website. The application can continue only after the payment provider confirms the transaction successfully.',
+  },
+  {
+    question: 'When will admission results be announced?',
+    answer: 'Results are issued after the admissions team verifies the submitted information, documents, and payment. Review time can vary, so keep your application reference number and contact the admissions office for the latest decision or missing-document request.',
+  },
 ];
 
 const programs = [
@@ -56,10 +71,19 @@ const programs = [
 ];
 
 const today = new Date().toISOString().slice(0, 10);
+const getOneYearFromDate = (dateText) => {
+  const current = new Date(`${dateText}T00:00:00Z`);
+  const targetYear = current.getUTCFullYear() + 1;
+  const targetMonth = current.getUTCMonth();
+  const lastDayOfTargetMonth = new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate();
+  const targetDay = Math.min(current.getUTCDate(), lastDayOfTargetMonth);
+  return new Date(Date.UTC(targetYear, targetMonth, targetDay)).toISOString().slice(0, 10);
+};
+const maximumAppointmentDate = getOneYearFromDate(today);
 const apiBaseUrl = 'http://localhost:5000';
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
-const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-' , 'C+', 'C', 'C-'];
+const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
 const mobileMoneyMethods = ['EVC Plus', 'eDahab', 'Zaad', 'Sahal'];
 const paymentSteps = {
   'EVC Plus': [
@@ -466,7 +490,6 @@ const optionValues = {
 const isAllowedOption = (name, value) => optionValues[name]?.includes(value);
 
 function ApplyPage() {
-  const [activeNav, setActiveNav] = useState('apply');
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(initialForm);
   const [photo, setPhoto] = useState(null);
@@ -481,6 +504,12 @@ function ApplyPage() {
   const [showGeneratedReceipt, setShowGeneratedReceipt] = useState(false);
   const [toast, setToast] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [registration, setRegistration] = useState({ loading: true, isOpen: false, status: 'Closed', period: null });
+
+  useEffect(() => {
+    api.get('/admission-registration/status').then((result) => setRegistration({ loading: false, ...result }))
+      .catch(() => setRegistration({ loading: false, isOpen: false, status: 'Closed', period: null }));
+  }, []);
 
   const showToast = ({ type = 'info', title, message, duration }) => {
     setToast({
@@ -701,6 +730,10 @@ function ApplyPage() {
           showError('Appointment date cannot be in the past.');
           return false;
         }
+        if (form.appointmentDate > maximumAppointmentDate) {
+          showError('Certificate appointment date must be within one year from today.');
+          return false;
+        }
         if (!/^\d{2}:\d{2}$/.test(normalizeValue(form.appointmentTime))) {
           showError('Please enter a valid appointment time.');
           return false;
@@ -801,6 +834,7 @@ function ApplyPage() {
   };
 
   const handleNextStep = async () => {
+    if (!registration.isOpen) return showError('Admission registration is not currently open.', 'Registration closed');
     if (step > 0 && step < steps.length - 1 && !validateStep(step)) return;
     if (step === 3 && form.paymentMethod === 'EVC Plus') {
       if (confirmedEvcPayment?.status === 'SUCCESS') {
@@ -829,6 +863,7 @@ function ApplyPage() {
   };
 
   const submitApplication = async () => {
+    if (!registration.isOpen) return showError('Admission registration is not currently open.', 'Registration closed');
     if (!validateAllSteps()) return;
 
     setIsSubmitting(true);
@@ -881,7 +916,6 @@ function ApplyPage() {
   };
 
   const previousStep = () => setStep((current) => Math.max(current - 1, 0));
-  const navClass = (item) => `site-nav-link ${activeNav === item ? 'active' : ''}`;
   const displayValue = (value, fallback = 'Not provided') => value || fallback;
   const documentReviewItems = form.hasCertificate === 'Yes'
     ? [['Certificate File', certificate?.name || 'Not uploaded']]
@@ -971,28 +1005,13 @@ function ApplyPage() {
   ];
 
   return (
+    <>
+      <PublicNav active="apply" applyHref="#application" />
     <div className="apply-page hero-pattern">
       {evcPaymentSession && <EvcPaymentFlow {...evcPaymentSession} onClose={() => setEvcPaymentSession(null)} onSuccess={(payment, receipt) => { setConfirmedEvcPayment(payment); setGeneratedReceipt(receipt); setEvcPaymentSession(null); setStep(4); }} />}
       {showGeneratedReceipt && generatedReceipt && <div className="evc-overlay" role="dialog" aria-modal="true"><section className="evc-dialog"><div className="evc-result success"><Check size={54} /><h2>Payment Successful</h2></div><dl className="evc-confirmation"><div><dt>Payment Method</dt><dd>EVC Plus</dd></div><div><dt>Payment Phone Number</dt><dd>{generatedReceipt.payerPhone}</dd></div><div><dt>Payment Amount</dt><dd>${Number(generatedReceipt.amount).toFixed(2)}</dd></div><div><dt>Payment Status</dt><dd>Successful</dd></div><div><dt>Transaction ID</dt><dd>{generatedReceipt.providerTransactionId || 'Not available'}</dd></div><div><dt>Reference ID</dt><dd>{generatedReceipt.referenceId}</dd></div><div><dt>Merchant</dt><dd>{generatedReceipt.merchantName}</dd></div></dl><div className="evc-actions"><button onClick={() => setShowGeneratedReceipt(false)} type="button">Close Receipt</button></div></section></div>}
       <Toast toast={toast} onClose={() => setToast(null)} />
       <header className="apply-header">
-        <nav className="mx-auto flex max-w-5xl items-center justify-center gap-4">
-          <a
-            aria-label="Go to homepage"
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 p-1 shadow-[0_0_30px_rgba(139,78,239,0.55)]"
-            href="/#home"
-          >
-            <img src={logo} alt="Jamhuriya University logo" className="h-full w-full rounded-full object-cover" />
-          </a>
-          <div className="site-nav">
-            <a className={navClass('home')} href="/#home" onClick={() => setActiveNav('home')}>Home</a>
-            <a className={navClass('programs')} href="/#programs" onClick={() => setActiveNav('programs')}>Programs</a>
-            <a className={navClass('apply')} href="#application" onClick={() => setActiveNav('apply')}>Apply</a>
-            <a className={navClass('contact')} href="/#contact" onClick={() => setActiveNav('contact')}>Contact</a>
-            <a className={navClass('login')} href="/login" onClick={() => setActiveNav('login')}>Login</a>
-          </div>
-        </nav>
-
         <section className="apply-hero">
           <div className="inline-flex items-center gap-2 rounded-full bg-[#F5F5F5] px-4 py-2 text-xs text-text-dark">
             <span className="h-2 w-2 rounded-full bg-emerald-400" />
@@ -1010,6 +1029,11 @@ function ApplyPage() {
           </a>
         </section>
       </header>
+      {!registration.loading && <section className={`mx-auto mb-6 max-w-5xl rounded-2xl border p-4 text-center ${registration.isOpen ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
+        <strong>{registration.isOpen ? 'Admission registration is currently open.' : registration.status === 'Paused' ? 'Admission registration is temporarily paused. Please check again later.' : registration.status === 'Expired' ? 'The admission registration deadline has passed.' : 'Admission registration is currently closed.'}</strong>
+        {registration.period && <p className="mt-1 text-sm">Opening: {new Date(registration.period.openingDatetime).toLocaleString()} · Closing: {new Date(registration.period.closingDatetime).toLocaleString()}</p>}
+        {registration.period?.applicantInstructions && <p className="mt-1 text-sm">{registration.period.applicantInstructions}</p>}
+      </section>}
 
       <Stepper currentStep={step} />
 
@@ -1102,7 +1126,7 @@ function ApplyPage() {
                 {form.hasCertificate === 'No' && (
                   <div className="certificate-appointment">
                     <p className="appointment-helper">Qabso xilliga aad keeneyso certificate ka</p>
-                    <Field label="Appointment Date" name="appointmentDate" type="date" value={form.appointmentDate} onChange={updateForm} min={today} />
+                    <Field label="Appointment Date" name="appointmentDate" type="date" value={form.appointmentDate} onChange={updateForm} min={today} max={maximumAppointmentDate} />
                     <Field label="Appointment Time" name="appointmentTime" type="time" value={form.appointmentTime} onChange={updateForm} min={appointmentStartTime} max={appointmentEndTime} step={60} />
                   </div>
                 )}
@@ -1203,7 +1227,7 @@ function ApplyPage() {
             </button>
           )}
           {step === steps.length - 1 && form.paymentMethod === 'EVC Plus' && confirmedEvcPayment?.status !== 'SUCCESS' && <p className="payment-submit-warning">Complete the EVC Plus payment before submitting your application.</p>}
-          <button className="next-button" disabled={isSubmitting || (step === steps.length - 1 && form.paymentMethod === 'EVC Plus' && confirmedEvcPayment?.status !== 'SUCCESS')} onClick={step === steps.length - 1 ? submitApplication : handleNextStep} type="button">
+          <button className="next-button" disabled={registration.loading || !registration.isOpen || isSubmitting || (step === steps.length - 1 && form.paymentMethod === 'EVC Plus' && confirmedEvcPayment?.status !== 'SUCCESS')} onClick={step === steps.length - 1 ? submitApplication : handleNextStep} type="button">
             {step === steps.length - 1 ? (isSubmitting ? 'Submitting...' : 'Submit Application') : 'Next Step'} <ArrowRight size={16} />
           </button>
         </div>
@@ -1237,15 +1261,12 @@ function ApplyPage() {
         </h2>
         <div className="apply-faq-list">
           {faqs.map((faq) => (
-            <details className="faq-item" key={faq}>
+            <details className="faq-item" key={faq.question}>
               <summary>
-                {faq}
+                {faq.question}
                 <ChevronDown size={16} />
               </summary>
-              <p>
-                Applicants can complete registration online, upload documents, pay admission fees,
-                and track decisions through the student portal.
-              </p>
+              <p>{faq.answer}</p>
             </details>
           ))}
         </div>
@@ -1265,46 +1286,9 @@ function ApplyPage() {
         </div>
       </section>
 
-      <footer className="footer-panel apply-footer">
-        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
-          <div>
-            <div className="flex items-center gap-3">
-              <img src={logo} alt="Jamhuriya University logo" className="h-12 w-12 rounded-full object-cover" />
-              <div>
-                <p className="font-bold text-emerald-300">Jamhuriya University</p>
-                <p className="text-xs text-white/45">of Science and Technology (JUST)</p>
-              </div>
-            </div>
-            <p className="mt-8 text-xs font-bold tracking-wide text-white/80">EST. 2010 . MOGADISHU</p>
-            <p className="mt-5 text-sm font-semibold text-white/70">Excellence in Education, Innovation in Practice</p>
-            <div className="mt-8 space-y-3 text-sm text-white/55">
-              <p className="flex items-center gap-3"><MapPin size={16} /> KM 5 Road, Mogadishu, Somalia</p>
-              <p className="flex items-center gap-3"><Mail size={16} /> info@jamhuriya.edu.so</p>
-              <p className="flex items-center gap-3"><Phone size={16} /> +252 61 XXX XXXX</p>
-            </div>
-          </div>
-          {[
-            ['UNIVERSITY', 'About', 'Programs', 'Apply', 'Contact'],
-            ['FACULTIES', 'Medicine & Health', 'Computer Science & IT', 'Engineering', 'Economics & Management'],
-            ['RESOURCES', 'Student Portal', 'Library', 'Research', 'Career Service'],
-          ].map(([title, ...links]) => (
-            <div key={title}>
-              <h3 className="text-sm font-extrabold tracking-wider">{title}</h3>
-              <ul className="mt-6 space-y-4 text-sm text-white/50">
-                {links.map((link) => <li key={link}>{link}</li>)}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div className="mx-auto mt-20 flex max-w-6xl flex-wrap justify-between gap-5 text-xs text-white/60">
-          <p>@2026 Jamhuriya University of Science & Technology. All rights reserved.</p>
-          <p>Privacy &nbsp;&nbsp; Terms &nbsp;&nbsp; Cookies</p>
-        </div>
-        <div className="pointer-events-none select-none text-center text-[12vw] font-black leading-none text-white/[0.035]">
-          JAMHURIYA
-        </div>
-      </footer>
     </div>
+      <PublicFooter />
+    </>
   );
 }
 

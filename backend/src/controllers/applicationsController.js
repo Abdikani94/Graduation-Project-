@@ -4,6 +4,7 @@ import { matchesText, paginate, sortNewest, toCsv } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 import { saveApplicationFile } from '../utils/files.js';
 import { generateStudentNumber } from '../utils/studentNumber.js';
+import { assertOpenForApplication } from './admissionPeriodsController.js';
 import { signToken } from '../lib/crypto.js';
 
 const applicationFields = [
@@ -49,10 +50,18 @@ const applicationFields = [
 const getBodyFields = (req) => (req.body?.fields ? req.body.fields : (req.body || {}));
 const getBodyFiles = (req) => (req.body?.files ? req.body.files : []);
 const today = () => new Date().toISOString().slice(0, 10);
+const oneYearFromToday = () => {
+  const current = new Date(`${today()}T00:00:00Z`);
+  const targetYear = current.getUTCFullYear() + 1;
+  const targetMonth = current.getUTCMonth();
+  const lastDayOfTargetMonth = new Date(Date.UTC(targetYear, targetMonth + 1, 0)).getUTCDate();
+  const targetDay = Math.min(current.getUTCDate(), lastDayOfTargetMonth);
+  return new Date(Date.UTC(targetYear, targetMonth, targetDay)).toISOString().slice(0, 10);
+};
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
 const fixedAdmissionFee = 25;
-const gradeOptions = ['A', 'A-', 'B+', 'B', 'B-'];
+const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
 
 const requiredCreateFields = [
   'fullName',
@@ -205,6 +214,9 @@ export const createApplication = async (req, res) => {
     if (!isValidDate(fields.appointmentDate)) fail(422, 'Appointment date is invalid');
     if (!isValidTime(fields.appointmentTime)) fail(422, 'Appointment time is invalid');
     if (fields.appointmentDate < today()) fail(422, 'Appointment date cannot be in the past');
+    if (fields.appointmentDate > oneYearFromToday()) {
+      fail(422, 'Certificate appointment date cannot be more than one year from today');
+    }
     if (fields.appointmentTime < appointmentStartTime || fields.appointmentTime > appointmentEndTime) {
       fail(422, 'Appointment time must be between 8:00 AM and 5:00 PM');
     }
@@ -223,7 +235,9 @@ export const createApplication = async (req, res) => {
     }
   }
   {
-    if (!gradeOptions.includes(fields.percentage)) fail(422, 'Passing grade must be A, A-, B+, B, or B-');
+    if (!gradeOptions.includes(fields.percentage)) {
+      fail(422, `Passing grade must be one of: ${gradeOptions.join(', ')}`);
+    }
   }
   requireOption(fields, 'heardFrom', 'How did you know about university');
   requireOption(fields, 'modeOfStudy', 'Mode Of Study');
@@ -231,6 +245,7 @@ export const createApplication = async (req, res) => {
   requireOption(fields, 'paymentMethod', 'Payment Method');
 
   const result = await updateDb(async (db) => {
+    const admissionPeriod = assertOpenForApplication(db, fields);
     const selectedProgram = db.programs.find((item) => item.title === faculty);
     if (!selectedProgram) fail(422, 'Faculty is invalid');
     if (!selectedProgram.departments?.some((item) => item.name === department)) {
@@ -253,6 +268,7 @@ export const createApplication = async (req, res) => {
       admissionFee: getProgramFee(db, faculty),
       paymentStatus: 'UNPAID',
       status: fields.paymentMethod === 'EVC Plus' ? 'DRAFT' : 'Pending',
+      admissionPeriodId: admissionPeriod.id,
       documents,
       notes: '',
       reviewedBy: null,
@@ -314,6 +330,8 @@ export const submitPaidApplication = async (req, res) => {
     if (application.status !== 'DRAFT') {
       return { application, payment: db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS') || null };
     }
+    const admissionPeriod = assertOpenForApplication(db, application);
+    if (application.admissionPeriodId && application.admissionPeriodId !== admissionPeriod.id) fail(409, 'The admission period for this application is no longer active.');
     const payment = db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS');
     if (!payment) fail(409, 'A confirmed payment is required before submitting this application.');
     application.status = 'Pending';

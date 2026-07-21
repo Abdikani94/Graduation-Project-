@@ -189,7 +189,7 @@ const Dashboard = () => {
           <div className="bg-white/5 p-4 rounded-xl mt-auto flex gap-3 items-start">
             <Bell size={16} className="text-[#6c6a7e] shrink-0 mt-0.5" />
             <p className="text-[#8c8a9e] text-[11px] leading-relaxed m-0">
-              In the coming months, we anticipate a significant shift in health schedules as more people prioritize wellness. With the rise of telehealth services, individuals will have greater access to healthcare professionals, leading to timely interventions.
+              Faculty demand is calculated from submitted admission applications. Use this overview to plan classes, staffing, and available capacity for the next intake.
             </p>
           </div>
         </Card>

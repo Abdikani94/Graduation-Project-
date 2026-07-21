@@ -17,9 +17,11 @@ process.env.WAAFI_API_KEY = 'super-secret-test-api-key';
 process.env.WAAFI_MINIMUM_AMOUNT = '0.01';
 process.env.WAAFI_MAXIMUM_AMOUNT = '1000';
 process.env.WAAFI_REQUEST_TIMEOUT_MS = '20';
+process.env.MAX_STORED_FILE_BYTES = '256';
+process.env.FILE_STORAGE_DIR = path.join(tmpDir, 'centralized-files');
 
 const { createApp } = await import('../src/app.js');
-const { ensureDb } = await import('../src/lib/db.js');
+const { closeDb, ensureDb, readDb, updateDb } = await import('../src/lib/db.js');
 const { setWaafiTransportForTests } = await import('../src/providers/waafiPayProvider.js');
 const { normalizeSomaliEvcPhone } = await import('../src/validators/phoneValidator.js');
 const { parseAmountToMinor } = await import('../src/validators/paymentValidator.js');
@@ -27,6 +29,12 @@ const { parseAmountToMinor } = await import('../src/validators/paymentValidator.
 await ensureDb();
 
 const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+const appointmentLimitDate = new Date();
+appointmentLimitDate.setUTCFullYear(appointmentLimitDate.getUTCFullYear() + 1);
+const maximumAppointmentDate = appointmentLimitDate.toISOString().slice(0, 10);
+const beyondAppointmentLimitDate = new Date(`${maximumAppointmentDate}T00:00:00Z`);
+beyondAppointmentLimitDate.setUTCDate(beyondAppointmentLimitDate.getUTCDate() + 1);
+const dateBeyondOneYear = beyondAppointmentLimitDate.toISOString().slice(0, 10);
 const validApplication = (overrides = {}) => ({
   fullName: 'Test Applicant',
   motherName: 'Test Mother',
@@ -84,9 +92,10 @@ const request = async ({ method = 'GET', path: requestPath, token, body }) =>
           res.on('end', () => {
             server.close();
             const text = Buffer.concat(chunks).toString('utf8');
+            const responseType = res.headers['content-type'] || '';
             resolve({
               status: res.statusCode,
-              body: text ? JSON.parse(text) : null
+              body: text ? (responseType.includes('application/json') ? JSON.parse(text) : text) : null
             });
           });
         }
@@ -99,6 +108,39 @@ const request = async ({ method = 'GET', path: requestPath, token, body }) =>
       req.end();
     });
   });
+
+const multipartRequest = async ({ path: requestPath, token, fields = {}, filename = 'report.txt', contentType = 'text/plain', content = 'report' }) => {
+  const boundary = `----jamhuriya-${crypto.randomUUID()}`;
+  const chunks = [];
+  for (const [name, value] of Object.entries({ category: 'Reports', ...fields })) {
+    chunks.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="${name}"\r\n\r\n${Array.isArray(value) ? JSON.stringify(value) : value}\r\n`));
+  }
+  chunks.push(Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${filename}"\r\nContent-Type: ${contentType}\r\n\r\n`));
+  chunks.push(Buffer.isBuffer(content) ? content : Buffer.from(content));
+  chunks.push(Buffer.from(`\r\n--${boundary}--\r\n`));
+  const payload = Buffer.concat(chunks);
+
+  return new Promise((resolve, reject) => {
+    const server = http.createServer(createApp());
+    server.listen(0, '127.0.0.1', () => {
+      const { port } = server.address();
+      const req = http.request({ hostname: '127.0.0.1', port, path: requestPath, method: 'POST', headers: {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`, 'Content-Length': payload.length,
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      } }, (res) => {
+        const responseChunks = [];
+        res.on('data', (chunk) => responseChunks.push(chunk));
+        res.on('end', () => {
+          server.close();
+          const text = Buffer.concat(responseChunks).toString('utf8');
+          resolve({ status: res.statusCode, body: text ? JSON.parse(text) : null });
+        });
+      });
+      req.on('error', (error) => { server.close(); reject(error); });
+      req.end(payload);
+    });
+  });
+};
 
 test('health check responds', async () => {
   const response = await request({ path: '/health' });
@@ -126,6 +168,191 @@ test('admin can login and read dashboard', async () => {
   assert.ok(dashboard.body.stats.totalApplications >= 1);
 });
 
+let fileAdminToken;
+let fileUserToken;
+let adminSharedFile;
+let privateAdminFile;
+let userDailyFile;
+
+test('file storage users authenticate and receive team assignments', async () => {
+  await updateDb((db) => {
+    const admin = db.users.find((item) => item.username === 'admin');
+    const officer = db.users.find((item) => item.username === 'officer');
+    admin.team = 'Administration'; admin.department = 'Admissions';
+    officer.team = 'Campus 3'; officer.department = 'Computer Science';
+  });
+  const [adminLogin, userLogin] = await Promise.all([
+    request({ method: 'POST', path: '/api/auth/login', body: { username: 'admin', password: 'admin12345' } }),
+    request({ method: 'POST', path: '/api/auth/login', body: { username: 'officer', password: 'officer12345' } })
+  ]);
+  fileAdminToken = adminLogin.body.token;
+  fileUserToken = userLogin.body.token;
+  assert.ok(fileAdminToken); assert.ok(fileUserToken);
+});
+
+test('unauthorized and invalid file uploads are rejected', async () => {
+  const fields = { title: 'Invalid', reportType: 'General File', visibility: 'Private' };
+  const unauthorized = await multipartRequest({ path: '/api/files', fields });
+  assert.equal(unauthorized.status, 401);
+  const unsupported = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields, filename: 'malware.exe', contentType: 'application/octet-stream' });
+  assert.equal(unsupported.status, 422);
+  const oversized = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields, content: Buffer.alloc(257, 1) });
+  assert.equal(oversized.status, 413);
+  const empty = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields, content: Buffer.alloc(0) });
+  assert.equal(empty.status, 422);
+  const blankText = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields, content: '   \n\t' });
+  assert.equal(blankText.status, 422);
+  const fakePdf = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields, filename: 'fake.pdf', contentType: 'application/pdf', content: 'not a pdf' });
+  assert.equal(fakePdf.status, 422);
+  const shortTitle = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields: { ...fields, title: '  a ' } });
+  assert.equal(shortTitle.status, 422);
+  const missingCategory = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields: { ...fields, category: '' } });
+  assert.equal(missingCategory.status, 422);
+  const missingSelectedUser = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields: { ...fields, visibility: 'Selected Users' } });
+  assert.equal(missingSelectedUser.status, 422);
+});
+
+test('Admin uploads files for all users and selected teams', async () => {
+  const sharedAll = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields: {
+    title: 'University Operations Guide', reportType: 'General File', visibility: 'All Users', approvalRequired: 'false'
+  }});
+  assert.equal(sharedAll.status, 201, sharedAll.body?.error?.message);
+  adminSharedFile = sharedAll.body.file;
+
+  const teamShared = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields: {
+    title: 'Campus Team File', reportType: 'General File', visibility: 'Selected Team', selectedTeam: 'Campus 3', approvalRequired: 'false'
+  }});
+  assert.equal(teamShared.status, 201, teamShared.body?.error?.message);
+  const db = await readDb();
+  const officerId = db.users.find((item) => item.username === 'officer').id;
+  const selectedUser = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields: {
+    title: 'Selected User File', reportType: 'General File', visibility: 'Selected Users', selectedUsers: [officerId], approvalRequired: 'false'
+  }});
+  assert.equal(selectedUser.status, 201, selectedUser.body?.error?.message);
+  const userList = await request({ path: '/api/files?tab=shared&limit=50', token: fileUserToken });
+  assert.equal(userList.status, 200);
+  assert.ok(userList.body.data.some((item) => item.id === adminSharedFile.id));
+  assert.ok(userList.body.data.some((item) => item.id === teamShared.body.file.id));
+  assert.ok(userList.body.data.some((item) => item.id === selectedUser.body.file.id));
+});
+
+test('file storage options include all campuses and academic departments', async () => {
+  const response = await request({ path: '/api/files/options', token: fileAdminToken });
+  assert.equal(response.status, 200);
+  assert.deepEqual(response.body.campuses, ['Main Campus', 'Campus 2', 'Campus 3']);
+  assert.ok(response.body.departments.length > 0);
+});
+
+test('admission periods are Admin-only and enforce lifecycle validation with audit history', async () => {
+  const opening = new Date(Date.now() + 2 * 86400000).toISOString();
+  const closing = new Date(Date.now() + 32 * 86400000).toISOString();
+  const payload = { name: 'January Undergraduate Intake', academicYear: '2026-2027', intakeName: 'January Intake',
+    admissionType: 'Undergraduate', openingDatetime: opening, closingDatetime: closing, timezone: 'Africa/Nairobi', status: 'Draft' };
+  const forbidden = await request({ method: 'POST', path: '/api/admission-periods', token: fileUserToken, body: payload });
+  assert.equal(forbidden.status, 403);
+  const invalid = await request({ method: 'POST', path: '/api/admission-periods', token: fileAdminToken,
+    body: { ...payload, name: 'Invalid Dates', openingDatetime: closing, closingDatetime: opening } });
+  assert.equal(invalid.status, 422);
+  const created = await request({ method: 'POST', path: '/api/admission-periods', token: fileAdminToken, body: payload });
+  assert.equal(created.status, 201, created.body?.error?.message);
+  const id = created.body.period.id;
+  assert.equal((await request({ method: 'POST', path: `/api/admission-periods/${id}/open`, token: fileAdminToken, body: {} })).status, 200);
+  assert.equal((await request({ method: 'POST', path: `/api/admission-periods/${id}/pause`, token: fileAdminToken, body: { reason: 'Administrative review' } })).body.period.status, 'Paused');
+  assert.equal((await request({ method: 'POST', path: `/api/admission-periods/${id}/resume`, token: fileAdminToken, body: {} })).body.period.status, 'Open');
+  const extendedClosing = new Date(Date.now() + 40 * 86400000).toISOString();
+  assert.equal((await request({ method: 'POST', path: `/api/admission-periods/${id}/extend`, token: fileAdminToken, body: { closingDatetime: extendedClosing, reason: 'Give applicants more time' } })).status, 200);
+  assert.equal((await request({ method: 'POST', path: `/api/admission-periods/${id}/close`, token: fileAdminToken, body: { reason: 'Intake review' } })).body.period.status, 'Closed');
+  assert.equal((await request({ method: 'POST', path: `/api/admission-periods/${id}/reopen`, token: fileAdminToken, body: { reason: 'Approved reopening' } })).body.period.status, 'Open');
+  const history = await request({ path: `/api/admission-periods/${id}/activity`, token: fileAdminToken });
+  assert.ok(history.body.data.some((entry) => entry.action === 'Registration paused'));
+  assert.ok(history.body.data.some((entry) => entry.action === 'Deadline extended'));
+  assert.ok(history.body.data.some((entry) => entry.action === 'Registration reopened'));
+});
+
+test('scheduled admission periods open and expire using server time', async () => {
+  const now = new Date();
+  await updateDb((db) => {
+    db.admissionPeriods.unshift({ id: 'adp_auto_open', name: 'Automatic Opening', academicYear: '2026-2027', intakeName: 'Automatic Intake', admissionType: 'General Admission',
+      facultyId: '', programId: '', openingDatetime: new Date(now.getTime() - 60000).toISOString(), closingDatetime: new Date(now.getTime() + 86400000).toISOString(),
+      timezone: 'Africa/Nairobi', status: 'Scheduled', automaticOpen: true, automaticClose: true, archived: false, version: 1, createdAt: now.toISOString(), updatedAt: now.toISOString() });
+    db.admissionPeriods.unshift({ id: 'adp_auto_expire', name: 'Automatic Expiry', academicYear: '2026-2027', intakeName: 'Expired Intake', admissionType: 'General Admission',
+      facultyId: '', programId: '', openingDatetime: new Date(now.getTime() - 86400000).toISOString(), closingDatetime: new Date(now.getTime() - 60000).toISOString(),
+      timezone: 'Africa/Nairobi', status: 'Open', automaticOpen: true, automaticClose: true, archived: false, version: 1, createdAt: now.toISOString(), updatedAt: now.toISOString() });
+  });
+  await request({ path: '/api/admission-registration/status?intake=Automatic%20Intake' });
+  const db = await readDb();
+  assert.equal(db.admissionPeriods.find((p) => p.id === 'adp_auto_open').status, 'Open');
+  assert.equal(db.admissionPeriods.find((p) => p.id === 'adp_auto_expire').status, 'Expired');
+});
+
+test('applicants cannot bypass a paused registration period through the API', async () => {
+  await updateDb((db) => {
+    const period = db.admissionPeriods.find((item) => item.id === 'adp_general_2026');
+    period.status = 'Paused'; period.automaticOpen = false;
+  });
+  const response = await request({ method: 'POST', path: '/api/applications', body: validApplication({
+    fullName: 'Blocked Period Applicant', nationalId: 'SO-PERIOD-BLOCK', rollNumber: 'PERIOD-BLOCK', email: 'blocked.period@example.com', mobile: '610000099'
+  }) });
+  assert.equal(response.status, 409);
+  assert.equal(response.body.error.code, 'ADMISSION_REGISTRATION_CLOSED');
+  await updateDb((db) => {
+    const period = db.admissionPeriods.find((item) => item.id === 'adp_general_2026');
+    period.status = 'Open'; period.automaticOpen = true;
+  });
+});
+
+test('a user cannot access another user private file but Admin can access every file', async () => {
+  const privateUpload = await multipartRequest({ path: '/api/files', token: fileAdminToken, fields: {
+    title: 'Private Admin File', reportType: 'General File', visibility: 'Private', approvalRequired: 'false'
+  }});
+  privateAdminFile = privateUpload.body.file;
+  const denied = await request({ path: `/api/files/${privateAdminFile.id}`, token: fileUserToken });
+  assert.equal(denied.status, 404);
+  const allowed = await request({ path: `/api/files/${privateAdminFile.id}/download`, token: fileAdminToken });
+  assert.equal(allowed.status, 200);
+});
+
+test('user daily and monthly reports persist and duplicate periods are rejected', async () => {
+  const dailyFields = { title: 'Daily Activity Report', reportType: 'Daily Report', reportDate: '2026-07-21', visibility: 'Private' };
+  const daily = await multipartRequest({ path: '/api/files', token: fileUserToken, fields: dailyFields });
+  assert.equal(daily.status, 201, daily.body?.error?.message);
+  userDailyFile = daily.body.file;
+  const duplicateDaily = await multipartRequest({ path: '/api/files', token: fileUserToken, fields: dailyFields });
+  assert.equal(duplicateDaily.status, 409);
+
+  const monthlyFields = { title: 'Monthly Activity Report', reportType: 'Monthly Report', reportingMonth: '7', reportingYear: '2026', visibility: 'Private' };
+  const monthly = await multipartRequest({ path: '/api/files', token: fileUserToken, fields: monthlyFields });
+  assert.equal(monthly.status, 201, monthly.body?.error?.message);
+  const duplicateMonthly = await multipartRequest({ path: '/api/files', token: fileUserToken, fields: monthlyFields });
+  assert.equal(duplicateMonthly.status, 409);
+});
+
+test('Admin approval, rejection comments, archive filtering, and file activity logs work', async () => {
+  const approved = await request({ method: 'PATCH', path: `/api/files/${userDailyFile.id}/review`, token: fileAdminToken,
+    body: { status: 'Approved', adminComment: 'Daily report verified.' } });
+  assert.equal(approved.status, 200);
+  assert.equal(approved.body.file.approvalStatus, 'Approved');
+  assert.equal(approved.body.file.adminComment, 'Daily report verified.');
+
+  const rejectTarget = await multipartRequest({ path: '/api/files', token: fileUserToken, fields: {
+    title: 'Revision Report', reportType: 'Daily Report', reportDate: '2026-07-20', visibility: 'Private'
+  }});
+  const rejected = await request({ method: 'PATCH', path: `/api/files/${rejectTarget.body.file.id}/review`, token: fileAdminToken,
+    body: { status: 'Rejected', adminComment: 'Please correct the totals.' } });
+  assert.equal(rejected.body.file.approvalStatus, 'Rejected');
+  assert.equal(rejected.body.file.adminComment, 'Please correct the totals.');
+
+  await request({ method: 'PATCH', path: `/api/files/${userDailyFile.id}/archive`, token: fileUserToken, body: { archived: true } });
+  const normal = await request({ path: '/api/files?tab=all&limit=50', token: fileUserToken });
+  const archived = await request({ path: '/api/files?tab=archived&limit=50', token: fileUserToken });
+  assert.equal(normal.body.data.some((item) => item.id === userDailyFile.id), false);
+  assert.equal(archived.body.data.some((item) => item.id === userDailyFile.id), true);
+  const activities = await request({ path: `/api/files/${userDailyFile.id}/activities`, token: fileUserToken });
+  assert.ok(activities.body.data.some((item) => item.action === 'File uploaded'));
+  assert.ok(activities.body.data.some((item) => item.action === 'File approved'));
+  assert.ok(activities.body.data.some((item) => item.action === 'File archived'));
+});
+
 let applicantPaymentAccess;
 let applicantRegistration;
 
@@ -145,6 +372,87 @@ test('public applicant can submit an application', async () => {
   applicantRegistration = response.body.application;
 });
 
+test('university accepts C and C- passing grades', async () => {
+  for (const [index, grade] of ['C', 'C-'].entries()) {
+    const response = await request({
+      method: 'POST',
+      path: '/api/applications',
+      body: validApplication({
+        fullName: index === 0 ? 'Accepted Grade Applicant One' : 'Accepted Grade Applicant Two',
+        nationalId: `SO-GRADE-${index + 1}`,
+        rollNumber: `GRADE-${index + 1}`,
+        email: `accepted.grade.${index + 1}@example.com`,
+        mobile: `61000001${index}`,
+        percentage: grade
+      })
+    });
+
+    assert.equal(response.status, 201, response.body?.message);
+    assert.equal(response.body.application.percentage, grade);
+  }
+});
+
+test('classes survive concurrent updates and a database restart', async () => {
+  const firstId = `cls_${crypto.randomUUID()}`;
+  const secondId = `cls_${crypto.randomUUID()}`;
+
+  await Promise.all([
+    updateDb(async (db) => {
+      await new Promise((resolve) => setTimeout(resolve, 25));
+      db.classes = db.classes || [];
+      db.classes.push({ id: firstId, name: 'Persistent Class A', capacity: 30 });
+    }),
+    updateDb((db) => {
+      db.classes = db.classes || [];
+      db.classes.push({ id: secondId, name: 'Persistent Class B', capacity: 30 });
+    })
+  ]);
+
+  await closeDb();
+  const reloaded = await readDb();
+  assert.ok(reloaded.classes.some((item) => item.id === firstId));
+  assert.ok(reloaded.classes.some((item) => item.id === secondId));
+});
+
+test('discounts and every admin collection survive a database restart', async () => {
+  const marker = `persist_${crypto.randomUUID()}`;
+  const persistentCollections = ['users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities', 'classes', 'files', 'fileShares', 'fileActivities', 'notifications'];
+
+  await updateDb((db) => {
+    for (const collection of persistentCollections) {
+      assert.ok(db[collection].length > 0, `${collection} must contain a record for the persistence test`);
+      db[collection][0].persistenceMarker = marker;
+    }
+    db.students[0].discountReason = 'Scholarship';
+    db.students[0].discountPercentage = 30;
+    db.settings.persistenceMarker = marker;
+    db.settings.twoFactorRequired = false;
+  });
+
+  await closeDb();
+  const reloaded = await readDb();
+  for (const collection of persistentCollections) {
+    assert.equal(reloaded[collection][0].persistenceMarker, marker, `${collection} was not persisted`);
+  }
+  assert.equal(reloaded.students[0].discountReason, 'Scholarship');
+  assert.equal(reloaded.students[0].discountPercentage, 30);
+  assert.equal(reloaded.settings.persistenceMarker, marker);
+  assert.equal(reloaded.settings.twoFactorRequired, false);
+});
+
+test('JSON database recovers all admin data from its latest backup', async () => {
+  const before = await readDb();
+  await fs.writeFile(process.env.DB_FILE, '{corrupted-json');
+
+  const recovered = await readDb();
+  assert.equal(recovered.students[0].discountPercentage, before.students[0].discountPercentage);
+  assert.equal(recovered.classes.length, before.classes.length);
+  assert.equal(recovered.applications.length, before.applications.length);
+  assert.equal(recovered.payments.length, before.payments.length);
+  assert.equal(recovered.programs.length, before.programs.length);
+  assert.equal(recovered.users.length, before.users.length);
+});
+
 test('certificate appointment is required when applicant has no certificate', async () => {
   const response = await request({
     method: 'POST',
@@ -159,6 +467,37 @@ test('certificate appointment is required when applicant has no certificate', as
   });
   assert.equal(response.status, 422);
   assert.deepEqual(response.body.error.details, ['appointmentDate', 'appointmentTime']);
+});
+
+test('certificate appointment must be within one year', async () => {
+  const allowed = await request({
+    method: 'POST',
+    path: '/api/applications',
+    body: validApplication({
+      fullName: 'Maximum Appointment Applicant',
+      nationalId: 'SO-APPOINTMENT-MAX',
+      rollNumber: 'APPOINTMENT-MAX',
+      email: 'maximum.appointment@example.com',
+      mobile: '610000020',
+      appointmentDate: maximumAppointmentDate
+    })
+  });
+  assert.equal(allowed.status, 201, allowed.body?.error?.message);
+
+  const tooLate = await request({
+    method: 'POST',
+    path: '/api/applications',
+    body: validApplication({
+      fullName: 'Late Appointment Applicant',
+      nationalId: 'SO-APPOINTMENT-LATE',
+      rollNumber: 'APPOINTMENT-LATE',
+      email: 'late.appointment@example.com',
+      mobile: '610000021',
+      appointmentDate: dateBeyondOneYear
+    })
+  });
+  assert.equal(tooLate.status, 422);
+  assert.equal(tooLate.body.error.message, 'Certificate appointment date cannot be more than one year from today');
 });
 
 test('public visitor can submit a contact message', async () => {

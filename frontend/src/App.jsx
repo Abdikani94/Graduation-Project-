@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Students from './pages/Students';
@@ -16,18 +18,27 @@ import AdminReport from './pages/AdminReport';
 import Settings from './pages/Settings';
 import LandingPage from './pages/LandingPage';
 import ApplyPage from './pages/ApplyPage';
+import AdmissionRequirementsPage from './pages/AdmissionRequirementsPage';
+import ProgramFeesPage from './pages/ProgramFeesPage';
+import AdmissionsPage from './pages/AdmissionsPage';
+import FileStorage from './pages/FileStorage';
+import AdmissionPeriods from './pages/AdmissionPeriods';
 
 const AdminLayout = () => {
   const token = localStorage.getItem('authToken');
+  const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const [navigationOpen, setNavigationOpen] = useState(false);
 
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
   return (
-    <div className="admin-shell flex h-screen w-full p-[15px] gap-[15px] bg-main-bg text-text-dark overflow-hidden box-border font-sans">
-      <Sidebar />
-      <main className="admin-content flex-1 overflow-y-auto h-full pr-1 custom-scrollbar">
+    <div className="admin-shell">
+      <button className="admin-mobile-menu" onClick={() => setNavigationOpen(true)} aria-label="Open navigation"><Menu size={22} /><span>Admin Portal</span></button>
+      {navigationOpen && <button className="admin-sidebar-overlay" aria-label="Close navigation" onClick={() => setNavigationOpen(false)} />}
+      <Sidebar open={navigationOpen} onClose={() => setNavigationOpen(false)} />
+      <main className="admin-content">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
@@ -39,6 +50,8 @@ const AdminLayout = () => {
           <Route path="/reports" element={<Reports />} />
           <Route path="/programs" element={<Programs />} />
           <Route path="/contact-messages" element={<ContactMessages />} />
+          <Route path="/file-storage" element={<FileStorage />} />
+          <Route path="/admission-periods" element={currentUser.role === 'Admin' ? <AdmissionPeriods /> : <Navigate to="/dashboard" replace />} />
           <Route path="/activity-log" element={<ActivityLog />} />
           <Route path="/admin-users" element={<AdminUsers />} />
           <Route path="/admin-report" element={<AdminReport />} />
@@ -55,6 +68,9 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/apply" element={<ApplyPage />} />
+        <Route path="/admissions" element={<AdmissionsPage />} />
+        <Route path="/admission-requirements" element={<AdmissionRequirementsPage />} />
+        <Route path="/program-fees" element={<ProgramFeesPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/admin/*" element={<AdminLayout />} />
         <Route path="/*" element={<AdminLayout />} />

@@ -2,7 +2,7 @@ import { readDb, updateDb } from '../lib/db.js';
 import { sendJson } from '../lib/http.js';
 import { addActivity } from '../services/audit.js';
 
-const allowedSettingsFields = ['universityName', 'supportEmail', 'admissionsSemester', 'currency', 'maintenanceMode', 'requireTwoFactor'];
+const allowedSettingsFields = ['universityName', 'supportEmail', 'admissionsSemester', 'currency', 'maintenanceMode', 'twoFactorRequired'];
 const allowedNotificationFields = ['newAdmissions', 'paymentSuccess', 'weeklyReports'];
 
 export const getSettings = async (req, res) => {

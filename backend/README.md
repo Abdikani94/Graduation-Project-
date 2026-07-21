@@ -21,6 +21,9 @@ npm run seed
 npm run dev
 ```
 
+`npm run seed` safely initializes a missing database and preserves all existing
+classes, applications, students, payments, and other records.
+
 When startup succeeds, the terminal prints:
 
 ```text

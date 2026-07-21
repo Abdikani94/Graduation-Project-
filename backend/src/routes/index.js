@@ -31,6 +31,12 @@ import { getSettings, updateSettings } from '../controllers/settingsController.j
 import { exportActivityCsv, listActivity } from '../controllers/activityController.js';
 import { initiate, preview, receipt, status } from '../controllers/paymentController.js';
 import { requirePaymentAuth } from '../middleware/paymentAuth.js';
+import { requireAdmissionPeriodPermission } from '../middleware/admissionPeriodAuth.js';
+import { archivePeriod, createPeriod, deleteDraftPeriod, duplicatePeriod, extendPeriod, getPeriod, getRegistrationStatus, listPeriodActivity, listPeriods, transitionPeriod, updatePeriod } from '../controllers/admissionPeriodsController.js';
+import {
+  archiveFile, deleteFile, downloadFile, getFile, getFileStats, listFileActivities, listFileOptions,
+  listFiles, listFileNotifications, markFileNotificationRead, previewFile, replaceFile, reviewFile, shareFile, updateFile, uploadFile
+} from '../controllers/filesController.js';
 
 export const registerRoutes = (router) => {
   router.get('/health', (req, res) => {
@@ -41,6 +47,24 @@ export const registerRoutes = (router) => {
 
   router.post('/api/auth/login', login);
   router.get('/api/auth/me', requireAuth(me));
+  router.get('/api/admission-registration/status', getRegistrationStatus);
+
+  const periodPermission = (permission, handler) => requireAuth(requireAdmissionPeriodPermission(permission)(handler), ['Admin']);
+  router.get('/api/admission-periods', periodPermission('admission_period.view', listPeriods));
+  router.post('/api/admission-periods', periodPermission('admission_period.create', createPeriod));
+  router.get('/api/admission-periods/:id', periodPermission('admission_period.view', getPeriod));
+  router.patch('/api/admission-periods/:id', periodPermission('admission_period.update', updatePeriod));
+  router.post('/api/admission-periods/:id/extend', periodPermission('admission_period.extend', extendPeriod));
+  router.post('/api/admission-periods/:id/duplicate', periodPermission('admission_period.create', duplicatePeriod));
+  router.patch('/api/admission-periods/:id/archive', periodPermission('admission_period.archive', archivePeriod));
+  router.get('/api/admission-periods/:id/activity', periodPermission('admission_period.view_audit_log', listPeriodActivity));
+  router.delete('/api/admission-periods/:id', periodPermission('admission_period.archive', deleteDraftPeriod));
+  for (const [action, permission] of Object.entries({ open: 'open', close: 'close', pause: 'pause', resume: 'resume', reopen: 'reopen', cancel: 'cancel' })) {
+    router.post(`/api/admission-periods/:id/${action}`, periodPermission(`admission_period.${permission}`, (req, res) => {
+      req.params.action = action;
+      return transitionPeriod(req, res);
+    }));
+  }
 
   router.get('/api/options', getOptions);
   router.get('/api/programs', listPrograms);
@@ -102,4 +126,21 @@ export const registerRoutes = (router) => {
 
   router.get('/api/activity-log', requireAuth(listActivity, ['Admin', 'Officer']));
   router.get('/api/activity-log/export/csv', requireAuth(exportActivityCsv, ['Admin', 'Officer']));
+
+  router.get('/api/files/stats', requireAuth(getFileStats, ['Admin', 'Officer']));
+  router.get('/api/files/options', requireAuth(listFileOptions, ['Admin', 'Officer']));
+  router.get('/api/files', requireAuth(listFiles, ['Admin', 'Officer']));
+  router.post('/api/files', requireAuth(uploadFile, ['Admin', 'Officer']));
+  router.get('/api/files/:id', requireAuth(getFile, ['Admin', 'Officer']));
+  router.get('/api/files/:id/preview', requireAuth(previewFile, ['Admin', 'Officer']));
+  router.get('/api/files/:id/download', requireAuth(downloadFile, ['Admin', 'Officer']));
+  router.get('/api/files/:id/activities', requireAuth(listFileActivities, ['Admin', 'Officer']));
+  router.patch('/api/files/:id', requireAuth(updateFile, ['Admin', 'Officer']));
+  router.post('/api/files/:id/replace', requireAuth(replaceFile, ['Admin', 'Officer']));
+  router.patch('/api/files/:id/archive', requireAuth(archiveFile, ['Admin', 'Officer']));
+  router.post('/api/files/:id/share', requireAuth(shareFile, ['Admin', 'Officer']));
+  router.patch('/api/files/:id/review', requireAuth(reviewFile, ['Admin']));
+  router.delete('/api/files/:id', requireAuth(deleteFile, ['Admin', 'Officer']));
+  router.get('/api/file-notifications', requireAuth(listFileNotifications, ['Admin', 'Officer']));
+  router.patch('/api/file-notifications/:id/read', requireAuth(markFileNotificationRead, ['Admin', 'Officer']));
 };

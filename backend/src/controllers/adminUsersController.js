@@ -40,7 +40,7 @@ export const listAdminUsers = async (req, res) => {
 };
 
 export const createAdminUser = async (req, res) => {
-  const { name, username, email, password, role = 'Officer', campus = 'Main Campus' } = req.body || {};
+  const { name, username, email, password, role = 'Officer', campus = 'Main Campus', team = '', department = '' } = req.body || {};
   if (!name || !username || !email || !password) fail(422, 'Name, username, email, and password are required');
   if (!isValidEmail(email)) fail(422, 'Please enter a valid email address');
   if (password.length < minPasswordLength) fail(422, `Password must be at least ${minPasswordLength} characters`);
@@ -62,6 +62,8 @@ export const createAdminUser = async (req, res) => {
       passwordHash: hashPassword(password),
       role,
       campus,
+      team,
+      department,
       status: 'Active',
       createdAt: now,
       updatedAt: now
@@ -91,7 +93,7 @@ export const updateAdminUser = async (req, res) => {
     const found = db.users.find((item) => item.id === req.params.id);
     if (!found) fail(404, 'Admin user not found');
     const before = found.role;
-    for (const key of ['name', 'username', 'email', 'role', 'campus', 'status']) {
+    for (const key of ['name', 'username', 'email', 'role', 'campus', 'team', 'department', 'status']) {
       if (req.body[key] !== undefined) found[key] = req.body[key];
     }
     if (req.body.password) found.passwordHash = hashPassword(req.body.password);

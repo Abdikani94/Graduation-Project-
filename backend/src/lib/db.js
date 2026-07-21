@@ -6,10 +6,27 @@ import { env } from '../config/env.js';
 import { createSeedData } from '../data/seed-data.js';
 import { hashPassword } from './crypto.js';
 
-const collections = ['users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities', 'classes'];
+const collections = [
+  'users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities', 'classes',
+  'files', 'fileShares', 'fileActivities', 'notifications', 'admissionPeriods', 'admissionPeriodActivities'
+];
+const admissionPeriodPermissions = ['admission_period.view', 'admission_period.create', 'admission_period.update', 'admission_period.open', 'admission_period.close', 'admission_period.pause', 'admission_period.resume', 'admission_period.extend', 'admission_period.reopen', 'admission_period.cancel', 'admission_period.archive', 'admission_period.view_audit_log'];
+const defaultSettings = {
+  universityName: 'Jamhuriya University',
+  supportEmail: 'support@jamhuriya.edu.so',
+  admissionsSemester: 'Fall 2026',
+  currency: 'USD',
+  twoFactorRequired: true,
+  notifications: {
+    newAdmissions: true,
+    paymentSuccess: true,
+    weeklyReports: false
+  }
+};
 let mongoClient;
 let mongoDatabase;
 let mongoConnectionLogged = false;
+let updateQueue = Promise.resolve();
 
 const ensureDirectory = async (filePath) => {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -33,30 +50,78 @@ const getMongoDatabase = async () => {
   return mongoDatabase;
 };
 
+const jsonBackupFile = () => `${env.dbFile}.bak`;
+
+const normalizeData = (data = {}) => {
+  const normalized = data && typeof data === 'object' ? data : {};
+  normalized.meta = normalized.meta && typeof normalized.meta === 'object' ? normalized.meta : {};
+  normalized.settings = {
+    ...defaultSettings,
+    ...(normalized.settings && typeof normalized.settings === 'object' ? normalized.settings : {}),
+    notifications: {
+      ...defaultSettings.notifications,
+      ...(normalized.settings?.notifications && typeof normalized.settings.notifications === 'object'
+        ? normalized.settings.notifications
+        : {})
+    }
+  };
+  for (const collection of collections) {
+    if (!Array.isArray(normalized[collection])) normalized[collection] = [];
+  }
+  for (const user of normalized.users) {
+    if (user.role === 'Admin' && !Array.isArray(user.permissions)) user.permissions = [...admissionPeriodPermissions];
+  }
+  return normalized;
+};
+
 const ensureJsonDb = async () => {
   try {
     await fs.access(env.dbFile);
+    try {
+      await fs.access(jsonBackupFile());
+    } catch {
+      await fs.copyFile(env.dbFile, jsonBackupFile());
+    }
   } catch {
     await ensureDirectory(env.dbFile);
+    try {
+      await fs.copyFile(jsonBackupFile(), env.dbFile);
+      return;
+    } catch {
+      // A new installation has no database or backup yet.
+    }
     const seed = createSeedData({ hashPassword });
     await fs.writeFile(env.dbFile, JSON.stringify(seed, null, 2));
+    await fs.copyFile(env.dbFile, jsonBackupFile());
   }
 };
 
 const readJsonDb = async () => {
   await ensureJsonDb();
-  const raw = await fs.readFile(env.dbFile, 'utf8');
-  const data = JSON.parse(raw);
-  data.classes = data.classes || [];
-  return data;
+  try {
+    const raw = await fs.readFile(env.dbFile, 'utf8');
+    return normalizeData(JSON.parse(raw));
+  } catch (primaryError) {
+    try {
+      const backupRaw = await fs.readFile(jsonBackupFile(), 'utf8');
+      const recovered = normalizeData(JSON.parse(backupRaw));
+      await fs.copyFile(jsonBackupFile(), env.dbFile);
+      console.warn(`Recovered database from backup after read failure: ${primaryError.message}`);
+      return recovered;
+    } catch {
+      throw primaryError;
+    }
+  }
 };
 
 const writeJsonDb = async (data) => {
   await ensureDirectory(env.dbFile);
   const tmpFile = `${env.dbFile}.tmp`;
-  await fs.writeFile(tmpFile, JSON.stringify(data, null, 2));
+  const normalized = normalizeData(data);
+  await fs.writeFile(tmpFile, JSON.stringify(normalized, null, 2));
   await fs.rename(tmpFile, env.dbFile);
-  return data;
+  await fs.copyFile(env.dbFile, jsonBackupFile());
+  return normalized;
 };
 
 const ensureMongoDb = async () => {
@@ -67,7 +132,16 @@ const ensureMongoDb = async () => {
     database.collection('payments').createIndex(
       { applicationId: 1, userId: 1, idempotencyKey: 1 },
       { unique: true, sparse: true }
-    )
+    ),
+    database.collection('files').createIndex({ uploadedBy: 1, reportType: 1, reportDate: 1 }),
+    database.collection('files').createIndex({ uploadedBy: 1, reportType: 1, reportingMonth: 1, reportingYear: 1 }),
+    database.collection('files').createIndex({ approvalStatus: 1, isArchived: 1, createdAt: -1 }),
+    database.collection('fileShares').createIndex({ fileId: 1, sharedWithUserId: 1 }),
+    database.collection('fileActivities').createIndex({ fileId: 1, createdAt: -1 }),
+    database.collection('notifications').createIndex({ userId: 1, read: 1, createdAt: -1 })
+    ,database.collection('admissionPeriods').createIndex({ status: 1, openingDatetime: 1, closingDatetime: 1 })
+    ,database.collection('admissionPeriods').createIndex({ academicYear: 1, intakeName: 1, facultyId: 1, programId: 1 })
+    ,database.collection('admissionPeriodActivities').createIndex({ admissionPeriodId: 1, createdAt: -1 })
   ]);
   const userCount = await database.collection('users').countDocuments();
   if (userCount === 0) {
@@ -135,15 +209,23 @@ export const readDb = async () => {
 };
 
 export const writeDb = async (data) => {
-  if (usesMongo()) return writeMongoDb(data);
+  if (usesMongo()) return writeMongoDb(normalizeData(data));
   return writeJsonDb(data);
 };
 
 export const updateDb = async (mutator) => {
-  const db = await readDb();
-  const result = await mutator(db);
-  await writeDb(db);
-  return result;
+  // Keep read-modify-write operations in one queue. Without this, two requests
+  // can read the same snapshot and the last writer can erase the first change.
+  const operation = updateQueue.then(async () => {
+    const db = await readDb();
+    const result = await mutator(db);
+    await writeDb(db);
+    return result;
+  });
+
+  // A rejected update must not permanently block later database operations.
+  updateQueue = operation.catch(() => undefined);
+  return operation;
 };
 
 export const closeDb = async () => {

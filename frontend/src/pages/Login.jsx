@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../components/Toast';
+import PublicNav from '../components/PublicNav';
 import logo from '../images/logo.jpg';
 import api from '../api/axios';
 
@@ -29,54 +30,47 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-main-bg w-full p-4 font-sans text-text-dark">
+    <div className="public-page login-public-page font-sans text-text-dark">
+      <PublicNav active="login" />
       <Toast toast={toast} onClose={() => setToast(null)} />
-      <div className="bg-card-bg border border-border-color rounded-[5px] shadow-xl shadow-primary/10 w-full max-w-[500px] p-12 flex flex-col">
-        <div className="text-center mb-10">
-          <img src={logo} alt="Jamhuriya University logo" className="mx-auto mb-5 h-20 w-20 rounded-full object-contain" />
-          <h1 className="text-primary text-[36px] font-bold tracking-[0.3px] font-jakarta">
-            Welcome Back
-          </h1>
-          <p className="text-brand-green text-[14px] mt-2 font-medium">
-            Sign in to the JUST administration portal
-          </p>
+      <main className="login-public-main">
+      <section className="login-card">
+        <div className="login-card-heading">
+          <img src={logo} alt="Jamhuriya University logo" />
+          <span>JUST ADMIN PORTAL</span>
+          <h1>Welcome Back</h1>
+          <p>Sign in securely to manage the university admission system.</p>
         </div>
 
-        <form onSubmit={handleSignIn} className="flex flex-col gap-6">
-          <div className="flex flex-col">
-            <label className="text-text-dark text-[13px] font-semibold mb-2.5 ml-1">
-              Username
-            </label>
+        <form onSubmit={handleSignIn} className="login-form">
+          <label className="login-field">
+            <span>Username</span>
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter username"
-              className="w-full bg-white border border-border-color text-text-dark rounded-[5px] px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-[#969696]"
+              autoComplete="username"
+              required
             />
-          </div>
+          </label>
 
-          <div className="flex flex-col">
-            <label className="text-text-dark text-[13px] font-semibold mb-2.5 ml-1">
-              Password
-            </label>
+          <label className="login-field">
+            <span>Password</span>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="**********"
-              className="w-full bg-white border border-border-color text-text-dark rounded-[5px] px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-[#969696]"
+              autoComplete="current-password"
+              required
             />
-          </div>
+          </label>
 
-          <button
-            type="submit"
-            className="w-full bg-primary hover:bg-brand-green text-white rounded-[5px] py-4 text-[13px] font-semibold transition-all mt-4 cursor-pointer shadow-lg shadow-primary/20"
-          >
-            Sign In
-          </button>
+          <button type="submit">Sign In</button>
         </form>
-      </div>
+      </section>
+      </main>
     </div>
   );
 };

@@ -58,6 +58,7 @@ export const sendError = (res, error) => {
   const status = error instanceof HttpError ? error.status : (error.status || 500);
   const message = error instanceof HttpError || error.status ? error.message : 'Internal server error';
   const payload = { error: { message } };
+  if (error.code) payload.error.code = error.code;
   if (error.details) payload.error.details = error.details;
   sendJson(res, status, payload);
 };

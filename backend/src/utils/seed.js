@@ -1,13 +1,15 @@
 import { env } from '../config/env.js';
-import { createSeedData } from '../data/seed-data.js';
-import { hashPassword } from '../lib/crypto.js';
-import { closeDb, writeDb } from '../lib/db.js';
+import { closeDb, ensureDb, readDb } from '../lib/db.js';
 
-await writeDb(createSeedData({ hashPassword }));
+// Initialize an empty database only. Existing applications, classes, payments,
+// and other records must never be replaced by the normal seed command.
+await ensureDb();
+const data = await readDb();
 await closeDb();
 
 const target = env.dbDriver === 'mongodb'
   ? `${env.mongodbUri}/${env.mongodbDbName}`
   : env.dbFile;
 
-console.log(`Seeded database: ${target}`);
+console.log(`Database ready: ${target}`);
+console.log(`Existing records preserved (${(data.classes || []).length} classes).`);

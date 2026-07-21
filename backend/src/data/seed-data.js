@@ -214,6 +214,7 @@ export const createSeedData = ({ hashPassword }) => {
         email: 'admin@jamhuriya.edu.so',
         passwordHash: hashPassword('admin12345'),
         role: 'Admin',
+        permissions: ['admission_period.view', 'admission_period.create', 'admission_period.update', 'admission_period.open', 'admission_period.close', 'admission_period.pause', 'admission_period.resume', 'admission_period.extend', 'admission_period.reopen', 'admission_period.cancel', 'admission_period.archive', 'admission_period.view_audit_log'],
         campus: 'Main Campus',
         status: 'Active',
         createdAt: isoDaysAgo(90),
@@ -346,13 +347,25 @@ export const createSeedData = ({ hashPassword }) => {
         createdAt: isoDaysAgo(15)
       }
     ],
+    admissionPeriods: [{
+      id: 'adp_general_2026', name: 'General Admission 2026-2027', academicYear: '2026-2027', intakeName: 'General Intake',
+      admissionType: 'General Admission', facultyId: '', programId: '', description: 'University-wide admission registration period.',
+      applicantInstructions: 'Complete every required field and submit before the closing deadline.',
+      openingDatetime: new Date(Date.now() - 30 * 86400000).toISOString(), closingDatetime: new Date(Date.now() + 365 * 86400000).toISOString(),
+      timezone: 'Africa/Nairobi', status: 'Open', automaticOpen: true, automaticClose: true, allowDraftApplications: true,
+      allowApplicationEditing: true, maximumApplications: null, applicationCount: applications.length, openedAt: now, openedBy: 'usr_admin',
+      closedAt: null, closedBy: null, pausedAt: null, pausedBy: null, pauseReason: '', cancellationReason: '', extensionReason: '',
+      sendOpeningNotification: false, sendClosingReminder: false, closingReminderPeriod: 24, archived: false, version: 1,
+      createdBy: 'usr_admin', updatedBy: 'usr_admin', createdAt: now, updatedAt: now
+    }],
+    admissionPeriodActivities: [],
     settings: {
       universityName: 'Jamhuriya University',
       supportEmail: 'support@jamhuriya.edu.so',
       admissionsSemester: 'Fall 2026',
       currency: 'USD',
       maintenanceMode: false,
-      requireTwoFactor: false,
+      twoFactorRequired: false,
       notifications: {
         newAdmissions: true,
         paymentSuccess: true,
