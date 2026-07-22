@@ -472,9 +472,9 @@ const ageFromDate = (dateText) => {
   return age;
 };
 const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
-const simpleTextPattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,/-]{1,99}$/;
-const idPattern = /^[A-Za-z0-9][A-Za-z0-9\s/-]{2,29}$/;
-const rollNumberPattern = /^[A-Za-z0-9][A-Za-z0-9/-]{2,29}$/;
+const simpleTextPattern = /^[A-Za-z][A-Za-z\s'.&,/-]{1,99}$/;
+const idPattern = /^\d{3,30}$/;
+const rollNumberPattern = /^\d[\d/-]{2,29}$/;
 const optionValues = {
   sex: ['Male', 'Female'],
   maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
@@ -665,15 +665,15 @@ function ApplyPage() {
         return false;
       }
       if (!simpleTextPattern.test(normalizeValue(form.nationality))) {
-        showError('Nationality must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        showError('Nationality must contain text only.');
         return false;
       }
       if (!idPattern.test(normalizeValue(form.nationalId))) {
-        showError('National ID is required and must be 3-30 letters or numbers.');
+        showError('National ID must be 3-30 digits.');
         return false;
       }
       if (!rollNumberPattern.test(normalizeValue(form.rollNumber))) {
-        showError('Roll Number must be 3-30 letters or numbers. Hyphens and slashes are allowed.');
+        showError('Roll Number must contain numbers only. Hyphens and slashes are allowed.');
         return false;
       }
       if (!isValidDateValue(form.dateOfBirth)) {
@@ -690,15 +690,15 @@ function ApplyPage() {
         return false;
       }
       if (!simpleTextPattern.test(normalizeValue(form.placeOfBirth))) {
-        showError('Place Of Birth must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        showError('Place Of Birth must contain text only.');
         return false;
       }
       if (!simpleTextPattern.test(normalizeValue(form.district))) {
-        showError('District must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        showError('District must contain text only.');
         return false;
       }
       if (!simpleTextPattern.test(normalizeValue(form.area))) {
-        showError('Area must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        showError('Area must contain text only.');
         return false;
       }
       if (!isValidEmail(form.email)) {
@@ -767,7 +767,7 @@ function ApplyPage() {
         return false;
       }
       if (!simpleTextPattern.test(normalizeValue(form.schoolDistrict))) {
-        showError('School District must be 2-100 characters and use letters, numbers, spaces, or simple punctuation.');
+        showError('School District must contain text only.');
         return false;
       }
       if (!isAllowedOption('heardFrom', form.heardFrom)) {

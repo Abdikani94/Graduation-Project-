@@ -49,8 +49,8 @@ const validApplication = (overrides = {}) => ({
   fullName: 'Test Applicant',
   motherName: 'Test Mother',
   nationality: 'Somali',
-  nationalId: 'SO-TEST-1001',
-  rollNumber: 'ROLL-1001',
+  nationalId: '1001001',
+  rollNumber: '1001',
   dateOfBirth: '2002-01-15',
   placeOfBirth: 'Mogadishu',
   district: 'Hodan',
@@ -73,6 +73,8 @@ const validApplication = (overrides = {}) => ({
   modeOfStudy: 'Full Time',
   paymentPlan: 'Admission fee only',
   paymentMethod: 'EVC Plus',
+  applicantPhotoUploaded: 'Yes',
+  certificateUploaded: 'No',
   hasCertificate: 'No',
   appointmentDate: tomorrow,
   appointmentTime: '09:30',
@@ -565,14 +567,14 @@ const paymentBody = (overrides = {}) => ({
 });
 
 const createPaymentDraft = async () => {
-  const suffix = crypto.randomBytes(4).toString('hex');
+  const suffix = Date.now().toString().slice(-8);
   const response = await request({
     method: 'POST',
     path: '/api/applications',
     body: validApplication({
       fullName: 'Payment Test Applicant',
-      nationalId: `SO-${suffix}`,
-      rollNumber: `ROLL-${suffix}`,
+      nationalId: `${suffix}`,
+      rollNumber: `${suffix}`,
       email: `payment-${suffix}@example.com`
     })
   });
