@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-dotenv
+pytest
+httpx
+ruff
+pandas
+chromadb
+sentence-transformers
+google-genai
+pymongo

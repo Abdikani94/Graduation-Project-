@@ -1,0 +1,237 @@
+{
+  "small_talk": [
+    {
+      "tag": "greeting_asc",
+      "patterns": [
+        "asc",
+        "asalaamu calaykum",
+        "assalamu alaikum",
+        "salaam",
+        "salaan",
+        "hello",
+        "hi"
+      ],
+      "response": "WCS 👋 Soo dhawoow. Su’aashaada admission-ka JUST ii sheeg."
+    },
+    {
+      "tag": "reply_wcs",
+      "patterns": [
+        "wcs",
+        "wacalaykum salaam",
+        "wa calaykum salaam",
+        "wa alaikum salaam"
+      ],
+      "response": "Soo dhawoow walaal 😊 Maxaan kaaga caawiyaa admission-ka JUST?"
+    },
+    {
+      "tag": "how_are_you",
+      "patterns": [
+        "sidee tahay",
+        "seetahay",
+        "see tahay",
+        "side tahay",
+        "iska waran",
+        "see wax yihiin"
+      ],
+      "response": "Waan fiicanahay walaal 😊 diyaar ayaan u ahay inaan kaa caawiyo admission-ka JUST."
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "mahadsanid",
+        "mahadsanidiin",
+        "thanks",
+        "thank you",
+        "jazakallah"
+      ],
+      "response": "Adaa mudan walaal 😊 Su’aal kale oo admission-ka JUST ah ii sheeg."
+    }
+  ],
+
+  "inappropriate": {
+    "patterns": [
+      "gabdho shidan",
+      "gabdha shidan",
+      "gabar shidan",
+      "hablo shidan",
+      "girls shidan",
+      "shidan miya",
+      "shukaansi",
+      "dating",
+      "gabar qurux",
+      "gabdho qurux"
+    ],
+    "response": "Walaal 😊 waxaan halkan u joogaa inaan kaa caawiyo su’aalaha la xiriira JUST admission-ka, kulliyadaha, lacagaha, diiwaangelinta, scholarships, iyo adeegyada ardayda. Su’aal admission ah ii sheeg."
+  },
+
+  "out_of_scope": {
+    "admission_terms": [
+      "just",
+      "jaamacad",
+      "jamacad",
+      "university",
+      "admission",
+      "diiwaan",
+      "diwaan",
+      "isdiiwaan",
+      "isdiwaan",
+      "kulliyad",
+      "kuliyad",
+      "faculty",
+      "program",
+      "barnaamij",
+      "fee",
+      "fees",
+      "lacag",
+      "qiimaha",
+      "kharash",
+      "khidmad",
+      "scholarship",
+      "deeq",
+      "hostel",
+      "exam",
+      "imtixaan",
+      "graduation",
+      "qalin",
+      "student",
+      "arday",
+      "location",
+      "xagee",
+      "halkee",
+      "taalaa",
+      "campus",
+      "xarun",
+      "medicine",
+      "computer",
+      "it",
+      "ict",
+      "nursing",
+      "public health",
+      "accounting",
+      "business",
+      "engineering"
+    ],
+    "unrelated_terms": [
+      "java",
+      "python",
+      "react",
+      "javascript",
+      "macalin",
+      "teacher",
+      "ai",
+      "chatgpt",
+      "football",
+      "ciyaar",
+      "music",
+      "youtube",
+      "facebook",
+      "tiktok",
+      "politics",
+      "siyaasad",
+      "crypto",
+      "trading",
+      "bitcoin"
+    ],
+    "response": "Walaal waxaan halkan u joogaa inaan kaa caawiyo su’aalaha la xiriira JUST admission-ka, kulliyadaha, lacagaha, diiwaangelinta, scholarships, hostel, exams, graduation, iyo adeegyada ardayda. Ii weydii su’aal la xiriirta JUST admission-ka."
+  },
+
+  "direct_answers": [
+    {
+      "tag": "registration_fee",
+      "required_terms_any": [
+        "isdiiwaangalin",
+        "isdiiwaangelin",
+        "is diiwaangalin",
+        "is diiwaangelin",
+        "diiwaangalin",
+        "diiwaangelin",
+        "diwaangalin",
+        "diwaangelin",
+        "diiwaan",
+        "diwaan",
+        "register",
+        "registration",
+        "codsi"
+      ],
+      "money_terms_any": [
+        "qiimaha",
+        "lacag",
+        "kharash",
+        "khidmad",
+        "khidmadda",
+        "fee",
+        "fees",
+        "cost",
+        "amount",
+        "imisa"
+      ],
+      "response": "Khidmadda diiwaangelinta dhamaan kulliyadaha waa $25."
+    }
+  ],
+
+  "unknown_course_subjects": {
+    "course_terms": [
+      "php",
+      "java",
+      "python",
+      "react",
+      "javascript",
+      "laravel",
+      "flutter",
+      "node",
+      "database",
+      "sql"
+    ],
+    "university_terms": [
+      "kuliyadda",
+      "kulliyadda",
+      "faculty",
+      "it",
+      "computer",
+      "jaamacad",
+      "jamacad",
+      "dhigaa",
+      "lagu dhigaa",
+      "subject",
+      "maado",
+      "maadada"
+    ],
+    "response": "Walaal su’aashaas hadda uma hayo macluumaad rasmi ah. Si aad u hesho faahfaahin sax ah, fadlan la xiriir qeybta Admission-ka: 618833500."
+  },
+
+  "program_aliases": {
+    "Computer and IT": [
+      "it",
+      "ict",
+      "computer",
+      "kombiyuutar",
+      "computer science",
+      "technology"
+    ],
+    "Medicine": [
+      "medicine",
+      "doctor",
+      "dhakhtar",
+      "caafimaad"
+    ],
+    "Nursing": [
+      "nursing",
+      "nurse",
+      "kalkaaliye"
+    ],
+    "Public Health": [
+      "public health",
+      "caafimaadka bulshada"
+    ],
+    "Accounting": [
+      "accounting",
+      "xisaabaad",
+      "account"
+    ],
+    "Business Administration": [
+      "business",
+      "business administration",
+      "maamulka ganacsiga"
+    ]
+  }
+}
