@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, UserPlus, Users, Briefcase, TrendingUp, BookOpen, MessageCircle, History, Users2, FileText, Settings, LogOut, GraduationCap, Percent, FolderArchive, CalendarCheck, MessageSquareText, MessagesSquare, X
+  LayoutDashboard, UserPlus, Users, Briefcase, TrendingUp, BookOpen, MessageCircle, History, Users2, FileText, Settings, LogOut, GraduationCap, Percent, FolderArchive, CalendarCheck, MessageSquareText, MessagesSquare, UserRoundSearch, X
 } from 'lucide-react';
 import Card from './Card';
 import logo from '../images/logo.jpg';
@@ -30,6 +30,7 @@ const Sidebar = ({ open = false, onClose = () => {} }) => {
           <NavItem onClick={onClose} to="/dashboard" icon={LayoutDashboard}>Dashboard</NavItem>
           <NavItem onClick={onClose} to="/applications" icon={UserPlus}>Applications</NavItem>
           <NavItem onClick={onClose} to="/students" icon={Users}>Students</NavItem>
+          {['Admin', 'Officer'].includes(currentUser.role) && <NavItem onClick={onClose} to="/student-search" icon={UserRoundSearch}>Student Search</NavItem>}
           <NavItem onClick={onClose} to="/classes" icon={GraduationCap}>Classes</NavItem>
           <NavItem onClick={onClose} to="/payments" icon={Briefcase}>Payments</NavItem>
           <NavItem onClick={onClose} to="/discount" icon={Percent}>Discount</NavItem>

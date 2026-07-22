@@ -25,6 +25,7 @@ import FileStorage from './pages/FileStorage';
 import AdmissionPeriods from './pages/AdmissionPeriods';
 import SmsNotifications from './pages/SmsNotifications';
 import ScheduledMessages from './pages/ScheduledMessages';
+import StudentSearch from './pages/StudentSearch';
 
 const AdminLayout = () => {
   const token = localStorage.getItem('authToken');
@@ -46,6 +47,7 @@ const AdminLayout = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/students" element={<Students />} />
+          <Route path="/student-search" element={['Admin', 'Officer'].includes(currentUser.role) ? <StudentSearch /> : <Navigate to="/dashboard" replace />} />
           <Route path="/classes" element={<Classes />} />
           <Route path="/payments" element={<Payments />} />
           <Route path="/discount" element={<Discount />} />

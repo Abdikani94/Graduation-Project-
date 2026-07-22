@@ -39,6 +39,8 @@ import {
 } from '../controllers/filesController.js';
 import { cancelSmsNotification, getSmsNotification, listSmsNotifications, resendSmsNotification } from '../controllers/smsNotificationsController.js';
 import { requireScheduledMessagePermission } from '../middleware/scheduledMessageAuth.js';
+import { requireStudentSearchPermission } from '../middleware/studentSearchAuth.js';
+import { searchStudents } from '../controllers/studentSearchController.js';
 import {
   archiveCampaign, archiveTemplate, cancelCampaign, createCampaign, createTemplate, duplicateCampaign,
   getCampaignDetails, getScheduledMessageOptions, listCampaigns, listTemplates, previewCampaign,
@@ -115,6 +117,7 @@ export const registerRoutes = (router) => {
   router.patch('/api/sms-templates/:id/archive', messagePermission('scheduled_message.manage_templates', archiveTemplate));
 
   router.get('/api/students', requireAuth(listStudents, ['Admin', 'Officer']));
+  router.get('/api/student-search', requireAuth(requireStudentSearchPermission('student_search.view')(searchStudents), ['Admin', 'Officer']));
   router.post('/api/students', requireAuth(createStudent, ['Admin', 'Officer']));
   router.get('/api/students/:id', requireAuth(getStudent, ['Admin', 'Officer']));
   router.patch('/api/students/:id', requireAuth(updateStudent, ['Admin', 'Officer']));

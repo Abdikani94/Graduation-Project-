@@ -12,6 +12,8 @@ const collections = [
 ];
 const admissionPeriodPermissions = ['admission_period.view', 'admission_period.create', 'admission_period.update', 'admission_period.open', 'admission_period.close', 'admission_period.pause', 'admission_period.resume', 'admission_period.extend', 'admission_period.reopen', 'admission_period.cancel', 'admission_period.archive', 'admission_period.view_audit_log'];
 const scheduledMessagePermissions = ['scheduled_message.view', 'scheduled_message.create', 'scheduled_message.update', 'scheduled_message.schedule', 'scheduled_message.send_now', 'scheduled_message.cancel', 'scheduled_message.retry', 'scheduled_message.view_results', 'scheduled_message.manage_templates'];
+const studentSearchPermissions = ['student_search.view', 'student_search.view_contact', 'student_search.view_emergency_contact', 'student_search.view_academic', 'student_search.view_payment_summary', 'student_search.view_full_profile'];
+const staffStudentSearchPermissions = studentSearchPermissions.filter((permission) => permission !== 'student_search.view_full_profile');
 const defaultSettings = {
   universityName: 'Jamhuriya University',
   supportEmail: 'support@jamhuriya.edu.so',
@@ -70,7 +72,8 @@ const normalizeData = (data = {}) => {
     if (!Array.isArray(normalized[collection])) normalized[collection] = [];
   }
   for (const user of normalized.users) {
-    if (user.role === 'Admin') user.permissions = [...new Set([...(user.permissions || []), ...admissionPeriodPermissions, ...scheduledMessagePermissions])];
+    if (user.role === 'Admin') user.permissions = [...new Set([...(user.permissions || []), ...admissionPeriodPermissions, ...scheduledMessagePermissions, ...studentSearchPermissions])];
+    if (user.role === 'Officer') user.permissions = [...new Set([...(user.permissions || []), ...staffStudentSearchPermissions])];
   }
   return normalized;
 };
