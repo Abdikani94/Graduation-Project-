@@ -5,6 +5,7 @@ import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
+import { confirmDialog } from '../services/dialogService';
 
 const formatDate = (value) => {
   if (!value) return 'Not provided';
@@ -142,7 +143,7 @@ const Applications = () => {
       `The application status will be changed to ${nextStatus}.`,
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: 'Reject application', confirmLabel: 'Reject Application', destructive: true })) return;
     setIsSaving(true);
     try {
       await api.patch(`/applications/${app.id}/status`, { status: nextStatus });
@@ -206,7 +207,7 @@ const Applications = () => {
       'This action cannot be undone.',
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: 'Delete application', confirmLabel: 'Delete Application', destructive: true })) return;
     setIsSaving(true);
     try {
       await api.delete(`/applications/${app.id}`);

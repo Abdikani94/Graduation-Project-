@@ -5,6 +5,7 @@ import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
+import { confirmDialog } from '../services/dialogService';
 
 const emptyForm = {
   name: '',
@@ -101,7 +102,7 @@ const AdminUsers = () => {
       `New status: ${nextStatus}`,
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: `${nextStatus} admin account`, confirmLabel: nextStatus === 'Disabled' ? 'Disable Account' : 'Enable Account', destructive: nextStatus === 'Disabled' })) return;
     try {
       await api.patch(`/admin-users/${user.id}`, { status: nextStatus });
       setToast({ type: 'success', title: 'Saved', message: 'Admin status updated.' });
@@ -120,7 +121,7 @@ const AdminUsers = () => {
       'This action cannot be undone.',
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: 'Delete admin user', confirmLabel: 'Delete Admin', destructive: true })) return;
     try {
       await api.delete(`/admin-users/${user.id}`);
       setToast({ type: 'success', title: 'Deleted', message: 'Admin user deleted.' });

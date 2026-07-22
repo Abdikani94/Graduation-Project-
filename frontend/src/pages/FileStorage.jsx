@@ -7,6 +7,7 @@ import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
+import { confirmDialog, promptDialog } from '../services/dialogService';
 
 const tabs = [
   ['all', 'All Files'], ['daily', 'Daily Reports'], ['monthly', 'Monthly Reports'],
@@ -154,17 +155,18 @@ function FileStorage() {
     catch (error) { setToast({ type: 'error', title: 'Action failed', message: error.message }); }
   };
   const remove = async (item) => {
-    if (!window.confirm(`Permanently delete “${item.title}”? This cannot be undone.`)) return;
+    if (!await confirmDialog(`Permanently delete “${item.title}”? This cannot be undone.`, { title: 'Delete stored file', confirmLabel: 'Delete File', destructive: true })) return;
     try { await api.delete(`/files/${item.id}`); await load(); }
     catch (error) { setToast({ type: 'error', title: 'Delete failed', message: error.message }); }
   };
   const review = async (item, nextStatus) => {
-    const adminComment = window.prompt(`Optional comment for ${nextStatus}:`, '') ?? '';
+    const adminComment = await promptDialog(`Add an optional comment for ${nextStatus}.`, '', { title: `${nextStatus} file`, confirmLabel: 'Save Review' });
+    if (adminComment === null) return;
     try { await api.patch(`/files/${item.id}/review`, { status: nextStatus, adminComment }); await load(); }
     catch (error) { setToast({ type: 'error', title: 'Review failed', message: error.message }); }
   };
   const share = async (item) => {
-    const input = window.prompt('Enter one or more user IDs separated by commas. Leave empty to share with all users.', '');
+    const input = await promptDialog('Enter one or more user IDs separated by commas. Leave empty to share with all users.', '', { title: 'Share stored file', confirmLabel: 'Update Sharing' });
     if (input === null) return;
     const selectedUsers = input.split(',').map((value) => value.trim()).filter(Boolean);
     try {
@@ -173,9 +175,9 @@ function FileStorage() {
     } catch (error) { setToast({ type: 'error', title: 'Share failed', message: error.message }); }
   };
   const editDetails = async (item) => {
-    const title = window.prompt('File title:', item.title);
+    const title = await promptDialog('Update the file title.', item.title, { title: 'Edit file title', required: true, multiline: false, confirmLabel: 'Continue' });
     if (!title?.trim()) return;
-    const description = window.prompt('Description:', item.description || '');
+    const description = await promptDialog('Update the file description.', item.description || '', { title: 'Edit file description', confirmLabel: 'Save Changes' });
     if (description === null) return;
     try { await api.patch(`/files/${item.id}`, { title: title.trim(), description }); await load(); }
     catch (error) { setToast({ type: 'error', title: 'Edit failed', message: error.message }); }
@@ -203,14 +205,16 @@ function FileStorage() {
   const runBulk = async (action) => {
     const chosen = files.filter((item) => selected.includes(item.id));
     if (!chosen.length) return;
-    if (action === 'delete' && !window.confirm(`Delete ${chosen.length} selected files permanently?`)) return;
+    if (action === 'delete' && !await confirmDialog(`Delete ${chosen.length} selected files permanently?`, { title: 'Delete selected files', confirmLabel: `Delete ${chosen.length} Files`, destructive: true })) return;
     try {
       if (action === 'approve' || action === 'reject') await Promise.all(chosen.map((item) => api.patch(`/files/${item.id}/review`, { status: action === 'approve' ? 'Approved' : 'Rejected', adminComment: 'Bulk review action' })));
       if (action === 'archive') await Promise.all(chosen.map((item) => api.patch(`/files/${item.id}/archive`, { archived: true })));
       if (action === 'delete') await Promise.all(chosen.map((item) => api.delete(`/files/${item.id}`)));
       if (action === 'download') for (const item of chosen) await openBlob(item, true);
       if (action === 'share') {
-        const userIds = (window.prompt('User IDs separated by commas; leave empty for all users.', '') ?? '').split(',').map((v) => v.trim()).filter(Boolean);
+        const sharingInput = await promptDialog('User IDs separated by commas; leave empty for all users.', '', { title: 'Share selected files', confirmLabel: 'Update Sharing' });
+        if (sharingInput === null) return;
+        const userIds = sharingInput.split(',').map((v) => v.trim()).filter(Boolean);
         await Promise.all(chosen.map((item) => api.post(`/files/${item.id}/share`, { visibility: userIds.length ? 'Selected Users' : 'All Users', selectedUsers: userIds })));
       }
       await load();

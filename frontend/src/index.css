@@ -5284,6 +5284,123 @@ body:has(.admin-shell) {
   .scheduled-messages-page > .admin-card table { min-width: 760px !important; }
 }
 
+/* Shared branded confirmation and validation dialogs */
+.global-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(7, 20, 43, 0.68);
+  backdrop-filter: blur(7px);
+  animation: global-dialog-fade 160ms ease-out;
+}
+
+.global-dialog {
+  width: min(100%, 520px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 30px 90px rgba(6, 20, 45, 0.38);
+  animation: global-dialog-enter 190ms ease-out;
+}
+
+.global-dialog-header {
+  position: relative;
+  padding: 26px 28px 24px;
+  color: #fff;
+  background: linear-gradient(135deg, #253b76, #176783);
+}
+
+.global-dialog-header.is-danger { background: linear-gradient(135deg, #9f1d1d, #dc2626); }
+.global-dialog-header.is-success { background: linear-gradient(135deg, #047857, #00a451); }
+.global-dialog-header.is-question { background: linear-gradient(135deg, #253b76, #303b97); }
+
+.global-dialog-header > button {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 9px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.global-dialog-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.global-dialog-header h2 { margin-top: 18px; font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+.global-dialog-header p { margin-top: 5px; color: rgba(255, 255, 255, 0.78); font-size: 13px; }
+.global-dialog-body { padding: 25px 28px 27px; }
+
+.global-dialog-message {
+  white-space: pre-line;
+  color: #52627a;
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.global-dialog-field { display: block; margin-top: 20px; }
+.global-dialog-field > span { display: flex; align-items: center; justify-content: space-between; color: #14294b; font-size: 12px; font-weight: 750; }
+.global-dialog-field em { color: #dc2626; font-size: 10px; font-style: normal; text-transform: uppercase; letter-spacing: .08em; }
+
+.global-dialog-field input,
+.global-dialog-field textarea {
+  width: 100%;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border: 1px solid #ced9e7;
+  border-radius: 9px;
+  outline: none;
+  color: #14294b;
+  background: #f8fafc;
+  resize: vertical;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background 150ms ease;
+}
+
+.global-dialog-field input:focus,
+.global-dialog-field textarea:focus { border-color: #303b97; background: #fff; box-shadow: 0 0 0 4px rgba(48, 59, 151, .11); }
+.global-dialog-field small { display: block; margin-top: 7px; color: #dc2626; font-size: 11px; font-weight: 650; }
+.global-dialog-actions { display: flex; justify-content: flex-end; gap: 11px; margin-top: 25px; }
+
+.global-dialog-actions button {
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 750;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.global-dialog-cancel { border: 1px solid #ccd7e5; color: #53627a; background: #fff; }
+.global-dialog-confirm { border: 0; color: #fff; background: linear-gradient(90deg, #303b97, #176783); box-shadow: 0 9px 22px rgba(37, 59, 118, .22); }
+.global-dialog-confirm.is-danger { background: linear-gradient(90deg, #b91c1c, #dc2626); box-shadow: 0 9px 22px rgba(185, 28, 28, .2); }
+.global-dialog-actions button:hover { transform: translateY(-1px); }
+
+@keyframes global-dialog-fade { from { opacity: 0; } }
+@keyframes global-dialog-enter { from { opacity: 0; transform: translateY(12px) scale(.985); } }
+
+@media (max-width: 560px) {
+  .global-dialog-backdrop { padding: 12px; align-items: end; }
+  .global-dialog { border-radius: 16px 16px 10px 10px; }
+  .global-dialog-header, .global-dialog-body { padding-left: 20px; padding-right: 20px; }
+  .global-dialog-actions { flex-direction: column-reverse; }
+  .global-dialog-actions button { width: 100%; }
+}
+
 @media (max-width: 560px) {
   .admin-shell { padding-inline: 8px !important; }
   .admin-mobile-menu { left: 8px; right: 8px; }

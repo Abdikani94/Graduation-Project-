@@ -5,6 +5,7 @@ import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
+import { confirmDialog } from '../services/dialogService';
 
 const contactTypes = ['Type of contact', 'Admission', 'Get discount', 'Problem enrollment', 'Payment', 'Technical Support', 'General'];
 
@@ -59,7 +60,7 @@ const ContactMessages = () => {
       `New status: ${nextStatus}`,
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: 'Update message status', confirmLabel: 'Update Status' })) return;
     try {
       await api.patch(`/contact-messages/${message.id}/status`, { status: nextStatus });
       setToast({ type: 'success', title: 'Saved', message: `Message marked ${nextStatus.toLowerCase()}.` });
@@ -78,7 +79,7 @@ const ContactMessages = () => {
       'This action cannot be undone.',
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: 'Delete contact message', confirmLabel: 'Delete Message', destructive: true })) return;
     try {
       await api.delete(`/contact-messages/${message.id}`);
       setToast({ type: 'success', title: 'Deleted', message: 'Contact message deleted.' });

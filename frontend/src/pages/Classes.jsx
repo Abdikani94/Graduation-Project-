@@ -5,6 +5,7 @@ import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
+import { confirmDialog } from '../services/dialogService';
 
 const emptyForm = { name: '', faculty: '', department: '', capacity: '' };
 
@@ -126,7 +127,7 @@ const Classes = () => {
   };
 
   const handleDelete = async (classItem) => {
-    if (!window.confirm(`Delete class "${classItem.name}"? This cannot be undone.`)) return;
+    if (!await confirmDialog(`Delete class "${classItem.name}"? This cannot be undone.`, { title: 'Delete class', confirmLabel: 'Delete Class', destructive: true })) return;
     try {
       await api.delete(`/classes/${classItem.id}`);
       setToast({ type: 'success', title: 'Class deleted', message: `"${classItem.name}" was removed.` });

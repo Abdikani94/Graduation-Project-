@@ -5,6 +5,7 @@ import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
+import { confirmDialog } from '../services/dialogService';
 
 const fallbackImage = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
 const fixedAdmissionFee = 25;
@@ -132,7 +133,7 @@ const Programs = () => {
       'This action cannot be undone.',
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: 'Delete faculty', confirmLabel: 'Delete Faculty', destructive: true })) return;
     try {
       await api.delete(`/programs/${faculty.id}`);
       showSuccess('Faculty deleted.');
@@ -237,7 +238,7 @@ const Programs = () => {
       'This action cannot be undone.',
     ].join('\n');
 
-    if (!window.confirm(confirmation)) return;
+    if (!await confirmDialog(confirmation, { title: 'Delete department', confirmLabel: 'Delete Department', destructive: true })) return;
     try {
       await api.delete(`/programs/${selectedFaculty.id}/departments/${department.id}`);
       showSuccess('Department deleted.');

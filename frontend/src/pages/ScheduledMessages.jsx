@@ -3,6 +3,7 @@ import { Archive, CalendarClock, CheckCircle2, Copy, Eye, FileEdit, MessageSquar
 import api from '../api/axios';
 import Card from '../components/Card';
 import PageLayout from '../components/PageLayout';
+import { confirmDialog } from '../services/dialogService';
 
 const emptyForm = { title: '', messageType: 'General Announcement', messageContent: '', targetAudience: 'All students', targetFilters: { faculty: '', department: '', program: '', classId: '', intake: '', academicYear: '' }, selectedStudentIds: [], scheduledAt: '', timezone: 'Africa/Nairobi' };
 const statusColors = { Draft: 'bg-slate-100 text-slate-700', Scheduled: 'bg-blue-50 text-blue-700', Processing: 'bg-amber-50 text-amber-700', Sent: 'bg-emerald-50 text-emerald-700', 'Partially Sent': 'bg-orange-50 text-orange-700', Failed: 'bg-red-50 text-red-700', Cancelled: 'bg-slate-100 text-slate-500' };
@@ -58,7 +59,7 @@ const ScheduledMessages = () => {
         setEditingId(item.id); setForm({ title: item.title, messageType: item.messageType, messageContent: item.messageContent, targetAudience: item.targetAudience, targetFilters: item.targetFilters || {}, selectedStudentIds: item.selectedStudentIds || [], scheduledAt: item.scheduledAt ? new Date(item.scheduledAt).toISOString().slice(0,16) : '', timezone: item.timezone || 'Africa/Nairobi' });
         setPreview({ totalRecipients: item.totalRecipients, validRecipients: item.validRecipients, invalidRecipients: item.invalidRecipients }); setTab('Create Message'); return;
       }
-      if (action === 'cancel') { if (!window.confirm('Are you sure you want to cancel this scheduled message? It will not be sent to the selected students.')) return; await api.post(`/scheduled-messages/${campaign.id}/cancel`, { reason: 'Cancelled from campaign dashboard' }); }
+      if (action === 'cancel') { if (!await confirmDialog('Are you sure you want to cancel this scheduled message? It will not be sent to the selected students.', { title: 'Cancel scheduled message', confirmLabel: 'Cancel Message', destructive: true })) return; await api.post(`/scheduled-messages/${campaign.id}/cancel`, { reason: 'Cancelled from campaign dashboard' }); }
       if (action === 'duplicate') await api.post(`/scheduled-messages/${campaign.id}/duplicate`, {});
       if (action === 'retry') await api.post(`/scheduled-messages/${campaign.id}/retry`, {});
       if (action === 'archive') await api.patch(`/scheduled-messages/${campaign.id}/archive`, {});
