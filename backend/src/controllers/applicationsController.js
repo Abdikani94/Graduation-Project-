@@ -38,6 +38,8 @@ const applicationFields = [
   'paymentPhone',
   'paymentAmount',
   'paymentTransactionId',
+  'applicantPhotoUploaded',
+  'certificateUploaded',
   'cardHolderName',
   'cardNumber',
   'cardExpiry',
@@ -68,12 +70,10 @@ const requiredCreateFields = [
   'fullName',
   'motherName',
   'nationality',
-  'nationalId',
   'rollNumber',
   'dateOfBirth',
   'placeOfBirth',
   'district',
-  'area',
   'email',
   'mobile',
   'sex',
@@ -102,13 +102,15 @@ const optionValues = {
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
-  paymentMethod: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal']
+  paymentMethod: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal', 'Cash Office'],
+  applicantPhotoUploaded: ['Yes', 'No'],
+  certificateUploaded: ['Yes', 'No']
 };
 
 const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
-const simpleTextPattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,/-]{1,99}$/;
-const idPattern = /^[A-Za-z0-9][A-Za-z0-9\s/-]{2,29}$/;
-const rollNumberPattern = /^[A-Za-z0-9][A-Za-z0-9/-]{2,29}$/;
+const simpleTextPattern = /^[A-Za-z][A-Za-z\s'.&,/-]{1,99}$/;
+const idPattern = /^\d{3,30}$/;
+const rollNumberPattern = /^\d[\d/-]{2,29}$/;
 const normalizeField = (value) => String(value ?? '').trim();
 const isEmptyField = (value) => normalizeField(value) === '';
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeField(email)) && normalizeField(email).length <= 254;
@@ -186,7 +188,8 @@ export const createApplication = async (req, res) => {
   const missing = requiredCreateFields.filter((field) => isEmptyField(fields[field]));
   if (!faculty) missing.push('program');
   if (!department) missing.push('department');
-  if (fields.hasCertificate === 'Yes' && !certificateFile) missing.push('certificate');
+  if (!passportFile && fields.applicantPhotoUploaded !== 'Yes') missing.push('passportPhoto');
+  if (fields.hasCertificate === 'Yes' && !certificateFile && fields.certificateUploaded !== 'Yes') missing.push('certificate');
   if (fields.hasCertificate === 'No') {
     if (!fields.appointmentDate) missing.push('appointmentDate');
     if (!fields.appointmentTime) missing.push('appointmentTime');
@@ -194,9 +197,9 @@ export const createApplication = async (req, res) => {
   if (missing.length) fail(422, 'Required application fields are missing', missing);
   if (!personNamePattern.test(fields.fullName)) fail(422, 'Full Name must contain only letters, spaces, apostrophes, hyphens, or periods');
   if (!personNamePattern.test(fields.motherName)) fail(422, "Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods");
-  if (!simpleTextPattern.test(fields.nationality)) fail(422, 'Nationality is invalid');
-  if (!idPattern.test(fields.nationalId)) fail(422, 'National ID is required and must be 3-30 letters or numbers');
-  if (!rollNumberPattern.test(fields.rollNumber)) fail(422, 'Roll Number is invalid');
+  if (!simpleTextPattern.test(fields.nationality)) fail(422, 'Nationality must contain text only');
+  if (!isEmptyField(fields.nationalId) && !idPattern.test(fields.nationalId)) fail(422, 'National ID must be 3-30 digits when provided');
+  if (!rollNumberPattern.test(fields.rollNumber)) fail(422, 'Roll Number must contain numbers only. Hyphens and slashes are allowed');
   if (!isValidEmail(fields.email)) fail(422, 'Please enter a valid email address');
   if (!isValidPhone(fields.mobile)) fail(422, 'Please enter a valid phone number');
   if (!isValidDate(fields.dateOfBirth)) fail(422, 'Date of birth is invalid');
@@ -205,12 +208,18 @@ export const createApplication = async (req, res) => {
     const age = ageFromDate(fields.dateOfBirth);
     if (age < 14 || age > 100) fail(422, 'Applicant age must be between 14 and 100 years');
   }
-  if (!simpleTextPattern.test(fields.placeOfBirth)) fail(422, 'Place Of Birth is invalid');
-  if (!simpleTextPattern.test(fields.district)) fail(422, 'District is invalid');
-  if (!simpleTextPattern.test(fields.area)) fail(422, 'Area is invalid');
+  if (!simpleTextPattern.test(fields.placeOfBirth)) fail(422, 'Place Of Birth must contain text only');
+  if (!simpleTextPattern.test(fields.district)) fail(422, 'District must contain text only');
+  if (!isEmptyField(fields.area) && !simpleTextPattern.test(fields.area)) fail(422, 'Area must contain text only');
   requireOption(fields, 'sex', 'Sex');
   requireOption(fields, 'maritalStatus', 'Marital Status');
   requireOption(fields, 'hasCertificate', 'Certificate status');
+  if (!isEmptyField(fields.applicantPhotoUploaded)) {
+    requireOption(fields, 'applicantPhotoUploaded', 'Applicant photo');
+  }
+  if (!isEmptyField(fields.certificateUploaded)) {
+    requireOption(fields, 'certificateUploaded', 'Certificate upload status');
+  }
   if (fields.hasCertificate === 'No') {
     if (!isValidDate(fields.appointmentDate)) fail(422, 'Appointment date is invalid');
     if (!isValidTime(fields.appointmentTime)) fail(422, 'Appointment time is invalid');
@@ -226,8 +235,8 @@ export const createApplication = async (req, res) => {
   if (!isValidPhone(fields.emergencyTell)) fail(422, 'Emergency phone is invalid');
   requireOption(fields, 'relationship', 'Relationship');
   requireOption(fields, 'familyStudied', 'Family Member Studied Here');
-  if (!simpleTextPattern.test(fields.schoolName)) fail(422, 'Secondary School Name is invalid');
-  if (!simpleTextPattern.test(fields.schoolDistrict)) fail(422, 'School District is invalid');
+  if (!simpleTextPattern.test(fields.schoolName)) fail(422, 'Secondary School Name must contain text only');
+  if (!simpleTextPattern.test(fields.schoolDistrict)) fail(422, 'School District must contain text only');
   {
     const graduationYear = Number(fields.graduationYear);
     const currentYear = new Date().getFullYear();
@@ -256,7 +265,27 @@ export const createApplication = async (req, res) => {
     const reference = generateReference(db);
     const documents = {};
     if (passportFile) documents.passportPhoto = await saveApplicationFile(passportFile, reference, 'passportPhoto');
+    if (!passportFile && fields.applicantPhotoUploaded === 'Yes') {
+      documents.passportPhoto = {
+        originalName: fields.applicantPhotoName || 'mobile-photo-confirmed',
+        filename: null,
+        contentType: fields.applicantPhotoMimeType || 'image/mobile-confirmed',
+        size: 0,
+        url: null,
+        status: 'Selected in mobile app'
+      };
+    }
     if (certificateFile) documents.certificate = await saveApplicationFile(certificateFile, reference, 'certificate');
+    if (!certificateFile && fields.certificateUploaded === 'Yes') {
+      documents.certificate = {
+        originalName: fields.certificateName || 'mobile-certificate-confirmed',
+        filename: null,
+        contentType: fields.certificateMimeType || 'application/mobile-confirmed',
+        size: 0,
+        url: null,
+        status: 'Selected in mobile app'
+      };
+    }
     if (receiptFile) documents.paymentReceipt = await saveApplicationFile(receiptFile, reference, 'paymentReceipt');
 
     const now = new Date().toISOString();

@@ -2,6 +2,7 @@ import { env } from './env.js';
 
 export const paymentConfig = {
   provider: 'WAAFIPAY',
+  environment: env.waafiEnv,
   paymentMethod: env.waafiPaymentMethod,
   serviceName: 'API_PURCHASE',
   currency: env.waafiCurrency,

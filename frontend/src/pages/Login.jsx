@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Toast from '../components/Toast';
-import PublicNav from '../components/PublicNav';
 import logo from '../images/logo.jpg';
 import api from '../api/axios';
 
 const Login = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState(null);
+  const [password, setPassword] = useState(null);
   const [toast, setToast] = useState(null);
 
   const handleSignIn = async (e) => {
@@ -31,7 +30,6 @@ const Login = () => {
 
   return (
     <div className="public-page login-public-page font-sans text-text-dark">
-      <PublicNav active="login" />
       <Toast toast={toast} onClose={() => setToast(null)} />
       <main className="login-public-main">
       <section className="login-card">
@@ -47,10 +45,10 @@ const Login = () => {
             <span>Username</span>
             <input
               type="text"
-              value={username}
+              value={username ?? ''}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter username"
-              autoComplete="username"
+              autoComplete="off"
               required
             />
           </label>
@@ -59,10 +57,10 @@ const Login = () => {
             <span>Password</span>
             <input
               type="password"
-              value={password}
+              value={password ?? ''}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="**********"
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
             />
           </label>

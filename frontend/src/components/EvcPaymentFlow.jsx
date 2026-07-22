@@ -87,7 +87,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
             <div><dt>Registration</dt><dd>{preview.registrationId}</dd></div><div><dt>Purpose</dt><dd>{preview.description}</dd></div>
           </dl>
           <p className="evc-secure-message">You are paying ${preview.amount.toFixed(2)} to {preview.merchantName}. After confirming, check your phone and complete the secure EVC payment confirmation.</p>
-          {isLoading && <p className="evc-processing"><LoaderCircle className="evc-spin" /> Payment request sent. Please check your phone and complete the secure EVC confirmation.</p>}
+          {isLoading && <p className="evc-processing"><LoaderCircle className="evc-spin" /> Payment request sent. Approve the EVC prompt on your phone within 60 seconds. Keep this window open.</p>}
           {error && <p className="evc-error">{error}</p>}
           <div className="evc-actions"><button className="evc-secondary" disabled={isLoading} onClick={() => setPreview(null)} type="button">Cancel</button><button disabled={isLoading} onClick={confirmPayment} type="button">{isLoading ? 'Processing…' : 'Pay with EVC Plus'}</button></div>
         </>}
@@ -104,7 +104,8 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
             {receipt?.providerTransactionId && <div><dt>Transaction ID</dt><dd>{receipt.providerTransactionId}</dd></div>}{receipt?.paidAt && <div><dt>Date</dt><dd>{new Date(receipt.paidAt).toLocaleString()}</dd></div>}
           </dl>
           {receipt?.walletBalanceMessage && <p className="evc-secure-message">{receipt.walletBalanceMessage}</p>}
-          <div className="evc-actions">{['FAILED', 'CANCELLED'].includes(payment.status) && payment.failureCode !== 'SANDBOX_AUTHENTICATION_FAILED' && <button className="evc-secondary" onClick={retry} type="button">Retry</button>}<button onClick={() => payment.status === 'SUCCESS' ? onSuccess(payment, receipt) : onClose()} type="button">Done</button></div>
+          {payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE' && <p className="evc-secure-message">The request could not reach WaafiPay. No approval was received. Check your EVC balance or SMS first, then retry.</p>}
+          <div className="evc-actions">{((['FAILED', 'CANCELLED'].includes(payment.status) && payment.failureCode !== 'SANDBOX_AUTHENTICATION_FAILED') || (payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE')) && <button className="evc-secondary" onClick={retry} type="button">Retry</button>}<button onClick={() => payment.status === 'SUCCESS' ? onSuccess(payment, receipt) : onClose()} type="button">Done</button></div>
         </>}
       </section>
     </div>

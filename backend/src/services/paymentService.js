@@ -70,6 +70,7 @@ const initiateOnce = async ({ registrationId, amount, phoneNumber, idempotencyKe
     const unresolved = db.payments.find((item) =>
       item.applicationId === registration.id &&
       ['PENDING', 'PROCESSING', 'UNKNOWN'].includes(item.status) &&
+      !(item.status === 'UNKNOWN' && item.failureCode === 'PROVIDER_UNAVAILABLE') &&
       Date.now() - new Date(item.createdAt).getTime() < 15 * 60 * 1000
     );
     if (unresolved) return { existing: unresolved };

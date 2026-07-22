@@ -25,6 +25,7 @@ import FileStorage from './pages/FileStorage';
 import AdmissionPeriods from './pages/AdmissionPeriods';
 import SmsNotifications from './pages/SmsNotifications';
 import ScheduledMessages from './pages/ScheduledMessages';
+import AdmissionChatbot from './components/AdmissionChatbot';
 
 const AdminLayout = () => {
   const token = localStorage.getItem('authToken');
@@ -79,6 +80,7 @@ function App() {
         <Route path="/admin/*" element={<AdminLayout />} />
         <Route path="/*" element={<AdminLayout />} />
       </Routes>
+      <AdmissionChatbot />
     </Router>
   );
 }

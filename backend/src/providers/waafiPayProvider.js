@@ -44,6 +44,11 @@ const mapProviderResult = (body) => {
   const providerDescription = String(body?.params?.description ?? '').replace(/[^A-Za-z0-9 _.,:'()/-]/g, '').slice(0, 160);
   const authenticationFailed = /authentication failed|invalid (api|merchant|credential)/i.test(`${responseMessage} ${providerDescription}`);
   const providerState = String(body?.params?.state ?? '').toUpperCase();
+  const knownFailureMessages = {
+    '5310': 'The phone confirmation was declined or expired. Retry and approve the EVC prompt within 60 seconds.',
+    '5206': 'The EVC account does not have enough balance for this payment.',
+    E10205: 'The EVC account does not have enough balance for this payment.'
+  };
   let status = 'UNKNOWN';
   if (responseCode === '2001' && providerState === 'APPROVED') status = 'SUCCESS';
   else if (['PENDING', 'PROCESSING', 'INITIATED'].includes(providerState)) status = 'PROCESSING';
@@ -61,8 +66,8 @@ const mapProviderResult = (body) => {
       : null,
     failureMessage: status === 'FAILED'
       ? (authenticationFailed
-          ? 'The supplied credentials do not appear to be valid for the Sandbox environment.'
-          : (providerDescription || responseMessage || 'Payment was not approved by the mobile-money provider'))
+          ? `The supplied credentials are not valid for the configured ${paymentConfig.environment} environment.`
+          : (knownFailureMessages[errorCode] || knownFailureMessages[responseCode] || providerDescription || responseMessage || 'Payment was not approved by the mobile-money provider'))
       : null
   };
 };
