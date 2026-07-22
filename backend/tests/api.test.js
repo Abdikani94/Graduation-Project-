@@ -730,6 +730,20 @@ test('frontend has no EVC PIN input field', async () => {
   assert.match(applyPage, /confirmedEvcPayment\?\.status !== 'SUCCESS'/);
 });
 
+test('all public and backend admission fees are fixed at 25 USD', async () => {
+  const admissionsPage = await fs.readFile(new URL('../../frontend/src/pages/AdmissionsPage.jsx', import.meta.url), 'utf8');
+  const feesData = await import('../../frontend/src/data/admissionsData.js');
+  assert.match(admissionsPage, /fixed, non-refundable admission fee of <strong>\$25<\/strong>/);
+  assert.equal(/<strong>\$(?:30|35)<\/strong>/.test(admissionsPage), false);
+  for (const group of feesData.programFeeGroups) {
+    for (const program of group.programs) assert.equal(program[7], 25, `${program[0]} registration fee must be 25`);
+  }
+  const db = await readDb();
+  assert.ok(db.programs.length > 0);
+  assert.equal(db.programs.every((program) => Number(program.admissionFee) === 25), true);
+  assert.equal(db.applications.every((application) => Number(application.admissionFee) === 25), true);
+});
+
 test('Somali SMS phone numbers normalize to international format and invalid numbers are rejected', () => {
   assert.equal(normalizeSomaliPhoneNumber('0618833500'), '+252618833500');
   assert.equal(normalizeSomaliPhoneNumber('618833500'), '+252618833500');

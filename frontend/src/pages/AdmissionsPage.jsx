@@ -37,8 +37,8 @@ function AdmissionsPage() {
           <div className="admission-center-grid">
             <article className="admission-center-card">
               <span className="admission-center-icon"><CircleDollarSign size={29} /></span>
-              <h3>Tuition Fees</h3>
-              <p>The admissions overview lists Admission and ID fees of <strong>$35</strong> for Medicine & General Surgery, <strong>$30</strong> for Computer programs, and <strong>$25</strong> for other programs.</p>
+              <h3>Admission Fee</h3>
+              <p>Every faculty and program has the same fixed, non-refundable admission fee of <strong>$25</strong>.</p>
               <a href="/program-fees">View Program Fees <ArrowRight size={15} /></a>
             </article>
             <article className="admission-center-card">
