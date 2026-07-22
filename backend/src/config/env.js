@@ -57,6 +57,7 @@ export const env = {
   smsEnabled: String(process.env.SMS_ENABLED || 'false').toLowerCase() === 'true',
   smsProvider: process.env.SMS_PROVIDER || 'XALIYE6',
   smsApiUrl: process.env.SMS_API_URL || 'https://api.xaliye6.online/sendSMS',
+  smsBrandName: process.env.SMS_BRAND_NAME || 'Jamhuriya University',
   smsRequestTimeoutMs: Math.max(1000, toNumber(process.env.SMS_REQUEST_TIMEOUT, 15) * 1000),
   smsMaxRetries: Math.max(1, Math.min(3, toNumber(process.env.SMS_MAX_RETRIES, 3))),
   smsDefaultCountryCode: process.env.SMS_DEFAULT_COUNTRY_CODE || '252',

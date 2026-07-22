@@ -6,6 +6,14 @@ const retryDelaysMs = [60_000, 300_000, 900_000];
 let smsTransport = (url, options) => fetch(url, options);
 let scheduler;
 
+export const brandSmsMessage = (message) => {
+  const content = String(message ?? '').trim();
+  const brand = String(env.smsBrandName || 'Jamhuriya University').trim();
+  if (!brand || !content) return content;
+  if (content.toLocaleLowerCase().startsWith(brand.toLocaleLowerCase())) return content;
+  return `${brand}: ${content}`;
+};
+
 export const setSmsTransportForTests = (transport) => {
   smsTransport = transport || ((url, options) => fetch(url, options));
 };
@@ -49,7 +57,7 @@ const createApplicationNotification = (db, application, template, { student = nu
     id: createId('sms'), studentId: student?.id || null, applicationId: application.id,
     applicationReference: application.reference, studentName: application.fullName,
     channel: 'SMS', provider: env.smsProvider, eventType: template.eventType,
-    recipient, message: typeof template.message === 'function' ? template.message(messageData) : template.message, status, providerResponse: null,
+    recipient, message: brandSmsMessage(typeof template.message === 'function' ? template.message(messageData) : template.message), status, providerResponse: null,
     errorMessage, attemptCount: 0, idempotencyKey, sentAt: null,
     deliveredAt: null, failedAt: status === 'FAILED' ? now : null,
     nextRetryAt: null, createdAt: now, updatedAt: now
@@ -117,7 +125,7 @@ export const processSmsNotification = async (id, { force = false } = {}) => {
     if (!force && !['PENDING', 'FAILED'].includes(found.status)) return null;
     if (!env.smsEnabled) { found.status = 'CANCELLED'; found.errorMessage = 'SMS feature is disabled'; return null; }
     if (!found.recipient) return null;
-    found.status = 'PROCESSING'; found.attemptCount += 1; found.nextRetryAt = null; found.updatedAt = new Date().toISOString();
+    found.status = 'PROCESSING'; found.message = brandSmsMessage(found.message); found.attemptCount += 1; found.nextRetryAt = null; found.updatedAt = new Date().toISOString();
     return { ...found };
   });
   if (!item) return null;

@@ -13,6 +13,7 @@ const ScheduledMessages = () => {
   const [options, setOptions] = useState({ messageTypes: [], placeholders: [], targetAudiences: [], students: [], faculties: [], departments: [], classes: [], intakes: [], academicYears: [] });
   const [templates, setTemplates] = useState([]); const [form, setForm] = useState(emptyForm); const [preview, setPreview] = useState(null); const [editingId, setEditingId] = useState(null);
   const [details, setDetails] = useState(null); const [search, setSearch] = useState(''); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
+  const [confirmation, setConfirmation] = useState(null);
   const [templateForm, setTemplateForm] = useState({ name: '', key: '', messageType: 'General Announcement', content: '', isActive: true });
   const [minimumScheduleTime] = useState(() => new Date(Date.now() + 60000).toISOString().slice(0, 16));
 
@@ -28,9 +29,17 @@ const ScheduledMessages = () => {
 
   const payload = () => ({ ...form, scheduledAt: form.scheduledAt ? new Date(form.scheduledAt).toISOString() : null });
   const previewRecipients = async () => { try { setPreview(await api.post('/scheduled-messages/preview', payload())); } catch (requestError) { setError(requestError.message); } };
-  const save = async (action) => {
+  const save = async (action, confirmed = false) => {
     const warning = action === 'schedule' ? 'Are you sure you want to schedule this SMS for the selected students? The system will automatically send it at the configured date and time.' : action === 'send' ? 'Are you sure you want to send this SMS now to all selected students?' : null;
-    if (warning && !window.confirm(warning)) return;
+    if (warning && !confirmed) {
+      setConfirmation({
+        action,
+        title: action === 'schedule' ? 'Confirm Message Schedule' : 'Confirm Message Delivery',
+        message: warning,
+        confirmLabel: action === 'schedule' ? 'Confirm Schedule' : 'Send Message Now'
+      });
+      return;
+    }
     try {
       let campaign;
       if (editingId) {
@@ -61,7 +70,8 @@ const ScheduledMessages = () => {
   const setFilter = (key, value) => setForm((current) => ({ ...current, targetFilters: { ...current.targetFilters, [key]: value } }));
 
   const statCards = [['Total Campaigns', summary.totalCampaigns, MessageSquareText], ['Draft Messages', summary.drafts, FileEdit], ['Scheduled', summary.scheduled, CalendarClock], ['Sent Campaigns', summary.sent, CheckCircle2], ['Failed Campaigns', summary.failed, XCircle], ['Total Recipients', summary.totalRecipients, Users]];
-  return <PageLayout>
+  return <PageLayout className="scheduled-messages-page">
+    {confirmation&&<div className="fixed inset-0 z-[70] grid place-items-center bg-[#0b1730]/65 p-4 backdrop-blur-sm" role="presentation" onMouseDown={()=>setConfirmation(null)}><section role="alertdialog" aria-modal="true" aria-labelledby="sms-confirmation-title" className="w-full max-w-[520px] overflow-hidden rounded-2xl border border-white/70 bg-white shadow-[0_28px_90px_rgba(6,20,45,.35)]" onMouseDown={(event)=>event.stopPropagation()}><div className="bg-gradient-to-br from-[#253b76] to-[#176783] px-7 py-6 text-white"><div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25">{confirmation.action==='schedule'?<CalendarClock size={25}/>:<Send size={24}/>}</div><h2 id="sms-confirmation-title" className="mt-5 text-2xl font-extrabold tracking-tight">{confirmation.title}</h2><p className="mt-2 text-sm leading-6 text-white/80">Please review the details before continuing.</p></div><div className="px-7 py-6"><p className="text-[15px] leading-7 text-slate-600">{confirmation.message}</p>{confirmation.action==='schedule'&&<div className="mt-5 grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2"><div><span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Scheduled time</span><strong className="mt-1 block text-sm text-[#14294b]">{form.scheduledAt?new Date(form.scheduledAt).toLocaleString():'Not selected'}</strong></div><div><span className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Time zone</span><strong className="mt-1 block text-sm text-[#14294b]">{form.timezone}</strong></div></div>}<div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"><button type="button" onClick={()=>setConfirmation(null)} className="min-h-11 border border-slate-300 bg-white px-5 text-sm font-bold text-slate-600 transition hover:border-slate-400 hover:bg-slate-50">Cancel</button><button type="button" onClick={()=>{const action=confirmation.action;setConfirmation(null);save(action,true);}} className={`flex min-h-11 items-center justify-center gap-2 px-6 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 ${confirmation.action==='schedule'?'bg-gradient-to-r from-[#303b97] to-[#176783]':'bg-emerald-600'}`}>{confirmation.action==='schedule'?<CalendarClock size={17}/>:<Send size={17}/>} {confirmation.confirmLabel}</button></div></div></section></div>}
     <header className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-emerald-600">Admin Communications</p><h1 className="mt-1 text-3xl font-extrabold text-[#14294b]">Scheduled Student Messages</h1><p className="mt-1 text-sm text-slate-500">Create, schedule, and monitor personalized student SMS campaigns.</p></div><button onClick={load} className="flex items-center gap-2 border bg-white px-4 py-2.5 text-sm font-semibold"><RefreshCw size={16}/>Refresh</button></header>
     <nav className="flex gap-1 overflow-x-auto border-b bg-white p-2">{tabs.map((item) => <button key={item} onClick={() => setTab(item)} className={`whitespace-nowrap px-4 py-2.5 text-sm font-semibold ${tab === item ? 'bg-[#253b76] text-white' : 'text-slate-600 hover:bg-slate-50'}`}>{item}</button>)}</nav>
     {error && <div className="flex justify-between border border-red-200 bg-red-50 p-3 text-sm text-red-700"><span>{error}</span><button onClick={() => setError('')}><X size={16}/></button></div>}

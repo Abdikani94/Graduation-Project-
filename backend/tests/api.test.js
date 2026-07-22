@@ -15,7 +15,7 @@ process.env.WAAFI_MERCHANT_UID = 'test-merchant';
 process.env.WAAFI_API_USER_ID = 'test-user';
 process.env.WAAFI_API_KEY = 'super-secret-test-api-key';
 process.env.WAAFI_MINIMUM_AMOUNT = '0.01';
-process.env.WAAFI_MAXIMUM_AMOUNT = '1000';
+process.env.WAAFI_MAXIMUM_AMOUNT = '10000';
 process.env.WAAFI_REQUEST_TIMEOUT_MS = '20';
 process.env.MAX_STORED_FILE_BYTES = '256';
 process.env.FILE_STORAGE_DIR = path.join(tmpDir, 'centralized-files');
@@ -777,7 +777,7 @@ test('application SMS is persistent, idempotent, uses the stored phone, and send
   assert.equal(providerCall.url, 'https://api.xaliye6.online/sendSMS');
   assert.deepEqual(providerCall.payload, {
     mobile: '+252618833500',
-    message: 'Codsigaaga Diiwaangelinta si Guul leh ayaa loo gudbiyey. Mahadsanid.'
+    message: 'Jamhuriya University: Codsigaaga Diiwaangelinta si Guul leh ayaa loo gudbiyey. Mahadsanid.'
   });
   const persisted = await readDb();
   assert.equal(persisted.smsNotifications.find((item) => item.id === notification.id).status, 'SENT');

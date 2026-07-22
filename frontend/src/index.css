@@ -5127,6 +5127,163 @@ body:has(.admin-shell) {
   .admin-content table { min-width: 760px; }
 }
 
+/* Scheduled messages: compact, scroll-free admin workspace */
+.scheduled-messages-page {
+  gap: 14px;
+  max-width: 1680px;
+  margin-inline: auto;
+}
+
+.scheduled-messages-page > header {
+  min-height: 56px;
+  align-items: center;
+}
+
+.scheduled-messages-page > header h1 {
+  margin-top: 2px !important;
+  font-size: clamp(24px, 2vw, 30px) !important;
+  line-height: 1.12;
+}
+
+.scheduled-messages-page > header p:last-child { margin-top: 4px !important; }
+
+.scheduled-messages-page > header button {
+  min-height: 40px;
+  border-color: #cbd8e7;
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.scheduled-messages-page > header button:hover {
+  color: #253b76;
+  border-color: #253b76;
+  transform: translateY(-1px);
+}
+
+.scheduled-messages-page > nav {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 4px !important;
+  overflow: visible !important;
+  padding: 5px !important;
+  border: 1px solid #dbe4ed !important;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(20, 41, 75, 0.045);
+}
+
+.scheduled-messages-page > nav button {
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 10px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px !important;
+  border-radius: 7px !important;
+}
+
+.scheduled-messages-page > section[class*="xl:grid-cols-6"] {
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+.scheduled-messages-page > section[class*="xl:grid-cols-6"] > .admin-card {
+  min-height: 112px;
+  padding: 14px !important;
+  border-top: 3px solid #303b97;
+}
+
+.scheduled-messages-page > section[class*="xl:grid-cols-6"] p { margin-top: 10px !important; }
+.scheduled-messages-page > .admin-card.p-4 { padding: 10px !important; }
+
+.scheduled-messages-page > .admin-card.p-4 label {
+  border-color: #dbe4ed;
+  border-radius: 7px;
+}
+
+.scheduled-messages-page > .admin-card.overflow-hidden { overflow: visible !important; }
+.scheduled-messages-page > .admin-card.overflow-hidden > .overflow-x-auto,
+.scheduled-messages-page .overflow-x-auto { overflow-x: visible !important; }
+
+.scheduled-messages-page > .admin-card table {
+  width: 100%;
+  min-width: 0 !important;
+  table-layout: fixed;
+}
+
+.scheduled-messages-page > .admin-card th,
+.scheduled-messages-page > .admin-card td {
+  padding: 12px !important;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+
+.scheduled-messages-page > .admin-card th { font-size: 10px; letter-spacing: .045em; }
+.scheduled-messages-page > .admin-card th:nth-child(1) { width: 16%; }
+.scheduled-messages-page > .admin-card th:nth-child(2) { width: 18%; }
+.scheduled-messages-page > .admin-card th:nth-child(3) { width: 10%; }
+.scheduled-messages-page > .admin-card th:nth-child(4) { width: 17%; }
+.scheduled-messages-page > .admin-card th:nth-child(5) { width: 11%; }
+.scheduled-messages-page > .admin-card th:nth-child(6) { width: 13%; }
+.scheduled-messages-page > .admin-card th:nth-child(7) { width: 15%; }
+.scheduled-messages-page > .admin-card td:last-child > div { flex-wrap: wrap; }
+
+@media (min-width: 861px) {
+  .sidebar-navigation {
+    gap: 7px !important;
+    padding: 9px 10px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #b8c5d6 transparent;
+  }
+
+  .sidebar-navigation > div { gap: 1px !important; }
+
+  .sidebar-navigation p {
+    margin-bottom: 1px !important;
+    font-size: 9px !important;
+    line-height: 1.2;
+  }
+
+  .sidebar-navigation a {
+    min-height: 31px;
+    gap: 9px !important;
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+  }
+
+  .sidebar-navigation a svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+  }
+
+  .sidebar-brand { min-height: 68px; padding: 10px 16px; }
+  .sidebar-profile { padding: 9px 12px; }
+}
+
+@media (max-width: 1180px) {
+  .scheduled-messages-page > nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .scheduled-messages-page > section[class*="xl:grid-cols-6"] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .scheduled-messages-page > .admin-card table { table-layout: auto; }
+}
+
+@media (max-width: 700px) {
+  .scheduled-messages-page > header { align-items: flex-start; }
+  .scheduled-messages-page > header button { width: 100%; justify-content: center; }
+  .scheduled-messages-page > nav,
+  .scheduled-messages-page > section[class*="xl:grid-cols-6"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+
+  .scheduled-messages-page > .admin-card.overflow-hidden {
+    overflow-x: auto !important;
+    scrollbar-width: none;
+  }
+
+  .scheduled-messages-page > .admin-card.overflow-hidden::-webkit-scrollbar { display: none; }
+  .scheduled-messages-page > .admin-card table { min-width: 760px !important; }
+}
+
 @media (max-width: 560px) {
   .admin-shell { padding-inline: 8px !important; }
   .admin-mobile-menu { left: 8px; right: 8px; }
@@ -6591,31 +6748,45 @@ body:has(.admin-shell) {
 
   .sidebar-navigation {
     min-height: 0;
+    overflow-x: hidden !important;
     overflow-y: auto !important;
     overscroll-behavior: contain;
     scrollbar-width: thin;
+    scrollbar-color: #b8c5d6 transparent;
   }
 }
 
+@media (min-width: 861px) {
+  .sidebar-navigation::-webkit-scrollbar { width: 5px; }
+  .sidebar-navigation::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-navigation::-webkit-scrollbar-thumb {
+    background: #b8c5d6;
+    border-radius: 999px;
+  }
+  .sidebar-navigation::-webkit-scrollbar-thumb:hover { background: #8fa2ba; }
+}
+
 .sidebar-brand {
-  min-height: 76px;
-  padding: 14px 18px;
+  min-height: 68px;
+  padding: 10px 16px;
 }
 
 .sidebar-navigation {
-  gap: 14px !important;
-  padding: 14px 12px !important;
+  gap: 7px !important;
+  padding: 9px 10px !important;
 }
 
 .sidebar-navigation p {
-  margin-bottom: 5px !important;
+  margin-bottom: 1px !important;
   padding-inline: 10px !important;
+  font-size: 9px !important;
 }
 
 .sidebar-navigation a {
-  min-height: 38px;
-  padding: 8px 11px !important;
+  min-height: 31px;
+  padding: 5px 10px !important;
   border-radius: 7px !important;
+  font-size: 12px !important;
 }
 
 .sidebar-navigation a.bg-primary {
@@ -6630,7 +6801,7 @@ body:has(.admin-shell) {
 }
 
 .sidebar-profile {
-  padding: 12px 14px;
+  padding: 9px 12px;
 }
 
 .sidebar-avatar {
