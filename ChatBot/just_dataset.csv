@@ -1,0 +1,801 @@
+﻿id,question,answer,category
+1,Waa imisa khidmadda diiwaangelinta? (Tixraac 1),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+2,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 2),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+3,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 3),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+4,Ma jiraa barnaamij Master ah? (Tixraac 4),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+5,Jaamacaddu ma leedahay gaadiid? (Tixraac 5),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+6,Ma jirtaa maktabad? (Tixraac 6),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+7,Sidee loo galaa Student Portal? (Tixraac 7),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+8,Sidee loo bixiyaa lacagta bilaha? (Tixraac 8),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+9,Jaamacaddu ma leedahay joornaalo? (Tixraac 9),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+10,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 10),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+11,Waa imisa khidmadda diiwaangelinta? (Tixraac 11),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+12,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 12),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+13,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 13),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+14,Ma jiraa barnaamij Master ah? (Tixraac 14),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+15,Jaamacaddu ma leedahay gaadiid? (Tixraac 15),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+16,Ma jirtaa maktabad? (Tixraac 16),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+17,Sidee loo galaa Student Portal? (Tixraac 17),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+18,Sidee loo bixiyaa lacagta bilaha? (Tixraac 18),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+19,Jaamacaddu ma leedahay joornaalo? (Tixraac 19),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+20,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 20),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+21,Waa imisa khidmadda diiwaangelinta? (Tixraac 21),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+22,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 22),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+23,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 23),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+24,Ma jiraa barnaamij Master ah? (Tixraac 24),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+25,Jaamacaddu ma leedahay gaadiid? (Tixraac 25),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+26,Ma jirtaa maktabad? (Tixraac 26),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+27,Sidee loo galaa Student Portal? (Tixraac 27),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+28,Sidee loo bixiyaa lacagta bilaha? (Tixraac 28),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+29,Jaamacaddu ma leedahay joornaalo? (Tixraac 29),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+30,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 30),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+31,Waa imisa khidmadda diiwaangelinta? (Tixraac 31),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+32,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 32),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+33,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 33),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+34,Ma jiraa barnaamij Master ah? (Tixraac 34),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+35,Jaamacaddu ma leedahay gaadiid? (Tixraac 35),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+36,Ma jirtaa maktabad? (Tixraac 36),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+37,Sidee loo galaa Student Portal? (Tixraac 37),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+38,Sidee loo bixiyaa lacagta bilaha? (Tixraac 38),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+39,Jaamacaddu ma leedahay joornaalo? (Tixraac 39),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+40,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 40),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+41,Waa imisa khidmadda diiwaangelinta? (Tixraac 41),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+42,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 42),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+43,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 43),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+44,Ma jiraa barnaamij Master ah? (Tixraac 44),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+45,Jaamacaddu ma leedahay gaadiid? (Tixraac 45),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+46,Ma jirtaa maktabad? (Tixraac 46),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+47,Sidee loo galaa Student Portal? (Tixraac 47),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+48,Sidee loo bixiyaa lacagta bilaha? (Tixraac 48),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+49,Jaamacaddu ma leedahay joornaalo? (Tixraac 49),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+50,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 50),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+51,Waa imisa khidmadda diiwaangelinta? (Tixraac 51),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+52,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 52),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+53,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 53),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+54,Ma jiraa barnaamij Master ah? (Tixraac 54),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+55,Jaamacaddu ma leedahay gaadiid? (Tixraac 55),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+56,Ma jirtaa maktabad? (Tixraac 56),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+57,Sidee loo galaa Student Portal? (Tixraac 57),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+58,Sidee loo bixiyaa lacagta bilaha? (Tixraac 58),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+59,Jaamacaddu ma leedahay joornaalo? (Tixraac 59),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+60,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 60),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+61,Waa imisa khidmadda diiwaangelinta? (Tixraac 61),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+62,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 62),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+63,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 63),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+64,Ma jiraa barnaamij Master ah? (Tixraac 64),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+65,Jaamacaddu ma leedahay gaadiid? (Tixraac 65),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+66,Ma jirtaa maktabad? (Tixraac 66),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+67,Sidee loo galaa Student Portal? (Tixraac 67),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+68,Sidee loo bixiyaa lacagta bilaha? (Tixraac 68),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+69,Jaamacaddu ma leedahay joornaalo? (Tixraac 69),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+70,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 70),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+71,Waa imisa khidmadda diiwaangelinta? (Tixraac 71),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+72,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 72),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+73,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 73),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+74,Ma jiraa barnaamij Master ah? (Tixraac 74),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+75,Jaamacaddu ma leedahay gaadiid? (Tixraac 75),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+76,Ma jirtaa maktabad? (Tixraac 76),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+77,Sidee loo galaa Student Portal? (Tixraac 77),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+78,Sidee loo bixiyaa lacagta bilaha? (Tixraac 78),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+79,Jaamacaddu ma leedahay joornaalo? (Tixraac 79),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+80,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 80),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+81,Waa imisa khidmadda diiwaangelinta? (Tixraac 81),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+82,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 82),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+83,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 83),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+84,Ma jiraa barnaamij Master ah? (Tixraac 84),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+85,Jaamacaddu ma leedahay gaadiid? (Tixraac 85),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+86,Ma jirtaa maktabad? (Tixraac 86),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+87,Sidee loo galaa Student Portal? (Tixraac 87),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+88,Sidee loo bixiyaa lacagta bilaha? (Tixraac 88),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+89,Jaamacaddu ma leedahay joornaalo? (Tixraac 89),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+90,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 90),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+91,Waa imisa khidmadda diiwaangelinta? (Tixraac 91),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+92,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 92),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
+93,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 93),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
+94,Ma jiraa barnaamij Master ah? (Tixraac 94),"Haa, waxaa jira Master ee Ganacsiga iyo AI/Data Science.",Programs
+95,Jaamacaddu ma leedahay gaadiid? (Tixraac 95),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
+96,Ma jirtaa maktabad? (Tixraac 96),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
+97,Sidee loo galaa Student Portal? (Tixraac 97),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
+98,Sidee loo bixiyaa lacagta bilaha? (Tixraac 98),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+99,Jaamacaddu ma leedahay joornaalo? (Tixraac 99),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
+100,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 100),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
+101,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 101),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+102,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 102),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+103,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 103),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+104,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 104),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+105,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 105),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+106,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 106),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+107,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 107),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+108,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 108),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+109,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 109),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+110,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 110),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+111,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 111),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+112,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 112),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+113,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 113),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+114,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 114),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+115,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 115),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+116,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 116),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+117,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 117),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+118,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 118),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+119,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 119),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+120,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 120),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+121,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 121),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+122,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 122),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+123,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 123),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+124,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 124),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+125,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 125),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+126,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 126),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+127,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 127),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+128,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 128),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+129,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 129),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+130,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 130),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+131,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 131),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+132,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 132),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+133,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 133),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+134,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 134),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+135,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 135),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+136,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 136),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+137,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 137),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+138,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 138),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+139,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 139),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+140,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 140),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+141,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 141),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+142,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 142),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+143,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 143),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+144,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 144),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+145,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 145),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+146,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 146),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+147,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 147),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+148,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 148),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+149,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 149),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+150,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 150),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+151,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 151),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+152,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 152),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+153,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 153),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+154,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 154),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+155,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 155),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+156,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 156),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+157,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 157),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+158,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 158),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+159,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 159),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+160,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 160),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+161,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 161),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+162,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 162),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+163,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 163),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+164,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 164),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+165,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 165),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+166,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 166),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+167,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 167),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+168,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 168),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+169,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 169),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+170,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 170),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+171,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 171),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+172,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 172),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+173,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 173),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+174,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 174),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+175,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 175),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+176,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 176),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+177,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 177),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+178,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 178),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+179,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 179),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+180,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 180),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+181,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 181),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+182,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 182),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+183,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 183),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+184,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 184),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+185,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 185),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+186,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 186),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+187,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 187),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+188,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 188),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+189,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 189),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+190,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 190),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+191,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 191),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics
+192,Maxay yihiin shuruudaha qalin-jabinta? (Qaybta 2 - Su'aasha 192),Waa in ardaygu dhammaystiro dhammaan saacadaha credit-ka ee looga baahan yahay kuliyaddiisa.,Academics
+193,Sidee ardaygu uga qayb qaadan karaa naadiyada? (Qaybta 2 - Su'aasha 193),Ardaygu wuxuu si toos ah ula xiriiri karaa maamulka naadiga ama xafiiska ardayda.,Student Life
+194,Jaamacadu ma leedahay qolal lagu barto teknoolojiyadda (Labs)? (Qaybta 2 - Su'aasha 194),"Haa, waxaa jira xarumo kombuyuutar oo casri ah oo lagu isticmaalo barnaamijyo horumarsan.",Facilities
+195,Ma jirtaa fursad lagu dhimayo lacagta waxbarashada? (Qaybta 2 - Su'aasha 195),"Haa, ardayda natiijooyinka sare keena waxay heli karaan dhimis.",Finance
+196,Waa maxay imtixaanka luqadda Ingiriisiga? (Qaybta 2 - Su'aasha 196),Waa imtixaan lagu qiimeynayo awoodda ardayga ee luqadda si loogu diyaariyo koorsooyinka jaamacadda.,Admission
+197,Sidee loo helaa shahaadada ama warqadda caddaynta (Transcript)? (Qaybta 2 - Su'aasha 197),Waxaad codsi u soo gudbin kartaa xafiiska diiwaangelinta (Registrar).,Student Services
+198,Maxay tahay kaalinta JUST ee bulshada? (Qaybta 2 - Su'aasha 198),JUST waxay fulisaa mashaariic horumarineed iyo adeegyo bulsho oo kala duwan.,About JUST
+199,Ma jiraan mashaariic cilmi-baaris oo ardayda u furan? (Qaybta 2 - Su'aasha 199),"Haa, ardaydu waxay ka qayb qaadan karaan cilmi-baaris ay kormeerayaan macalimiintu.",Research
+200,Ma jiraan fursado shaqo oo ardayda jaamacadu helaan? (Qaybta 2 - Su'aasha 200),Jaamacadu waxay xiriir la leedahay shirkado badan oo fursado siiya ardayda ugu sarreeya.,Opportunities
+201,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 201),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+202,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 202),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+203,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 203),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+204,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 204),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+205,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 205),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+206,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 206),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+207,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 207),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+208,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 208),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+209,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 209),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+210,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 210),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+211,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 211),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+212,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 212),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+213,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 213),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+214,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 214),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+215,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 215),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+216,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 216),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+217,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 217),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+218,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 218),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+219,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 219),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+220,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 220),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+221,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 221),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+222,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 222),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+223,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 223),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+224,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 224),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+225,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 225),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+226,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 226),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+227,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 227),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+228,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 228),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+229,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 229),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+230,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 230),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+231,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 231),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+232,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 232),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+233,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 233),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+234,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 234),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+235,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 235),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+236,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 236),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+237,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 237),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+238,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 238),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+239,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 239),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+240,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 240),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+241,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 241),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+242,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 242),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+243,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 243),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+244,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 244),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+245,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 245),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+246,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 246),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+247,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 247),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+248,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 248),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+249,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 249),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+250,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 250),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+251,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 251),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+252,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 252),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+253,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 253),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+254,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 254),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+255,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 255),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+256,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 256),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+257,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 257),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+258,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 258),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+259,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 259),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+260,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 260),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+261,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 261),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+262,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 262),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+263,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 263),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+264,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 264),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+265,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 265),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+266,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 266),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+267,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 267),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+268,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 268),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+269,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 269),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+270,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 270),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+271,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 271),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+272,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 272),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+273,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 273),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+274,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 274),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+275,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 275),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+276,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 276),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+277,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 277),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+278,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 278),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+279,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 279),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+280,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 280),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+281,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 281),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+282,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 282),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+283,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 283),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+284,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 284),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+285,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 285),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+286,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 286),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+287,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 287),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+288,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 288),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+289,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 289),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+290,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 290),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+291,Waa maxay xeerka lahaanshaha kaarka aqoonsiga (ID card)? (Qaybta 3 - Su'aasha 291),Arday kasta waa inuu wataa ID-ga jaamacadda mar kasta oo uu ku sugan yahay xarunta.,Rules
+292,Jaamacadu ma leedahay adeeg caafimaad oo degdeg ah? (Qaybta 3 - Su'aasha 292),"Haa, waxaa jira xarun caafimaad oo bixisa gargaar degdeg ah (First Aid).",Health
+293,Sidee loo bedelaa kuliyadda kadib sanadka koowaad? (Qaybta 3 - Su'aasha 293),Bedelaada kuliyadda kadib sanadka koowaad waxay u baahan tahay oggolaansho gaar ah oo ka timaada Guddiga Akadeemiyadda.,Academics
+294,Sidee loo abaabulaa munaasabadaha ardayda? (Qaybta 3 - Su'aasha 294),Munaasabadaha waxaa lagu soo gudbiyaa dalab qoraal ah oo loo gudbiyo Xafiiska Ardayda 1-buuxa ka hor.,Student Life
+295,Maxaa dhacaya haddii ardaygu ka maqnaado fasalka? (Qaybta 3 - Su'aasha 295),Maqnaanshaha badan wuxuu keeni karaa in ardayga loo diido gelitaanka imtixaanka final-ka.,Rules
+296,Jaamacadu ma leedahay qolal lagu barto (Study Rooms) oo gaar ah? (Qaybta 3 - Su'aasha 296),"Haa, maktabada waxaa ku yaal qolal yar-yar oo loogu talagalay wada-shaqaynta ardayda.",Facilities
+297,Sidee loo qaataa lacag celinta (Refund) haddii aan ka tago jaamacadda? (Qaybta 3 - Su'aasha 297),Lacag celinta waxaa lagu maamulaa xeerka maaliyadeed ee jaamacadda ka dib marka la buuxiyo foomka bixitaanka.,Finance
+298,Ma jirtaa meel lagu kaydiyo alaabta lumay (Lost & Found)? (Qaybta 3 - Su'aasha 298),"Haa, xafiiska ammaanka (Security Office) ayaa haya alaabta la helo.",Student Services
+299,Waa maxay muhiimadda xiriirka jaamacadda iyo warshadaha? (Qaybta 3 - Su'aasha 299),In la hubiyo in manhajku la jaan-qaado baahida shaqo ee suuqa.,About JUST
+300,Sidee ardaygu u daabacan karaa cilmi-baaris? (Qaybta 3 - Su'aasha 300),Ardaygu wuxuu u soo gudbin karaa cilmi-baaristiisa guddiga joornaalka jaamacadda si loo tayeeyo.,Research
+301,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 301),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+302,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 302),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+303,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 303),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+304,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 304),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+305,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 305),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+306,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 306),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+307,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 307),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+308,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 308),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+309,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 309),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+310,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 310),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+311,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 311),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+312,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 312),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+313,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 313),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+314,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 314),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+315,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 315),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+316,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 316),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+317,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 317),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+318,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 318),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+319,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 319),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+320,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 320),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+321,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 321),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+322,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 322),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+323,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 323),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+324,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 324),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+325,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 325),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+326,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 326),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+327,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 327),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+328,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 328),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+329,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 329),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+330,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 330),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+331,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 331),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+332,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 332),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+333,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 333),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+334,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 334),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+335,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 335),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+336,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 336),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+337,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 337),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+338,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 338),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+339,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 339),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+340,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 340),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+341,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 341),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+342,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 342),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+343,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 343),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+344,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 344),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+345,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 345),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+346,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 346),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+347,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 347),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+348,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 348),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+349,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 349),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+350,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 350),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+351,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 351),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+352,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 352),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+353,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 353),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+354,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 354),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+355,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 355),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+356,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 356),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+357,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 357),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+358,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 358),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+359,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 359),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+360,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 360),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+361,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 361),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+362,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 362),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+363,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 363),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+364,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 364),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+365,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 365),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+366,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 366),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+367,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 367),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+368,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 368),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+369,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 369),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+370,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 370),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+371,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 371),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+372,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 372),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+373,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 373),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+374,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 374),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+375,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 375),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+376,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 376),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+377,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 377),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+378,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 378),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+379,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 379),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+380,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 380),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+381,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 381),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+382,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 382),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+383,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 383),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+384,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 384),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+385,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 385),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+386,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 386),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+387,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 387),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+388,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 388),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+389,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 389),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+390,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 390),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+391,Immisa maado ayuu ardaygu qaadan karaa simistarkiiba? (Qaybta 4 - Su'aasha 391),Ardaygu wuxuu qaadan karaa inta u dhaxaysa 18 ilaa 21 saacadood (credit hours) simistarkiiba.,Academics
+392,Jaamacadu ma leedahay sheybaarada korontada (Electrical Labs)? (Qaybta 4 - Su'aasha 392),"Haa, Kuliyadda Injineeriyadu waxay leedahay sheybaarada korontada ee casriga ah.",Facilities
+393,Sidee ardaygu u heli karaa kaalmo waxbarasho haddii uu u baahdo? (Qaybta 4 - Su'aasha 393),Ardaygu wuxuu codsi u gudbin karaa xafiiska adeegyada ardayda si loogu qiimeeyo xaaladiisa.,Student Life
+394,Ma jiraan siminaaro ardayda loogu qabto habka cilmi-baarista? (Qaybta 4 - Su'aasha 394),"Haa, kuliyadaha waxaa lagu qabtaa siminaaro joogto ah oo ku saabsan hababka cilmi-baarista.",Academics
+395,Waa maxay mowduucyada ugu muhiimsan ee cilmi-baarista JUST? (Qaybta 4 - Su'aasha 395),"Diiraddu waxay saaran tahay caafimaadka dadweynaha, teknoolojiyadda, iyo maamulka ganacsiga.",Research
+396,Jaamacadu ma bixisaa Wi-Fi bilaash ah? (Qaybta 4 - Su'aasha 396),"Haa, ardayda jaamacadda waxay heli karaan Wi-Fi xawaare sare leh oo ku baahsan xarunta.",Facilities
+397,Goormaa la bixiyaa khidmadda xiritaanka simistarka? (Qaybta 4 - Su'aasha 397),Waa in la bixiyaa ka hor imtixaanka final-ka si uu ardaygu u helo ogolaanshaha imtixaanka.,Finance
+398,Waa maxay xeerka lahaanshaha telefoonka fasalka dhexdiisa? (Qaybta 4 - Su'aasha 398),Telefoonka waa inuu ahaadaa mid la demiyo ama la aamusiyo inta uu jiro casharku.,Rules
+399,Ma jirtaa meel lagu soo gudbiyo cabashooyinka ardayda? (Qaybta 4 - Su'aasha 399),"Haa, waxaad cabashadaada u soo gudbin kartaa xafiiska tayada iyo cabashooyinka (Quality Assurance).",Student Services
+400,Jaamacadu ma bixisaa tababarro shaqo (Internship)? (Qaybta 4 - Su'aasha 400),"Haa, JUST waxay heshiisyo la leedahay shirkado badan si ardaygu u helaan tababar.",Opportunities
+401,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 401),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+402,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 402),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+403,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 403),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+404,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 404),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+405,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 405),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+406,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 406),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+407,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 407),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+408,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 408),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+409,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 409),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+410,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 410),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+411,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 411),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+412,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 412),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+413,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 413),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+414,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 414),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+415,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 415),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+416,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 416),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+417,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 417),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+418,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 418),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+419,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 419),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+420,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 420),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+421,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 421),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+422,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 422),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+423,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 423),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+424,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 424),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+425,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 425),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+426,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 426),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+427,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 427),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+428,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 428),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+429,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 429),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+430,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 430),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+431,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 431),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+432,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 432),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+433,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 433),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+434,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 434),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+435,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 435),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+436,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 436),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+437,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 437),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+438,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 438),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+439,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 439),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+440,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 440),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+441,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 441),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+442,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 442),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+443,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 443),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+444,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 444),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+445,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 445),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+446,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 446),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+447,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 447),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+448,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 448),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+449,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 449),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+450,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 450),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+451,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 451),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+452,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 452),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+453,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 453),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+454,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 454),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+455,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 455),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+456,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 456),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+457,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 457),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+458,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 458),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+459,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 459),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+460,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 460),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+461,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 461),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+462,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 462),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+463,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 463),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+464,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 464),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+465,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 465),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+466,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 466),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+467,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 467),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+468,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 468),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+469,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 469),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+470,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 470),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+471,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 471),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+472,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 472),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+473,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 473),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+474,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 474),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+475,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 475),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+476,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 476),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+477,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 477),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+478,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 478),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+479,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 479),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+480,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 480),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+481,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 481),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+482,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 482),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+483,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 483),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+484,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 484),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+485,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 485),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+486,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 486),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+487,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 487),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+488,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 488),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+489,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 489),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+490,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 490),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+491,Goormaa la qabtaa munaasabadda qalin-jabinta? (Qaybta 5 - Su'aasha 491),"Munaasabadda qalin-jabinta waxaa la qabtaa sannadkii hal mar, inta badan dhammaadka sannad dugsiyeedka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Graduation
+492,Ma jiraa urur u gaar ah ardayda qalin-jabisay? (Qaybta 5 - Su'aasha 492),"Haa, JUST waxay leedahay ururka Alumni-ga oo xiriiriya ardaydii hore ee jaamacadda. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Alumni
+493,Jaamacadu ma leedahay qolal ay ku nastaan ardayda? (Qaybta 5 - Su'aasha 493),"Haa, waxaa jira meelo gaar ah oo ardaydu ku nastaan inta u dhaxaysa fasalada. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+494,Sidee ardaygu u heli karaa kaarka aqoonsiga markii uu ka lumo? (Qaybta 5 - Su'aasha 494),Ardaygu wuxuu codsan karaa kaar cusub kadib marka uu bixiyo khidmadda bedelka kaarka. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Life
+495,Ma jiraan barnaamijyo isweydaarsi ah oo lala leeyahay jaamacadaha gobolka? (Qaybta 5 - Su'aasha 495),"Haa, JUST waxay leedahay xiriir wada-shaqayn oo lala leeyahay jaamacado ka tirsan Geeska Afrika. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Academics
+496,Jaamacadu ma leedahay sheybaarada kombuyuutarka ee furan galabkii? (Qaybta 5 - Su'aasha 496),"Haa, sheybaarada waxaa loo furaa ardayda saacadaha dheeraadka ah ee maalinlaha ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Facilities
+497,Sidee loo helaa warqad caddayn ah oo ku saabsan khidmadda waxbarashada? (Qaybta 5 - Su'aasha 497),Waad kala soo bixi kartaa warqaddan adigoo isticmaalaya Student Portal-kaaga. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Finance
+498,Ma jirtaa meel lagu gado qalabka waxbarashada? (Qaybta 5 - Su'aasha 498),"Haa, jaamacadu waxay leedahay dukaamo yaryar oo bixiya qalabka lagama maarmaanka ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.",Rules
+499,Sidee loola xiriiraa lataliyaha akadeemiyadeed? (Qaybta 5 - Su'aasha 499),Arday kasta wuxuu leeyahay lataliye akadeemiyadeed oo la shaqeeya inta uu waxbarashada ku jiro. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,Student Services
+500,Maxay tahay shaqada xafiiska tayada (Quality Assurance)? (Qaybta 5 - Su'aasha 500),Xafiisku wuxuu hubiyaa in manhajka iyo hab-u-dhaca jaamacadu waafaqsan yihiin heerarka caalamiga ah. Wixii dheeraad ah fadlan la xiriir xafiiska ay quseyso.,About JUST
+501,Sideen iskaga diiwaangelin karaa Jaamacadda Jamhuriya?,"Waxaad iska diiwaangelin kartaa adigoo buuxinaya foomka codsiga admission-ka, keenaya dukumentiyada loo baahan yahay, kadibna bixinaya lacagta diiwaangelinta.",Admission
+502,Yaa codsan kara admission-ka jaamacadda?,Arday kasta oo dhammaystay dugsiga sare isla markaana haysta shahaado sax ah wuu codsan karaa.,Admission
+503,Waa maxay shuruudaha admission-ka?,"Waxaa looga baahan yahay shahaadada dugsiga sare, sawirro passport-size ah, iyo lacagta diiwaangelinta.",Admission
+504,Shahaadada dugsiga sare ma khasab baa?,"Haa, shahaadada dugsiga sare waa dukumenti muhiim ah oo admission-ka looga baahan yahay.",Admission
+505,Imisa sawir ayaan keenayaa?,Waxaa looga baahan yahay afar sawir oo passport-size ah.,Admission
+506,Sawirrada passport-size-ka sidee bay noqonayaan?,Waa inay noqdaan sawirro cusub oo background-koodu cad yahay.,Admission
+507,Imisa copy oo shahaadada ah ayaa la rabaa?,Waxaa loo baahan yahay labo nuqul oo photocopy ah.,Admission
+508,Original certificate ma la keenayaa?,"Haa, original-ka shahaadada waa in la keenaa.",Admission
+509,Registration fee waa imisa?,Khidmadda isdiiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+510,Registration fee ma la soo celin karaa?,"Maya, registration fee-gu waa non-refundable.",Fees
+511,Goorma ayaan codsan karaa admission-ka?,Marka admission-ka la furo ayaad codsan kartaa.,Admission
+512,Admission-ku ma online baa?,"Jaamacaddu waxay bixisaa macluumaadka admission-ka, waxaana la raacayaa nidaamka ay dejisay.",Admission
+513,Jaamacaddu xaggee ku taallaa?,"Waxay ku taallaa Muqdisho, Degmada Hodan, Digfeer Street.",General
+514,Sideen ula xiriiri karaa admissions office-ka?,Waxaad la xiriiri kartaa email-ka iyo telefoonada ku qoran website-ka jaamacadda.,Admission
+515,Email-ka admissions-ka waa maxay?,admission@just.edu.so,Admission
+516,JUST ma bixisaa Medicine?,"Haa, JUST waxay bixisaa Medicine and General Surgery.",Programs
+517,Medicine imisa sano ayuu socdaa?,Medicine and General Surgery wuxuu socdaa 7 sano.,Programs
+518,Nursing ma ka jirtaa jaamacadda?,"Haa, Nursing waa mid ka mid ah barnaamijyada jaamacadda.",Programs
+519,Nursing imisa sano ayuu socdaa?,Nursing wuxuu socdaa 5 sano.,Programs
+520,Midwifery ma ka jirtaa JUST?,"Haa, Midwifery waa barnaamij ay bixiso jaamacaddu.",Programs
+521,Public Health ma ka jirtaa JUST?,"Haa, Public Health waa mid ka mid ah barnaamijyada caafimaadka.",Programs
+522,Medical Laboratory Science ma jirtaa?,"Haa, jaamacaddu waxay bixisaa Medical Laboratory Science.",Programs
+523,Computer Application ma ka jirtaa JUST?,"Haa, waxay ka tirsan tahay Faculty of Computer and IT.",Programs
+524,Computer Application imisa sano ayuu socdaa?,Wuxuu socdaa 5 sano.,Programs
+525,Computer Network and Security ma jirtaa?,"Haa, waa mid ka mid ah barnaamijyada IT-ga.",Programs
+526,Computer Multimedia ma ka jirtaa JUST?,"Haa, Computer Multimedia waa barnaamij rasmi ah.",Programs
+527,Business Administration ma jirtaa?,"Haa, waxay ka tirsan tahay Faculty of Economics and Management.",Programs
+528,Accounting ma ka jirtaa JUST?,"Haa, Accounting waa barnaamij la bixiyo.",Programs
+529,Banking and Finance ma jirtaa?,"Haa, Banking and Finance waa barnaamij ay bixiso jaamacaddu.",Programs
+530,Public Administration ma ka jirtaa JUST?,"Haa, Public Administration waa barnaamij rasmi ah.",Programs
+531,Economics ma ka jirtaa JUST?,"Haa, Economics waa mid ka mid ah barnaamijyada kulliyadda dhaqaalaha.",Programs
+532,Computer and IT registration fee waa imisa?,Khidmadda isdiiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+533,Medicine registration fee waa imisa?,Khidmadda isdiiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+534,Kulliyadaha kale registration fee-goodu waa imisa?,Khidmadda isdiiwaangelinta dhammaan kulliyadaha waa $25.,Fees
+535,Medicine monthly fee waa imisa?,Medicine monthly fee waa $120.,Fees
+536,Nursing monthly fee waa imisa?,Nursing monthly fee waa $40.,Fees
+537,Public Health monthly fee waa imisa?,Public Health monthly fee waa $35.,Fees
+538,Medical Laboratory Science monthly fee waa imisa?,Medical Laboratory Science monthly fee waa $45.,Fees
+539,Computer Application monthly fee waa imisa?,Computer Application monthly fee waa $65.,Fees
+540,Computer Network and Security monthly fee waa imisa?,Computer Network and Security monthly fee waa $65.,Fees
+541,Computer Multimedia monthly fee waa imisa?,Computer Multimedia monthly fee waa $65.,Fees
+542,Business Administration monthly fee waa imisa?,Business Administration monthly fee waa $40.,Fees
+543,Accounting monthly fee waa imisa?,Accounting monthly fee waa $40.,Fees
+544,Banking and Finance monthly fee waa imisa?,Banking and Finance monthly fee waa $40.,Fees
+545,Public Administration monthly fee waa imisa?,Public Administration monthly fee waa $40.,Fees
+546,Economics monthly fee waa imisa?,Economics monthly fee waa $40.,Fees
+547,Ma heli karaa macluumaad dheeraad ah oo ku saabsan kulliyadaha?,"Haa, waxaad ka heli kartaa website-ka jaamacadda ama admissions office-ka.",Faculty
+548,Sideen ku dooran karaa kulliyadda igu habboon?,"Waxaad ku dooran kartaa iyadoo lagu saleynayo xiisahaaga, kartidaada, iyo mustaqbalka shaqo ee aad rabto.",Programs
+549,Haddii aan su'aal kale qabo maxaan sameeyaa?,Waxaad la xiriiri kartaa admissions office-ka ama adeegga taageerada ardayda.,Student Services
+550,JUST ma tahay jaamacad la aqoonsan yahay?,"Haa, JUST waa jaamacad bixisa waxbarasho sare oo ka shaqeysa Soomaaliya.",General
+551,Jaamacaddu ma bixisaa deeq waxbarasho?,"Haa, mararka qaar jaamacaddu waxay bixisaa deeqo waxbarasho iyadoo ku xiran barnaamijyada la heli karo.",Scholarship
+552,Sideen ku heli karaa deeq waxbarasho?,Waxaad la xiriiri kartaa admissions office-ka si aad u ogaato fursadaha deeqaha waxbarasho.,Scholarship
+553,Ardayda dhibcaha sare leh ma helaan deeq?,Waxaa jiri kara deeqo ama dhiirrigelin loogu talagalay ardayda leh waxqabad wanaagsan.,Scholarship
+554,Ma jiraan qiimo-dhimisyo gaar ah?,Qiimo-dhimisyadu waxay ku xiran yihiin siyaasadda jaamacadda ee waqtigaas jirta.,Scholarship
+555,Lacagta semester-ka hal mar ma la bixiyaa?,"Haa, semester fee-ga waxaa lagu bixin karaa habka ay jaamacaddu oggolaatay.",Fees
+556,Lacagta waxbarashada ma loo qaybin karaa bilo?,Waxay ku xiran tahay nidaamka lacag bixinta ee jaamacadda.,Fees
+557,Hababka lacag bixinta ee jaamacaddu aqbasho waa maxay?,Jaamacaddu waxay aqbashaa hababka lacag bixinta ee ay si rasmi ah u shaaciso.,Fees
+558,EVC Plus ma lagu bixin karaa lacagta?,"Haddii jaamacaddu oggolaato, waxaad ku bixin kartaa adeegyada lacag dirista elektarooniga ah.",Fees
+559,Zaad ma lagu bixin karaa lacagta?,Waxay ku xiran tahay hababka lacag bixinta ee jaamacaddu taageerto.,Fees
+560,Receipt ma la i siinayaa marka aan bixiyo lacagta?,"Haa, waa inaad heshaa caddeyn ama receipt marka lacagta la bixiyo.",Fees
+561,Part-time ma ka jiraa JUST?,"Haa, barnaamijyada qaarkood waxay leeyihiin nidaam part-time.",Programs
+562,Full-time iyo part-time maxay ku kala duwan yihiin?,"Full-time waa waxbarasho joogto ah, halka part-time uu ku habboon yahay dadka shaqeeya ama leh waqti kooban.",Programs
+563,Yaa codsan kara part-time?,Dadka shaqeeya ama leh duruufo gaar ah ayaa codsan kara part-time.,Programs
+564,Part-time ma u baahan yahay waayo-aragnimo shaqo?,Qaar ka mid ah barnaamijyada part-time waxay u baahan karaan waayo-aragnimo shaqo.,Programs
+565,Imisa sano ayuu part-time-ku socdaa?,Waxay ku xiran tahay kulliyadda iyo barnaamijka la doortay.,Programs
+566,Ma beddeli karaa part-time una beddeli karaa full-time?,Waxay ku xiran tahay siyaasadda jaamacadda.,Registration
+567,Ma beddeli karaa full-time una beddeli karaa part-time?,"Haa, haddii jaamacaddu oggolaato oo shuruudaha la buuxiyo.",Registration
+568,Imtixaan gelitaan ma jiraa?,Qaar ka mid ah barnaamijyada waxay yeelan karaan imtixaan ama qiimeyn admission.,Admission
+569,Sideen ku ogaan karaa natiijada admission-ka?,Waxaad kala socon kartaa admissions office-ka ama nidaamka jaamacadda.,Admission
+570,Haddii aan ku guuldareysto admission-ka maxaan sameeyaa?,Waxaad la xiriiri kartaa admissions office-ka si aad u ogaato tallaabooyinka xiga.,Admission
+571,Ma codsan karaa kulliyad ka badan hal?,Waxay ku xiran tahay nidaamka admission-ka ee jaamacadda.,Admission
+572,Ma beddeli karaa kulliyadda aan doortay?,"Haa, xaaladaha qaarkood waa la beddeli karaa iyadoo la raacayo nidaamka jaamacadda.",Registration
+573,Arday jaamacad kale ka yimid ma transfer sameyn karaa?,"Haa, haddii uu buuxiyo shuruudaha transfer-ka.",Admission
+574,Waa maxay transfer student?,Waa arday ka yimid jaamacad kale oo doonaya inuu waxbarashada ka sii wato JUST.,Admission
+575,Dukumentiyo noocee ah ayaa transfer-ka looga baahan yahay?,Waxaa looga baahan karaa transcript iyo dukumentiyada kale ee waxbarashada.,Admission
+576,Transcript waa maxay?,Waa warqad muujinaysa maaddooyinka iyo dhibcaha ardaygu horay u qaatay.,Admission
+577,Ma heli karaa talo ku saabsan kulliyadda igu habboon?,"Haa, admissions office-ka ama chatbot-ku wuxuu ku siin karaa talooyin.",Student Services
+578,Haddii aan jeclahay technology maxaan doortaa?,"Waxaad dooran kartaa Computer Application, Network Security ama Multimedia.",Programs
+579,Haddii aan jeclahay caafimaadka maxaan doortaa?,"Waxaad dooran kartaa Medicine, Nursing, Midwifery ama Public Health.",Programs
+580,Haddii aan jeclahay ganacsiga maxaan doortaa?,"Waxaad dooran kartaa Business Administration, Accounting ama Banking and Finance.",Programs
+581,Ardayda cusub ma helaan orientation?,"Haa, badanaa waxaa loo qabtaa kulan lagu barayo nidaamka jaamacadda.",Student Services
+582,Orientation maxay tahay?,Waa barnaamij lagu soo dhaweynayo laguna hagayo ardayda cusub.,Student Services
+583,Ma heli karaa student ID?,"Haa, marka aad si rasmi ah isu diiwaangeliso.",Registration
+584,Student ID maxaa loo isticmaalaa?,Waxaa loo isticmaalaa aqoonsiga ardayga iyo adeegyada jaamacadda.,Student Services
+585,Library ma ku taal jaamacadda?,"Haa, jaamacaddu waxay leedahay adeegyo maktabadeed.",Student Services
+586,Internet ma laga helaa campus-ka?,Adeegyada internet-ka waxay ku xiran yihiin xarumaha jaamacadda.,Student Services
+587,Computer labs ma jiraan?,"Haa, kulliyadaha IT-ga waxay leeyihiin computer labs.",Student Services
+588,Ma jiraan tababaro dheeraad ah?,"Haa, jaamacaddu mararka qaar waxay qabataa seminars iyo trainings.",Student Services
+589,Ardaydu ma ka qayb geli karaan ururrada jaamacadda?,"Haa, ardaydu waxay ka qayb geli karaan ururrada iyo hawlaha jaamacadda.",Student Services
+590,Sideen ula socon karaa wararka jaamacadda?,Waxaad kala socon kartaa website-ka iyo baraha bulshada ee jaamacadda.,General
+591,Website-ka JUST waa maxay?,Website-ka rasmiga ah waa.,General
+592,Ma heli karaa jadwalka waxbarashada online?,"Haa, haddii jaamacaddu ku bixiso nidaam online ah.",Student Services
+593,Attendance ma muhiim baa?,"Haa, joogitaanka casharrada waa muhiim.",Student Services
+594,Ma jiraan xeerar ardaydu raacaan?,"Haa, ardaydu waa inay raacaan xeerarka iyo anshaxa jaamacadda.",Student Services
+595,Haddii aan waayo student ID maxaan sameeyaa?,Waa inaad la xiriirtaa maamulka ardayda.,Student Services
+596,Sideen ku heli karaa gargaar admission?,Waxaad la xiriiri kartaa admissions office-ka ama chatbot-ka jaamacadda.,Admission
+597,Chatbot-ku muxuu iga caawin karaa?,"Wuxuu ka jawaabi karaa su'aalaha admission-ka, lacagaha, kulliyadaha iyo adeegyada ardayda.",Student Services
+598,Ma weydiin karaa chatbot-ka su'aalo badan?,"Haa, chatbot-ku wuxuu diyaar u yahay inuu ka jawaabo su'aalahaaga.",Student Services
+599,Haddii chatbot-ku jawaabta garan waayo maxaa dhacaya?,Waxaa laguu gudbin karaa admissions office-ka ama taageerada jaamacadda.,Student Services
+600,Maxay tahay faa'iidada ugu weyn ee JUST?,"JUST waxay bixisaa waxbarasho tayo leh, kulliyado kala duwan, iyo adeegyo taageera ardayda.",General
+601,Goorma ayuu semester-ka cusub bilaabmaa?,Taariikhda semester-ka cusub waxaa shaacisa jaamacaddu kahor bilowga waxbarashada.,Registration
+602,Sideen ku ogaan karaa taariikhda furitaanka admission-ka?,Waxaad kala socon kartaa baraha bulshada ee jaamacadda.,Admission
+603,Ma codsan karaa admission haddii aan wali sugayo shahaadada dugsiga sare?,Waxay ku xiran tahay siyaasadda admission-ka ee jaamacadda.,Admission
+604,Da'da ugu yar ee admission-ka waa imisa?,Ardayga waa inuu buuxiyaa shuruudaha waxbarashada ee jaamacadda.,Admission
+605,Da'da ma saameynaysaa admission-ka?,Guud ahaan shahaadada iyo shuruudaha admission-ka ayaa mudnaanta leh.,Admission
+606,Ma codsan karaa haddii aan ka qalin jabiyay dugsi sare sanadihii hore?,"Haa, haddii aad haysato shahaado sax ah waad codsan kartaa.",Admission
+607,Ardayda dibadda ma codsan karaan?,"Haa, ardayda caalamiga ah way codsan karaan haddii ay buuxiyaan shuruudaha.",Admission
+608,Dukumentiyada dibadda laga keenay ma la aqbalayaa?,"Haa, haddii ay yihiin dukumentiyo sax ah oo la aqoonsan yahay.",Admission
+609,Ma loo baahan yahay turjumaad dukumenti?,"Haddii dukumentigu uusan ku qorneyn luqadaha la aqbalo, waxaa laga yaabaa in turjumaad loo baahdo.",Admission
+610,Admission-ka ma leeyahay waqti xaddidan?,"Haa, admission-ku wuxuu leeyahay waqtiyo cayiman oo codsiyada la aqbalo.",Admission
+611,Haddii aan seego deadline-ka maxaan sameeyaa?,Waa inaad sugtaa wareegga admission-ka ee xiga ama la xiriirtaa admissions office-ka.,Admission
+612,Ma beddeli karaa xogta codsigeyga kadib marka aan gudbiyo?,Waxay ku xiran tahay heerka uu marayo codsigaaga.,Admission
+613,Sideen ku hubin karaa in codsigeyga la helay?,Waxaad heli kartaa fariin xaqiijin ah ama waxaad la xiriiri kartaa admissions office-ka.,Admission
+614,Intee ayay qaadataa in codsiga la qiimeeyo?,Waxay ku xiran tahay tirada codsiyada iyo habraaca jaamacadda.,Admission
+615,Ma heli doonaa fariin marka la iga aqbalo?,"Haa, jaamacaddu waxay ku soo ogeysiin kartaa telefoon ama email.",Admission
+616,Haddii la iga aqbalo maxaan sameeyaa?,Waa inaad dhammeystirtaa diiwaangelinta oo bixisaa lacagaha lagama maarmaanka ah.,Fees
+617,Haddii la iga diido codsiga ma codsan karaa mar kale?,"Haa, waxaad mar kale codsan kartaa marka admission-ka xiga furmo.",Admission
+618,Ma codsan karaa laba barnaamij isku mar?,Waxay ku xiran tahay nidaamka admission-ka ee jaamacadda.,Admission
+619,Sideen ku dooran karaa barnaamijka ugu habboon?,"Ku dooro adigoo eegaya xiisahaaga, kartidaada iyo himilooyinka mustaqbalka.",Admission
+620,Chatbot-ku ma iga caawin karaa doorashada kulliyadda?,"Haa, chatbot-ku wuxuu ku siin karaa talooyin guud oo ku saabsan kulliyadaha.",Student Services
+621,Haddii aan ku fiicanahay xisaabta maxaan doortaa?,"Waxaad tixgelin kartaa Engineering, Computer Science ama Accounting.",Programs
+622,Haddii aan jeclahay caafimaadka maxaan doortaa?,"Waxaad dooran kartaa Medicine, Nursing, Midwifery ama Public Health.",Student Services
+623,Haddii aan jeclahay naqshadeynta iyo warbaahinta maxaan doortaa?,Computer Multimedia ayaa noqon karta doorasho wanaagsan.,Programs
+624,Haddii aan jeclahay amniga internet-ka maxaan doortaa?,Computer Network and Security ayaa ku habboon.,Programs
+625,Haddii aan rabo inaan noqdo maamule ganacsi maxaan doortaa?,Business Administration ayaa ku habboon.,Programs
+626,Haddii aan rabo inaan noqdo xisaabiye maxaan doortaa?,Accounting ayaa ku habboon.,Programs
+627,Haddii aan rabo inaan ka shaqeeyo bangiyada maxaan doortaa?,Banking and Finance ayaa ku habboon.,Programs
+628,Haddii aan rabo inaan noqdo dhaqaale-yahan maxaan doortaa?,Economics ayaa ku habboon.,Programs
+629,Ma jiraan kulammo lagu sharxayo admission-ka?,"Haa, jaamacaddu waxay qaban kartaa kulammo iyo wacyigelin admission.",Admission
+630,Waalidiintu ma heli karaan xog admission?,"Haa, waalidiintu waxay heli karaan xogta guud ee admission-ka.",Admission
+631,Jaamacaddu ma leedahay adeeg talo-bixin?,"Haa, waxaa jiri kara adeegyo hagid iyo talo-bixin ardayeed.",Fees
+632,Sideen u codsan karaa gargaar dheeraad ah?,Waxaad la xiriiri kartaa admissions office-ka ama adeegga taageerada.,Admission
+633,Ma jirtaa xarun ardayda cusub lagu soo dhaweeyo?,"Haa, ardayda cusub waxaa loo diyaariyaa orientation iyo hagid.",Student Services
+634,Orientation-ku ma khasab baa?,Waxaa lagu talinayaa in ardaydu ka qayb galaan si ay u fahmaan nidaamka jaamacadda.,Student Services
+635,Maxaan ka faa'iidayaa orientation-ka?,"Waxaad baranaysaa xeerarka, adeegyada iyo habka waxbarashada.",Student Services
+636,Ma jiraan ururro ardayeed?,"Haa, jaamacaddu waxay leedahay ururro iyo kooxo ardayeed.",Student Services
+637,Sideen ugu biiri karaa urur ardayeed?,Waxaad la xiriiri kartaa maamulka ama ururka aad danaynayso.,Student Services
+638,Ma jiraan ciyaaro iyo tartamo ardayda loogu talagalay?,"Haa, jaamacaddu waxay qaban kartaa ciyaaro iyo tartamo kala duwan.",Student Services
+639,Ma jiraan tababaro xirfadeed?,"Haa, mararka qaar waxaa la qabtaa seminars iyo workshops.",Student Services
+640,Jaamacaddu ma caawisaa helitaanka shaqo?,Waxay bixin kartaa tababaro iyo hagid ku saabsan xirfadaha shaqada.,Fees
+641,Ma jiraan fursado internship?,Qaar ka mid ah barnaamijyada waxay leeyihiin internship ama tababar shaqo.,Student Services
+642,Internship maxay tahay?,Waa tababar shaqo oo ardaygu ku helo khibrad dhab ah.,Student Services
+643,Ma heli karaa warqad caddeyn ardaynimo?,"Haa, marka aad si rasmi ah u diiwaangashan tahay.",Registration
+644,Student ID goorma ayaan helayaa?,Kadib marka la dhammeeyo diiwaangelinta.,Registration
+645,Haddii aan waayo student ID maxaan sameeyaa?,Waa inaad la xiriirtaa maamulka ardayda.,Student Services
+646,Sideen ku beddeli karaa lambarkayga telefoonka ee diiwaanka?,Waxaad la xiriiri kartaa xafiiska maamulka ardayda.,Registration
+647,Sideen ku beddeli karaa email-kayga?,Waxaad codsi u gudbin kartaa maamulka ardayda.,Admission
+648,Chatbot-ku ma shaqeeyaa 24 saac?,"Haa, chatbot-ku wuxuu diyaar u yahay inuu bixiyo jawaabo wakhti kasta.",Student Services
+649,Chatbot-ku ma ku hadli karaa Af-Soomaali?,"Haa, chatbot-ka waxaa loo diyaarin karaa inuu ku jawaabo Af-Soomaali.",Student Services
+650,Maxay tahay faa'iidada chatbot-kan admission-ka?,"Wuxuu si degdeg ah uga jawaabaa su'aalaha ardayda, wuxuuna yareeyaa culayska admissions office-ka.",Admission
+651,JUST ma bixisaa Civil Engineering?,"Haa, JUST waxay bixisaa Civil Engineering oo ka tirsan Faculty of Engineering.",Programs
+652,Civil Engineering imisa sano ayuu socdaa?,Civil Engineering wuxuu socdaa 5 sano.,Programs
+653,Civil Engineering maxaa lagu bartaa?,"Waxaa lagu bartaa naqshadeynta, dhismaha, waddooyinka, buundooyinka iyo kaabayaasha dhaqaalaha.",Programs
+654,Civil Engineering ma leeyahay shaqooyin badan?,"Haa, waxaa jira fursado shaqo oo badan oo la xiriira dhismaha iyo injineernimada.",Programs
+655,JUST ma bixisaa Electrical Engineering?,"Haa, JUST waxay bixisaa Electrical Engineering.",Programs
+656,Electrical Engineering imisa sano ayuu socdaa?,Electrical Engineering wuxuu socdaa 5 sano.,Programs
+657,Electrical Engineering maxaa lagu bartaa?,"Waxaa lagu bartaa korontada, tamarta, wareegyada iyo nidaamyada korontada.",Programs
+658,Engineering ma u baahan yahay xisaab fiican?,"Haa, xisaabta iyo physics-ka ayaa muhiim u ah engineering-ka.",Programs
+659,Haddii aan ku fiicanahay xisaabta ma dooran karaa Engineering?,"Haa, Engineering waa doorasho wanaagsan dadka ku fiican xisaabta.",Programs
+660,Engineering-ka ma leeyahay practical?,"Haa, waxaa ku jira casharro iyo tababaro practical ah.",Student Services
+661,Ma jiraan laboratories loogu talagalay Engineering?,"Haa, jaamacaddu waxay leedahay shaybaarro iyo goobaha tababarka.",Student Services
+662,Ma beddeli karaa Computer Science una beddeli karaa Engineering?,"Haa, haddii aad buuxiso shuruudaha jaamacadda.",Admission
+663,Engineering-ka kee ayaa shaqo badan leh?,Civil Engineering iyo Electrical Engineering labaduba waxay leeyihiin fursado shaqo oo wanaagsan.,Programs
+664,JUST ma leedahay hostel?,Waxaad la xiriiri kartaa maamulka si aad u ogaato adeegyada hoyga ardayda.,Hostel
+665,Haddii aan ka imid gobol kale ma heli karaa hoy?,Waxaa lagugula talinayaa inaad la xiriirto maamulka jaamacadda.,Hostel
+666,Jaamacaddu ma caawisaa ardayda ka timid gobollada?,Waxaa jiri kara hagid iyo taageero loo fidiyo ardayda cusub.,Student Services
+667,Ma jiraan adeegyo gaadiid?,Adeegyada gaadiidka waxay ku xiran yihiin qorshaha jaamacadda.,Student Services
+668,Ma jiraan maqaayado ama cafeterias?,Waxaa jiri kara adeegyo cunto oo ardaydu isticmaalaan.,Student Services
+669,Campus-ku ma ammaan yahay?,Jaamacaddu waxay dadaalisaa ilaalinta ammaanka ardayda iyo shaqaalaha.,Student Services
+670,Ma jiraan adeegyo caafimaad oo ardayda loo hayo?,Waxay ku xiran tahay adeegyada uu bixiyo campus-ku.,Student Services
+671,Online learning ma ka jiraa JUST?,Barnaamijyada qaarkood waxay isticmaali karaan nidaamyo waxbarasho oo online ah.,Student Services
+672,Ma qaadan karaa casharro online ah?,Waxay ku xiran tahay koorsada iyo nidaamka jaamacadda.,Student Services
+673,Moodle ama LMS ma la isticmaalaa?,"Haddii jaamacaddu leedahay nidaam LMS, ardaydu way isticmaali karaan.",Student Services
+674,LMS maxay tahay?,LMS waa nidaam online ah oo lagu maareeyo casharrada iyo assignments-ka.,Student Services
+675,Sideen u geli karaa LMS?,Waxaad isticmaali doontaa account-ka uu ku siiyo maamulka jaamacadda.,Student Services
+676,Password-keyga LMS haddii aan illoobo maxaan sameeyaa?,Waxaad la xiriiri kartaa IT support-ka ama maamulka.,Student Services
+677,Attendance online ma la diiwaangeliyaa?,Waxay ku xiran tahay nidaamka waxbarashada ee la isticmaalo.,Student Services
+678,Assignment online ma la gudbin karaa?,"Haa, haddii nidaamka LMS la isticmaalo.",Student Services
+679,Ma heli karaa lectures online?,Qaar ka mid ah koorsooyinka waxay bixin karaan lectures online ah.,Fees
+680,Ma heli karaa recording casharrada?,Waxay ku xiran tahay macallinka iyo nidaamka koorsada.,Programs
+681,Sideen u bixin karaa lacagta semester-ka?,Waxaad raaci kartaa hababka lacag bixinta ee ay jaamacaddu oggolaato.,Fees
+682,Ma bixin karaa lacagta qaybo-qaybo?,Waxay ku xiran tahay siyaasadda lacag bixinta ee jaamacadda.,Fees
+683,Haddii aan dib u dhaco lacag bixinta maxaa dhacaya?,Waxaa jiri kara xeerar ama ganaaxyo la xiriira dib u dhaca.,Fees
+684,Ma heli karaa caddeyn lacag bixin?,"Haa, waa inaad heshaa receipt ama caddeyn rasmi ah.",Fees
+685,Sideen ku xaqiijin karaa in lacagta la iga diiwaangeliyay?,Waxaad la xiriiri kartaa xafiiska maaliyadda.,Fees
+686,Haddii aan si khaldan lacag u diro maxaan sameeyaa?,Waa inaad si degdeg ah ula xiriirtaa maamulka maaliyadda.,Fees
+687,Ma jiraan kharashyo dheeraad ah oo aan bixinayo?,Waxay ku xiran tahay kulliyadda iyo adeegyada aad isticmaasho.,Fees
+688,Ma bixinayaa lacagta ID card-ka?,Waxay ku xiran tahay siyaasadda jaamacadda.,Fees
+689,Imtixaannada semester-ka ma khasab baa?,"Haa, ardaydu waa inay galaan imtixaannada loo qorsheeyay.",Exams
+690,Haddii aan maqnaado imtixaan maxaan sameeyaa?,Waa inaad la xiriirtaa maamulka iyo macallinka koorsada.,Exams
+691,Ma jiri karaa imtixaan dib-u-gal ah?,Waxay ku xiran tahay xeerarka jaamacadda.,Exams
+692,Sideen ku arki karaa natiijooyinkayga?,Waxaad ka heli kartaa nidaamka ardayda ama maamulka.,Exams
+693,GPA waa maxay?,GPA waa celceliska dhibcaha waxbarashada ardayga.,Exams
+694,GPA-ga wanaagsan waa imisa?,GPA sare wuxuu muujinayaa waxqabad waxbarasho oo wanaagsan.,Exams
+695,Ma heli karaa transcript inta aan waxbaranayo?,"Haa, waxaad codsan kartaa transcript haddii loo baahdo.",Admission
+696,Transcript-ka maxaa loo isticmaalaa?,"Waxaa loo isticmaalaa transfer, scholarship iyo codsiyada shaqo.",Scholarship
+697,Sideen ku codsan karaa transcript?,Waxaad la xiriiri kartaa registrar office-ka.,Admission
+698,Registrar office muxuu qabtaa?,Wuxuu maamulaa diiwaannada waxbarashada ardayda.,Registration
+699,Chatbot-ku ma iga caawin karaa arrimaha lacag bixinta?,"Haa, wuxuu ku siin karaa macluumaadka guud ee lacagaha iyo hababka bixinta.",Fees
+700,Chatbot-kan ma beddeli karaa admissions office-ka?,"Maya, chatbot-ku waa caawiye bixiya macluumaad, halka go'aamada rasmiga ah ay gaaraan maamulka jaamacadda.",Admission
+701,"Asc, admission-ku wali ma furan yahay?",Fadlan hubi website-ka jaamacadda ama la xiriir admissions office-ka si aad u ogaato xaaladda admission-ka.,Admission
+702,Goorma ayuu admission-ku xirmayaa?,Taariikhda xiritaanka admission-ka waxaa shaacisa jaamacaddu.,Admission
+703,"Waan dhammeeyay dugsiga sare, ma codsan karaa hadda?","Haa, haddii aad haysato shahaadada dugsiga sare waad codsan kartaa.",Admission
+704,"Weli shahaadadii ma aanan qaadan, maxaan sameeyaa?",La xiriir admissions office-ka si aad u ogaato haddii dukumenti ku meel gaar ah la aqbali karo.,Admission
+705,Ma codsan karaa anigoo sugaya natiijada dugsiga sare?,Waxay ku xiran tahay siyaasadda admission-ka ee jaamacadda.,Admission
+706,Sideen ku ogaan karaa kulliyadda igu habboon?,Waxaad eegtaa maaddooyinka aad ku fiican tahay iyo xirfadda aad mustaqbalka rabto.,Programs
+707,Computer Science ma shaqo fiican ayuu leeyahay?,"Haa, Computer Science iyo IT-ga guud ahaan waxay leeyihiin fursado shaqo oo badan.",Programs
+708,Multimedia ma shaqo ayuu leeyahay?,"Haa, Multimedia waxay leedahay fursado shaqo sida graphic design, video editing, animation iyo digital marketing.",Programs
+709,Network Security ma mustaqbal fiican ayuu leeyahay?,"Haa, amniga internet-ka waa mid ka mid ah xirfadaha aadka loo baahan yahay.",Programs
+710,Medicine ma adag tahay?,Medicine waa barnaamij u baahan dadaal iyo waqti badan laakiin leh fursado wanaagsan.,Programs
+711,Nursing iyo Midwifery kee fiican?,"Labaduba waa xirfado caafimaad oo muhiim ah, doorashaduna waxay ku xiran tahay danahaaga.",Programs
+712,Public Health maxaa lagu shaqeeyaa?,"Waxaa lagu shaqeyn karaa hay'adaha caafimaadka, NGO-yada iyo xarumaha caafimaadka.",Programs
+713,Accounting ma shaqo badan ayuu leeyahay?,"Haa, xisaabaadka waa xirfad ay u baahan yihiin shirkado badan.",Programs
+714,Banking and Finance maxaa lagu shaqeeyaa?,"Waxaa lagu shaqeyn karaa bangiyada, shirkadaha maaliyadda iyo hay'adaha dhaqaalaha.",Programs
+715,Economics maxay faa'iido leedahay?,Economics waxay kaa caawisaa fahamka dhaqaalaha iyo maamulka khayraadka.,Programs
+716,Civil Engineering ma ku habboon yahay qof jecel dhismaha?,"Haa, Civil Engineering wuxuu si gaar ah ugu saabsan yahay dhismaha iyo kaabayaasha.",Programs
+717,Electrical Engineering maxaa lagu shaqeeyaa?,"Waxaa lagu shaqeyn karaa korontada, tamarta iyo nidaamyada elektarooniga ah.",Programs
+718,Ma beddeli karaa major-kayga sanad kadib?,Waxay ku xiran tahay siyaasadda jaamacadda iyo shuruudaha barnaamijka.,Programs
+719,Semester-ku imisa bilood ayuu socdaa?,Waxay ku xiran tahay jadwalka waxbarashada ee jaamacadda.,General
+720,Ma jiraan fasaxyo semester-ka dhexdiisa ah?,"Haa, waxaa jiri kara fasaxyo lagu qorsheeyay jadwalka waxbarashada.",General
+721,Sideen ku heli karaa jadwalka casharrada?,Jadwalka waxaa laga heli karaa maamulka ama nidaamka ardayda.,General
+722,Haddii aan cashar ka maqnaado maxaa dhacaya?,Waa muhiim inaad joogto casharrada si aad uga fogaato dhibaatooyin attendance.,General
+723,Attendance-ku ma saameeyaa imtixaanka?,"Haa, koorsooyinka qaarkood attendance-ku waa muhiim.",General
+724,Ma isticmaali karaa laptop gudaha campus-ka?,"Haa, ardaydu waxay isticmaali karaan laptop-yadooda waxbarashada.",Student Services
+725,Wi-Fi ma ka jiraa campus-ka?,Waxay ku xiran tahay adeegyada ay bixiso jaamacaddu.,Student Services
+726,Ma jiraan computer labs?,"Haa, gaar ahaan kulliyadaha IT-ga iyo Engineering-ka.",Student Services
+727,Ma jiraan clubs ardayeed?,"Haa, ardaydu waxay ka qayb geli karaan clubs iyo ururro kala duwan.",Student Services
+728,Sideen ugu biiri karaa technology club?,Waxaad la xiriiri kartaa maamulka ardayda ama ururka laftiisa.,Student Services
+729,Ma jiraan tartamo technology ah?,"Haa, mararka qaar waxaa la qabtaa tartamo iyo hackathons.",Student Services
+730,Hackathon waa maxay?,Waa tartan lagu xalliyo dhibaatooyin iyadoo la adeegsanayo tiknoolajiyadda.,Student Services
+731,Ma jiraan seminars?,"Haa, jaamacaddu waxay qabataa seminars iyo workshops.",Student Services
+732,Workshop maxay tahay?,Waa tababar kooban oo lagu barto xirfad gaar ah.,Student Services
+733,Ma heli karaa certificate seminar kadib?,Waxay ku xiran tahay seminar-ka iyo qabanqaabiyeyaasha.,Student Services
+734,Jaamacaddu ma caawisaa internship?,"Haa, qaar ka mid ah kulliyadaha waxay taageeraan internship-ka ardayda.",Student Services
+735,Internship ma khasab baa?,Waxay ku xiran tahay barnaamijka aad dhigato.,Student Services
+736,Ma heli karaa shaqo anigoo wali waxbaranaya?,"Haa, arday badan waxay shaqeeyaan iyagoo waxbaranaya.",Student Services
+737,Part-time ma ku habboon yahay dadka shaqeeya?,"Haa, part-time waxaa loogu talagalay dadka leh shaqo ama waqti kooban.",Student Services
+738,Sideen ku codsan karaa part-time?,Waxaad la xiriiri kartaa admissions office-ka si aad u ogaato shuruudaha.,Student Services
+739,Ma heli karaa discount haddii aan walaalo nahay?,Waxay ku xiran tahay siyaasadda jaamacadda.,Fees
+740,Ma jiraan deeqo gaar ah oo ardayda la siiyo?,Waxaa jiri kara deeqo iyadoo ku xiran fursadaha la heli karo.,Scholarship
+741,Sideen ku ogaan karaa deeqaha cusub?,Kala soco website-ka iyo ogeysiisyada jaamacadda.,Scholarship
+742,Ma u baahanahay email si aan u codsado admission?,"Haa, email-ku wuxuu fududeeyaa xiriirka iyo ogeysiisyada.",Admission
+743,Haddii aan email lahayn maxaan sameeyaa?,Waxaad samaysan kartaa email bilaash ah sida Gmail.,Admission
+744,Telefoon la'aan ma codsan karaa?,Waxaa muhiim ah inaad bixiso lambar lagula soo xiriiri karo.,Admission
+745,Ma isticmaali karaa lambarka waalidkay?,"Haa, haddii uu yahay lambar si joogto ah loo heli karo.",Admission
+746,Sideen ku heli karaa wararka admission-ka?,"Website-ka, Facebook-ga iyo xafiiska admission-ka ayaa bixiya wararka.",Admission
+747,Chatbot-kan ma ku shaqeeyaa habeenkii?,"Haa, chatbot-ku wuxuu shaqeyn karaa 24/7.",Student Services
+748,Chatbot-ku ma ka jawaabi karaa su'aalo badan?,"Haa, wuxuu ka jawaabi karaa admission, fees, programs iyo adeegyada ardayda.",Student Services
+749,Haddii chatbot-ku jawaab khaldan bixiyo maxaan sameeyaa?,La xiriir admissions office-ka si aad u hesho xogta rasmiga ah.,Student Services
+750,Maxaa ka dhigaya chatbot-kan mid faa'iido leh?,Wuxuu si degdeg ah uga jawaabaa su'aalaha ardayda wuxuuna yareeyaa waqtiga lagu bixiyo helitaanka macluumaadka.,Student Services
+751,"Asc, admission-ka ma furan yahay hadda?",Fadlan hubi website-ka jaamacadda ama la xiriir admissions office-ka si aad u ogaato xaaladda admission-ka.,Admission
+752,Walaal sideen isku diiwaangelin karaa?,"Waxaad buuxin kartaa foomka admission-ka, keeni kartaa dukumentiyada loo baahan yahay, kadibna bixin kartaa lacagta diiwaangelinta.",Admission
+753,Registration fee-ga xagee laga bixiyaa?,Waxaa lagu bixiyaa hababka lacag bixinta ee ay jaamacaddu oggolaato.,Fees
+754,Fee-ga Computer Application waa imisa?,Computer Application monthly fee waa $65.,Fees
+755,Fee-ga Medicine waa imisa bishii?,Medicine monthly fee waa $120.,Fees
+756,Nursing-ka bishii intee la bixiyaa?,Nursing monthly fee waa $40.,Fees
+757,Ma iska diiwaangelin karaa online?,Waxay ku xiran tahay nidaamka admission-ka ee jaamacadda.,Admission
+758,Ma ii sheegi kartaa kulliyadaha jaamacadda?,"Haa, jaamacaddu waxay bixisaa Health Sciences, Computer & IT, Economics & Management, iyo Engineering.",Programs
+759,Computer Science iyo Computer Application ma isku mid baa?,Waxay wadaagaan qaybo badan laakiin waxay leeyihiin maaddooyin iyo jihayn kala duwan.,Programs
+760,Multimedia ma fiican tahay?,"Haa, waxay ku habboon tahay dadka jecel naqshadeynta, warbaahinta iyo hal-abuurka.",Programs
+761,"Waxaan rabaa inaan noqdo software developer, maxaan doortaa?",Computer Application ama Computer Network & Security ayaa kuu noqon kara doorashooyin wanaagsan.,Programs
+762,"Waxaan rabaa inaan noqdo doctor, maxaan doortaa?",Waa inaad doorataa Medicine & General Surgery.,Programs
+763,"Waxaan rabaa inaan noqdo nurse, maxaan doortaa?",Waa inaad doorataa Nursing.,Programs
+764,"Waxaan rabaa inaan noqdo injineer, maxaan doortaa?",Waxaad dooran kartaa Civil Engineering ama Electrical Engineering.,Programs
+765,Engineering ma adag yahay?,Wuxuu u baahan yahay dadaal iyo faham wanaagsan oo xisaabta iyo physics-ka ah.,Programs
+766,Medicine ma qaadan karaa haddii grade-keygu hooseeyo?,Waxay ku xiran tahay shuruudaha admission-ka iyo qiimeynta jaamacadda.,Programs
+767,Ma beddeli karaa kulliyadda kadib marka aan bilaabo?,"Haa, xaaladaha qaarkood waa la beddeli karaa iyadoo la raacayo xeerarka jaamacadda.",Programs
+768,Ma jiraan casharro practical ah?,"Haa, kulliyado badan waxay leeyihiin practicals iyo laboratory sessions.",Student Services
+769,Jaamacaddu ma leedahay laboratory?,"Haa, gaar ahaan kulliyadaha caafimaadka, IT-ga iyo engineering-ka.",Student Services
+770,Wi-Fi ma laga helaa campus-ka?,Waxay ku xiran tahay adeegyada ay bixiso jaamacadda.,Student Services
+771,Ma isticmaali karaa laptop-kayga?,"Haa, waxaad u isticmaali kartaa waxbarashada iyo cilmi-baarista.",Student Services
+772,Ma jiraan maktabado?,"Haa, jaamacaddu waxay leedahay adeegyo maktabadeed.",Student Services
+773,Sideen u isticmaali karaa maktabadda?,Waxaad isticmaali kartaa marka aad noqoto arday si rasmi ah u diiwaangashan.,Student Services
+774,Student ID goorma ayaan helayaa?,Kadib marka aad dhammeystirto diiwaangelinta.,Student Services
+775,Haddii aan waayo Student ID maxaan sameeyaa?,Waa inaad la xiriirtaa maamulka ardayda.,Student Services
+776,Ma jiraan kooxo ardayeed?,"Haa, ardaydu waxay ku biiri karaan ururro iyo kooxo kala duwan.",Student Services
+777,Ma jiraan ciyaaro jaamacadeed?,"Haa, waxaa jiri kara tartamo iyo ciyaaro ardayeed.",Student Services
+778,Jaamacaddu ma qabataa seminars?,"Haa, waxaa si joogto ah loo qabtaa seminars iyo workshops.",Student Services
+779,Workshop maxay tahay?,Waa tababar gaaban oo lagu barto xirfad ama aqoon gaar ah.,Student Services
+780,Ma heli karaa internship?,Qaar ka mid ah kulliyadaha waxay bixiyaan ama taageeraan internship.,Student Services
+781,Internship-ku ma lacag ayuu leeyahay?,Waxay ku xiran tahay shirkadda ama hay'adda bixineysa internship-ka.,Student Services
+782,Sideen ku heli karaa transcript?,Waxaad codsi u gudbin kartaa registrar office-ka.,Student Services
+783,GPA waa maxay?,GPA waa celceliska dhibcaha waxbarashada ardayga.,Exams
+784,GPA-ga sare ma ii fududeyn karaa scholarship?,"Haa, GPA sare wuxuu kordhin karaa fursadaha deeqaha waxbarasho.",Scholarship
+785,Ma jiraan deeqo waxbarasho?,"Haa, waxaa jiri kara deeqo iyadoo ku xiran fursadaha la heli karo.",Scholarship
+786,Sideen ku ogaan karaa deeqaha cusub?,Kala soco website-ka iyo ogeysiisyada jaamacadda.,Scholarship
+787,Walaal email ma khasab baa?,"Haa, email-ku wuxuu muhiim u yahay xiriirka iyo ogeysiisyada.",Admission
+788,Gmail ma isticmaali karaa?,"Haa, Gmail waa email aad isticmaali karto.",Admission
+789,Lambarka telefoonka ma khasab baa?,"Haa, waa muhiim in lagu soo gaaro haddii loo baahdo.",Admission
+790,Ma isticmaali karaa lambarka waalidkay?,"Haa, haddii si joogto ah loo heli karo.",Admission
+791,Ma codsan karaa anigoo shaqeeya?,"Haa, waxaad dooran kartaa part-time haddii uu ku habboon yahay.",Programs
+792,Part-time ma ka jiraa Computer Application?,Waxay ku xiran tahay barnaamijyada ay jaamacaddu bixiso waqtigaas.,Programs
+793,Full-time iyo part-time kee fiican?,Waxay ku xiran tahay waqtigaaga iyo xaaladdaada shaqo.,Programs
+794,Ma jiraan fasallo habeenkii ah?,Waxay ku xiran tahay jadwalka iyo nidaamka kulliyadda.,Programs
+795,Sideen ula xiriiri karaa admissions office-ka?,"Waxaad isticmaali kartaa email-ka, telefoonka ama booqan kartaa xafiiska admission-ka.",Admission
+796,Chatbot-kan ma ka jawaabi karaa Af-Soomaali?,"Haa, chatbot-ka waxaa loo diyaariyey inuu ku jawaabo Af-Soomaali.",Student Services
+797,Chatbot-kan ma shaqeeyaa 24 saac?,"Haa, chatbot-ku wuxuu diyaar u yahay inuu ku caawiyo wakhti kasta.",Student Services
+798,Haddii chatbot-ku jawaabta garan waayo maxaa dhacaya?,Waxaa laguu gudbin karaa admissions office-ka ama taageerada jaamacadda.,Student Services
+799,Chatbot-ku ma iga caawin karaa doorashada kulliyadda?,"Haa, wuxuu ku siin karaa talooyin ku saleysan danahaaga iyo yoolalkaaga.",Student Services
+800,Maxay tahay faa'iidada ugu weyn ee chatbot-kan?,"Wuxuu si degdeg ah uga jawaabaa su'aalaha admission-ka, lacagaha, kulliyadaha iyo adeegyada ardayda, isagoo fududeynaya helitaanka macluumaadka.",Student Services

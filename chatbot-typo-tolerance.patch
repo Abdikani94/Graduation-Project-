@@ -1,0 +1,177 @@
+diff --git a/app/services/chat/text_normalization.py b/app/services/chat/text_normalization.py
+new file mode 100644
+--- /dev/null
++++ b/app/services/chat/text_normalization.py
+@@ -0,0 +1,84 @@
++import re
++from difflib import get_close_matches
++from typing import Iterable
++
++
++# Common Somali spellings and phone-keyboard shorthand. These canonical forms
++# improve intent detection; answers still come only from the indexed dataset.
++ALIASES = {
++    "xage": "xagee",
++    "xagey": "xagee",
++    "halke": "halkee",
++    "side": "sidee",
++    "sidn": "sideen",
++    "tla": "taalaa",
++    "tala": "taalaa",
++    "talaa": "taalaa",
++    "jamacada": "jaamacadda",
++    "jamacadda": "jaamacadda",
++    "jamacada": "jaamacadda",
++    "jamhuriya": "jamhuriya",
++    "diwan": "diiwaan",
++    "diwaan": "diiwaan",
++    "diiwan": "diiwaan",
++    "isdiiwan": "isdiiwaan",
++    "isdiwan": "isdiiwaan",
++    "galiya": "geliyaa",
++    "galiyaa": "geliyaa",
++    "gelia": "geliyaa",
++    "dokument": "dukumenti",
++    "document": "dukumenti",
++    "lacg": "lacag",
++    "lacgta": "lacagta",
++    "kuliyad": "kulliyad",
++    "kulyad": "kulliyad",
++    "caafimad": "caafimaad",
++    "scholership": "scholarship",
++    "requirment": "requirement",
++    "admision": "admission",
++    "addmission": "admission",
++    "registrtion": "registration",
++    "universty": "university",
++}
++
++DOMAIN_VOCABULARY = {
++    "admission", "application", "apply", "campus", "certificate",
++    "computer", "department", "diiwaan", "diiwaangelin", "documents",
++    "engineering", "faculty", "fees", "graduation", "halkee", "hostel",
++    "jaamacadda", "jamhuriya", "kulliyad", "lacag", "medicine", "nursing",
++    "program", "register", "registration", "requirement", "scholarship",
++    "student", "taalaa", "university", "xagee",
++}
++
++
++def normalize_query(text: str, extra_vocabulary: Iterable[str] = ()) -> str:
++    normalized = text.lower().strip().replace("â€™", "'")
++    normalized = re.sub(r"[^a-z0-9\s'$]", " ", normalized)
++    tokens = re.sub(r"\s+", " ", normalized).strip().split()
++    vocabulary = DOMAIN_VOCABULARY | {
++        word.lower() for word in extra_vocabulary if len(word) >= 3
++    }
++
++    corrected: list[str] = []
++    for token in tokens:
++        direct = ALIASES.get(token)
++        if direct:
++            corrected.append(direct)
++            continue
++        if token in vocabulary or len(token) < 3:
++            corrected.append(token)
++            continue
++
++        cutoff = 0.68 if len(token) <= 4 else 0.76
++        match = get_close_matches(token, vocabulary, n=1, cutoff=cutoff)
++        corrected.append(match[0] if match else token)
++
++    result = " ".join(corrected)
++    phrase_aliases = {
++        "is diiwaan": "isdiiwaan",
++        "isku diiwaan geliyaa": "sidee la isku diiwaangeliyaa" if result.startswith("sidee") else "isku diiwaangeliyaa",
++        "diiwaan geliyaa": "diiwaangeliyaa",
++    }
++    for source, target in phrase_aliases.items():
++        result = result.replace(source, target)
++    return result
+diff --git a/app/services/chat/intent_service.py b/app/services/chat/intent_service.py
+--- a/app/services/chat/intent_service.py
++++ b/app/services/chat/intent_service.py
+@@ -2,3 +2,5 @@ import re
+ from dataclasses import dataclass
+ from enum import Enum
+ 
++from app.services.chat.text_normalization import normalize_query
++
+@@ -77,2 +79,3 @@
+     def _normalize(self, text: str) -> str:
++        return normalize_query(text)
+ 
+@@ -250,2 +253,4 @@
+         registration_terms = [
++            "diiwaangeliyaa",
++            "isdiiwaangeliyaa",
+             "isdiiwaangalin",
+@@ -286,2 +291,4 @@
+         registration_terms = [
++            "diiwaangeliyaa",
++            "isdiiwaangeliyaa",
+             "isdiiwaangalin",
+diff --git a/app/services/retrieval/retrieval_service.py b/app/services/retrieval/retrieval_service.py
+--- a/app/services/retrieval/retrieval_service.py
++++ b/app/services/retrieval/retrieval_service.py
+@@ -5,2 +5,3 @@ from app.repositories.chroma_repository import ChromaRepository
+ from app.schemas.retrieval.result import RetrievedDocument, RetrievalResult
++from app.services.chat.text_normalization import normalize_query
+ from app.services.embedding.embedding_service import EmbeddingService
+@@ -23,1 +24,1 @@
+-        cleaned_query = query.strip()
++        cleaned_query = normalize_query(query)
+@@ -30,1 +31,12 @@
+-        vector_results = self._vector_search(
++        keyword_results = self._keyword_search(collection=collection)
++        corpus_vocabulary = {
++            token
++            for document in keyword_results
++            for token in self._normalize(
++                f"{document.question} {document.answer} {document.category}"
++            ).split()
++            if len(token) >= 3
++        }
++        cleaned_query = normalize_query(cleaned_query, corpus_vocabulary)
++
++        vector_results = self._vector_search(
+@@ -36,3 +48,1 @@
+-        keyword_results = self._keyword_search(collection=collection)
+-
+         merged_results = self._merge_results(vector_results + keyword_results)
+@@ -204,1 +214,1 @@
+-        if any(term in query_text for term in ["xagee", "xaggee", "taallaa", "halkee"]):
++        if any(term in query_text for term in ["xagee", "xaggee", "taalaa", "taallaa", "halkee"]):
+@@ -212,1 +222,1 @@
+-        if any(term in query_text for term in ["diiwaangeliyaa", "diiwaangelin", "register"]):
++        if any(term in query_text for term in ["diiwaangeliyaa", "diiwaangelin", "diiwaan", "register", "registration"]):
+diff --git a/tests/test_intent_service.py b/tests/test_intent_service.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_intent_service.py
+@@ -0,0 +1,26 @@
++from app.services.chat.intent_service import ChatIntent, IntentService
++from app.services.chat.text_normalization import normalize_query
++
++
++def test_general_typo_normalization_handles_location_question() -> None:
++    normalized = normalize_query("Xage ku tla jamhuriya")
++    assert "xagee" in normalized
++    assert "taalaa" in normalized
++
++    result = IntentService().analyze("Xage ku tla jamhuriya")
++    assert result.intent == ChatIntent.ADMISSION_QUESTION
++    assert "university location address" in (result.rewritten_query or "")
++
++
++def test_general_typo_normalization_handles_registration_question() -> None:
++    normalized = normalize_query("side isku diwan galiya")
++    assert "diiwaangeliyaa" in normalized
++
++    result = IntentService().analyze("side isku diwan galiya")
++    assert result.intent == ChatIntent.ADMISSION_QUESTION
++    assert "required documents" in (result.rewritten_query or "")
++
++
++def test_english_domain_typos_are_corrected() -> None:
++    normalized = normalize_query("admision requirment and registrtion")
++    assert normalized == "admission requirement and registration"

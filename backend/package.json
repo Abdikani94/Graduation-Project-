@@ -1,0 +1,19 @@
+{
+  "name": "jamhuriya-admission-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Backend API for the Jamhuriya online admission gateway.",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "seed": "node src/utils/seed.js",
+    "test": "node --test --experimental-test-isolation=none"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "mongodb": "^7.2.0"
+  }
+}
