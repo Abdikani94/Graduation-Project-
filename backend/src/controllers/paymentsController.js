@@ -3,27 +3,44 @@ import { fail, sendCsv, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest, toCsv } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 
-export const listPayments = async (req, res) => {
-  const db = await readDb();
-  let items = sortNewest(db.payments).map((item) => ({
+const paymentView = (db, item) => {
+  const application = db.applications.find((entry) => entry.id === item.applicationId || entry.reference === item.registrationReference || entry.reference === item.reference) || {};
+  const student = db.students.find((entry) => entry.applicationId === application.id) || {};
+  return {
     id: item.id,
     applicationId: item.applicationId,
-    reference: item.reference || item.registrationReference || '',
+    applicantName: application.fullName || student.fullName || '',
+    studentNumber: student.studentNumber || application.studentNumber || '',
+    faculty: application.faculty || student.faculty || '',
+    program: application.department || student.department || '',
+    reference: item.reference || item.registrationReference || application.reference || '',
     paymentReference: item.referenceId || '',
+    invoiceId: item.invoiceId || '',
     amount: Number(item.amount || 0),
-    currency: item.currency,
-    method: item.method || item.paymentMethod,
+    currency: item.currency || 'USD',
+    method: item.method || item.paymentMethod || '',
+    provider: item.provider || '',
     transactionCode: item.transactionCode || item.providerTransactionId || '',
-    status: item.status,
+    issuerTransactionId: item.issuerTransactionId || '',
+    status: item.status || 'Pending',
+    providerState: item.providerState || '',
     payerPhone: item.payerPhoneMasked || '',
+    description: item.description || 'Admission payment',
+    failureMessage: item.failureMessage || '',
     createdAt: item.createdAt,
-    updatedAt: item.updatedAt
-  }));
+    updatedAt: item.updatedAt,
+    paidAt: item.paidAt || null
+  };
+};
+
+export const listPayments = async (req, res) => {
+  const db = await readDb();
+  let items = sortNewest(db.payments).map((item) => paymentView(db, item));
   const { search, method, status } = req.query;
 
   if (method && method !== 'Method') items = items.filter((item) => item.method === method);
   if (status && status !== 'All Status') items = items.filter((item) => item.status === status);
-  items = items.filter((item) => matchesText(item, ['reference', 'method', 'transactionCode', 'status'], search));
+  items = items.filter((item) => matchesText(item, ['reference', 'paymentReference', 'studentNumber', 'applicantName', 'payerPhone', 'method', 'transactionCode', 'status'], search));
 
   const today = new Date().toISOString().slice(0, 10);
   const paid = db.payments.filter((item) => ['Paid', 'SUCCESS'].includes(item.status));
@@ -32,7 +49,10 @@ export const listPayments = async (req, res) => {
     todayCollected: paid
       .filter((item) => item.updatedAt?.slice(0, 10) === today || item.createdAt?.slice(0, 10) === today)
       .reduce((sum, item) => sum + Number(item.amount || 0), 0),
-    transactions: db.payments.length
+    transactions: db.payments.length,
+    successful: paid.length,
+    pending: db.payments.filter((item) => ['Pending', 'PENDING', 'PROCESSING', 'UNKNOWN'].includes(item.status)).length,
+    failed: db.payments.filter((item) => ['Failed', 'FAILED'].includes(item.status)).length
   };
 
   sendJson(res, 200, { ...paginate(items, req.query), summary });
@@ -157,19 +177,25 @@ export const deletePayment = async (req, res) => {
 
 export const exportPaymentsCsv = async (req, res) => {
   const db = await readDb();
-  let items = sortNewest(db.payments);
+  let items = sortNewest(db.payments).map((item) => paymentView(db, item));
   const { search, method, status } = req.query;
   if (method && method !== 'Method') items = items.filter((item) => item.method === method);
   if (status && status !== 'All Status') items = items.filter((item) => item.status === status);
-  items = items.filter((item) => matchesText(item, ['reference', 'method', 'transactionCode', 'status'], search));
+  items = items.filter((item) => matchesText(item, ['reference', 'paymentReference', 'studentNumber', 'applicantName', 'payerPhone', 'method', 'transactionCode', 'status'], search));
 
   const csv = toCsv(items, [
     { key: 'reference', header: 'Reference' },
+    { key: 'paymentReference', header: 'Payment Reference' },
+    { key: 'studentNumber', header: 'Student Number' },
+    { key: 'applicantName', header: 'Student Name' },
+    { key: 'payerPhone', header: 'Payer Phone (Masked)' },
     { key: 'amount', header: 'Amount' },
     { key: 'currency', header: 'Currency' },
     { key: 'method', header: 'Method' },
     { key: 'transactionCode', header: 'Transaction' },
     { key: 'status', header: 'Status' },
+    { key: 'providerState', header: 'Provider State' },
+    { key: 'paidAt', header: 'Paid At' },
     { key: 'createdAt', header: 'Created At' }
   ]);
   sendCsv(res, 'payments.csv', csv);
