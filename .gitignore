@@ -64,3 +64,16 @@ Desktop.ini
 .cache/
 .vite/
 .nyc_output/
+
+# Python / chatbot generated files
+**/.venv*/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.ruff_cache/
+**/chroma_db/
+
+# Flutter generated files
+**/.dart_tool/
+**/.pub-cache/
+**/.flutter-plugins-dependencies
