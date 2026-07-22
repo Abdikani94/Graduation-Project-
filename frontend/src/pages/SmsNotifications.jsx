@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AlertCircle, CheckCircle2, Clock3, Eye, MessageSquareText, RefreshCw, Search, Send, X, XCircle } from 'lucide-react';
 import api from '../api/axios';
+import { confirmDialog } from '../services/dialogService';
 import Card from '../components/Card';
 import PageLayout from '../components/PageLayout';
 
@@ -35,12 +36,12 @@ const SmsNotifications = () => {
   useEffect(() => { setPage(1); }, [search, status]);
 
   const resend = async (item) => {
-    if (!window.confirm(`Resend the submission SMS to ${item.recipient}?`)) return;
+    if (!await confirmDialog(`Resend the submission SMS to ${item.recipient}?`, { title: 'Resend SMS notification', confirmLabel: 'Resend SMS' })) return;
     try { await api.post(`/sms-notifications/${item.id}/resend`, {}); await load(); }
     catch (requestError) { setError(requestError.message); }
   };
   const cancel = async (item) => {
-    if (!window.confirm('Cancel this SMS notification?')) return;
+    if (!await confirmDialog('Cancel this SMS notification?', { title: 'Cancel SMS notification', confirmLabel: 'Cancel Notification', destructive: true })) return;
     try { await api.patch(`/sms-notifications/${item.id}/cancel`, {}); await load(); }
     catch (requestError) { setError(requestError.message); }
   };
