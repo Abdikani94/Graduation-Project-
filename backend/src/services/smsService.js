@@ -8,7 +8,7 @@ let scheduler;
 
 export const brandSmsMessage = (message) => {
   const content = String(message ?? '').trim();
-  const brand = String(env.smsBrandName || 'Jamhuriya University').trim();
+  const brand = String(env.smsBrandName || 'Jamhuuriya University').trim();
   if (!brand || !content) return content;
   if (content.toLocaleLowerCase().startsWith(brand.toLocaleLowerCase())) return content;
   return `${brand}: ${content}`;
@@ -68,6 +68,18 @@ const createApplicationNotification = (db, application, template, { student = nu
 
 export const createApplicationSubmittedNotification = (db, application) =>
   createApplicationNotification(db, application, SMS_TEMPLATES.APPLICATION_SUBMITTED_SMS);
+
+export const createInsufficientBalanceNotification = (db, application, payment, payerPhone) =>
+  createApplicationNotification(
+    db,
+    { ...application, mobile: payerPhone },
+    {
+      eventType: 'PAYMENT_INSUFFICIENT_BALANCE',
+      enabled: true,
+      message: 'Haraaga EVC-ga kuguma filna bixinta khidmada diiwaangelinta ee USD 25.00. Fadlan lacag ku shubo kadibna mar kale isku day.'
+    },
+    { idempotencyKey: `PAYMENT_INSUFFICIENT_BALANCE:${payment.referenceId}` }
+  );
 
 export const createScheduledSmsNotification = (db, campaign, recipient) => {
   const template = { eventType: 'SCHEDULED_STUDENT_MESSAGE', enabled: true, message: recipient.personalizedMessage };

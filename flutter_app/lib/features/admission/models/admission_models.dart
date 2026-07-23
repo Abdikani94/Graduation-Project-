@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class Faculty {
   const Faculty({
     required this.name,
@@ -65,9 +67,14 @@ class ApplicationDraft {
   String applicantPhotoUri = '';
   String applicantPhotoName = '';
   String applicantPhotoMimeType = '';
+  Uint8List? applicantPhotoBytes;
   String certificateUri = '';
   String certificateName = '';
   String certificateMimeType = '';
+  Uint8List? certificateBytes;
+  Uint8List? paymentReceiptBytes;
+  String paymentReceiptName = '';
+  String paymentReceiptMimeType = '';
   String certificateStatus = '';
   String appointmentDate = '';
   String appointmentTime = '';
@@ -76,6 +83,12 @@ class ApplicationDraft {
   String? paymentId;
   String? submittedReference;
   String paymentStatus = 'Pending';
+  String applicationStatus = '';
+  String paymentAccessToken = '';
+  String paymentReferenceId = '';
+  String payerPhone = '';
+  String paymentAmount = '25.00';
+  String paymentTransactionId = '';
 
   String get reference => submittedReference ?? 'Draft';
   double get admissionFee => 25;
@@ -87,6 +100,8 @@ class ApplicationDraft {
 
   static final _personNamePattern = RegExp(r"^[A-Za-z][A-Za-z\s'.-]{1,79}$");
   static final _simpleTextPattern = RegExp(r"^[A-Za-z][A-Za-z\s'.&,/-]{1,99}$");
+  static final _schoolNamePattern =
+      RegExp(r"^[A-Za-z0-9][A-Za-z0-9\s'.&,()/-]{1,149}$");
   static final _idPattern = RegExp(r'^\d{3,30}$');
   static final _rollNumberPattern = RegExp(r'^\d[\d/-]{2,29}$');
   static final _emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
@@ -134,9 +149,7 @@ class ApplicationDraft {
   ];
   static final _paymentMethodOptions = [
     'EVC Plus',
-    'Zaad',
     'eDahab',
-    'Cash Office',
   ];
 
   Map<String, dynamic> toApiPayload() {
@@ -167,12 +180,15 @@ class ApplicationDraft {
       'modeOfStudy': studyMode,
       'paymentPlan': paymentPlan,
       'paymentMethod': paymentMethod,
+      'paymentPhone': payerPhone,
+      'paymentAmount': paymentAmount,
+      'paymentTransactionId': paymentTransactionId,
       'faculty': faculty,
       'department': department,
-      'applicantPhotoUploaded': applicantPhotoUploaded ? 'Yes' : 'No',
+      'applicantPhotoUploaded': applicantPhotoBytes != null ? 'Yes' : 'No',
       'applicantPhotoName': applicantPhotoName,
       'applicantPhotoMimeType': applicantPhotoMimeType,
-      'certificateUploaded': certificateUploaded ? 'Yes' : 'No',
+      'certificateUploaded': certificateBytes != null ? 'Yes' : 'No',
       'certificateName': certificateName,
       'certificateMimeType': certificateMimeType,
       'hasCertificate': certificateStatus,
@@ -314,8 +330,8 @@ class ApplicationDraft {
     if (!_familyStudiedOptions.contains(familyStudied)) {
       return 'Family Member Studied Here is invalid';
     }
-    if (!_simpleTextPattern.hasMatch(schoolName.trim())) {
-      return 'Secondary School Name must contain text only';
+    if (!_schoolNamePattern.hasMatch(schoolName.trim())) {
+      return 'Secondary School Name may contain letters and numbers';
     }
     if (!_simpleTextPattern.hasMatch(schoolDistrict.trim())) {
       return 'School District must contain text only';
@@ -409,12 +425,17 @@ class ApplicationDraft {
       submittedReference = application['reference']?.toString();
       paymentStatus =
           (application['paymentStatus'] ?? paymentStatus).toString();
+      applicationStatus =
+          (application['status'] ?? applicationStatus).toString();
     }
 
     if (payment is Map<String, dynamic>) {
       paymentId = payment['id']?.toString();
       paymentStatus = (payment['status'] ?? paymentStatus).toString();
     }
+
+    paymentAccessToken =
+        (data['paymentAccessToken'] ?? paymentAccessToken).toString();
 
     submitted = true;
   }
@@ -423,22 +444,26 @@ class ApplicationDraft {
     required String uri,
     required String name,
     required String mimeType,
+    Uint8List? bytes,
   }) {
     applicantPhotoUri = uri;
     applicantPhotoName = name;
     applicantPhotoMimeType = mimeType;
     applicantPhotoUploaded = uri.isNotEmpty;
+    applicantPhotoBytes = bytes;
   }
 
   void setCertificate({
     required String uri,
     required String name,
     required String mimeType,
+    Uint8List? bytes,
   }) {
     certificateUri = uri;
     certificateName = name;
     certificateMimeType = mimeType;
     certificateUploaded = uri.isNotEmpty;
+    certificateBytes = bytes;
   }
 
   void clearCertificate() {
@@ -446,5 +471,88 @@ class ApplicationDraft {
     certificateName = '';
     certificateMimeType = '';
     certificateUploaded = false;
+    certificateBytes = null;
   }
+}
+
+class RegistrationStatus {
+  const RegistrationStatus(
+      {required this.isOpen, required this.status, this.period});
+
+  factory RegistrationStatus.fromJson(Map<String, dynamic> json) {
+    final rawPeriod = json['period'];
+    return RegistrationStatus(
+      isOpen: json['isOpen'] == true,
+      status: (json['status'] ?? 'Closed').toString(),
+      period: rawPeriod is Map<String, dynamic>
+          ? AdmissionPeriod.fromJson(rawPeriod)
+          : null,
+    );
+  }
+
+  final bool isOpen;
+  final String status;
+  final AdmissionPeriod? period;
+}
+
+class AdmissionPeriod {
+  const AdmissionPeriod({
+    required this.id,
+    required this.name,
+    required this.openingDatetime,
+    required this.closingDatetime,
+    required this.applicantInstructions,
+  });
+
+  factory AdmissionPeriod.fromJson(Map<String, dynamic> json) =>
+      AdmissionPeriod(
+        id: (json['id'] ?? '').toString(),
+        name: (json['name'] ?? '').toString(),
+        openingDatetime:
+            DateTime.tryParse((json['openingDatetime'] ?? '').toString()),
+        closingDatetime:
+            DateTime.tryParse((json['closingDatetime'] ?? '').toString()),
+        applicantInstructions: (json['applicantInstructions'] ?? '').toString(),
+      );
+
+  final String id;
+  final String name;
+  final DateTime? openingDatetime;
+  final DateTime? closingDatetime;
+  final String applicantInstructions;
+}
+
+class PaymentResult {
+  const PaymentResult({
+    required this.status,
+    required this.referenceId,
+    required this.amount,
+    required this.currency,
+    required this.payerPhone,
+    this.providerState,
+    this.failureCode,
+    this.failureMessage,
+  });
+
+  factory PaymentResult.fromJson(Map<String, dynamic> json) => PaymentResult(
+        status: (json['status'] ?? 'UNKNOWN').toString(),
+        referenceId: (json['referenceId'] ?? '').toString(),
+        amount: (json['amount'] as num?)?.toDouble() ??
+            double.tryParse('${json['amount']}') ??
+            0,
+        currency: (json['currency'] ?? 'USD').toString(),
+        payerPhone: (json['payerPhone'] ?? '').toString(),
+        providerState: json['providerState']?.toString(),
+        failureCode: json['failureCode']?.toString(),
+        failureMessage: json['failureMessage']?.toString(),
+      );
+
+  final String status;
+  final String referenceId;
+  final double amount;
+  final String currency;
+  final String payerPhone;
+  final String? providerState;
+  final String? failureCode;
+  final String? failureMessage;
 }

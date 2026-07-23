@@ -6147,7 +6147,7 @@ body:has(.admin-shell) {
   box-shadow: 0 0 0 4px rgba(45, 54, 141, 0.1);
 }
 
-.login-form button {
+.login-submit {
   background: linear-gradient(135deg, var(--just-blue), #246d7b);
   border: 0;
   border-radius: 12px;
@@ -6162,9 +6162,40 @@ body:has(.admin-shell) {
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
-.login-form button:hover {
+.login-submit:hover {
   box-shadow: 0 16px 30px rgba(45, 54, 141, 0.26);
   transform: translateY(-2px);
+}
+
+.login-password-input {
+  display: block;
+  position: relative;
+}
+
+.login-password-input input {
+  padding-right: 50px;
+}
+
+.login-password-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #68758a;
+  cursor: pointer;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 7px;
+  top: 6px;
+  width: 40px;
+}
+
+.login-password-toggle:hover {
+  color: var(--just-blue);
 }
 
 /* Compact Apply hero: keep the CTA visible in the first viewport */
@@ -6310,7 +6341,7 @@ body:has(.admin-shell) {
   }
 
   .login-field input,
-  .login-form button {
+  .login-submit {
     height: 46px;
   }
 }

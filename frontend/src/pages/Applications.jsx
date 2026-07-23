@@ -64,7 +64,7 @@ const EDIT_SECTIONS = [
       { key: 'department', label: 'Program' },
       { key: 'modeOfStudy', label: 'Mode of Study', options: ['Full Time', 'Part Time'] },
       { key: 'paymentPlan', label: 'Payment Plan', options: ['Admission fee only', 'Semester payment', 'Full year payment'] },
-      { key: 'paymentMethod', label: 'Payment Method', options: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal'] },
+      { key: 'paymentMethod', label: 'Payment Method', options: ['EVC Plus', 'eDahab'] },
       { key: 'paymentPhone', label: 'Payment Phone' },
       { key: 'paymentAmount', label: 'Payment Amount' },
       { key: 'paymentTransactionId', label: 'Transaction ID' },
@@ -336,22 +336,24 @@ const Applications = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-[13px] text-gray-400">{formatDate(app.createdAt)}</td>
-                  <td className="px-6 py-4">
-                    <button onClick={() => setSelectedApplication(app)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="View">
-                      <Eye size={18} />
-                    </button>
-                    <button onClick={() => openEdit(app)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="Edit">
-                      <Edit2 size={17} />
-                    </button>
-                    <button disabled={isSaving || app.status === 'Approved'} onClick={() => openApprove(app)} className="text-gray-500 hover:text-[#00A451] transition-colors p-1 disabled:opacity-40" type="button" title="Approve">
-                      <Check size={17} />
-                    </button>
-                    <button disabled={isSaving} onClick={() => handleStatus(app, 'Rejected')} className="text-gray-500 hover:text-red-500 transition-colors p-1 disabled:opacity-40" type="button" title="Reject">
-                      <X size={17} />
-                    </button>
-                    <button disabled={isSaving} onClick={() => handleDelete(app)} className="text-gray-500 hover:text-red-500 transition-colors p-1 disabled:opacity-40" type="button" title="Delete">
-                      <Trash2 size={17} />
-                    </button>
+                  <td className="min-w-[270px] px-6 py-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      <button onClick={() => setSelectedApplication(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-bold text-slate-600 transition-colors hover:border-blue-300 hover:text-blue-700" type="button">
+                        <Eye size={14} /> View
+                      </button>
+                      <button onClick={() => openEdit(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-bold text-slate-600 transition-colors hover:border-violet-300 hover:text-violet-700" type="button">
+                        <Edit2 size={14} /> Edit
+                      </button>
+                      <button disabled={isSaving || app.status === 'Approved'} onClick={() => openApprove(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] font-bold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40" type="button">
+                        <Check size={14} /> Approve
+                      </button>
+                      <button disabled={isSaving} onClick={() => handleStatus(app, 'Rejected')} className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[11px] font-bold text-amber-700 transition-colors hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-40" type="button">
+                        <X size={14} /> Reject
+                      </button>
+                      <button disabled={isSaving} onClick={() => handleDelete(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-[11px] font-bold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40" type="button">
+                        <Trash2 size={14} /> Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -1,7 +1,9 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/network/api_client.dart';
 import '../data/admission_repository.dart';
 import '../models/admission_models.dart';
 
@@ -15,15 +17,18 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  late String method = widget.draft.paymentMethod.isEmpty
-      ? 'EVC Plus'
-      : widget.draft.paymentMethod;
+  late String method = const {'EVC Plus', 'eDahab'}
+          .contains(widget.draft.paymentMethod)
+      ? widget.draft.paymentMethod
+      : 'EVC Plus';
   late final TextEditingController phoneController =
       TextEditingController(text: widget.draft.phone);
   late final TextEditingController confirmController =
       TextEditingController(text: widget.draft.phone);
+  late final TextEditingController transactionController =
+      TextEditingController(text: widget.draft.paymentTransactionId);
   bool authorized = true;
-  String demoStatus = 'Processing';
+  String paymentStatus = 'Not started';
   bool isPaying = false;
   final repository = const AdmissionRepository();
 
@@ -31,6 +36,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void dispose() {
     phoneController.dispose();
     confirmController.dispose();
+    transactionController.dispose();
     super.dispose();
   }
 
@@ -69,33 +75,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                     const SizedBox(height: 10),
                     _PaymentMethodCard(
-                      badge: 'Z',
-                      title: 'Zaad',
-                      subtitle: 'Pay with your Telesom Zaad wallet',
-                      selected: method == 'Zaad',
-                      onTap: () => setState(() => method = 'Zaad'),
-                    ),
-                    const SizedBox(height: 10),
-                    _PaymentMethodCard(
                       badge: 'eD',
                       title: 'eDahab',
                       subtitle: 'Pay with your Somtel eDahab wallet',
                       selected: method == 'eDahab',
                       onTap: () => setState(() => method = 'eDahab'),
                     ),
-                    const SizedBox(height: 10),
-                    _PaymentMethodCard(
-                      badge: '\u{1F3E6}',
-                      title: 'Cash Office',
-                      subtitle: 'Pay at the university finance office',
-                      selected: method == 'Cash Office',
-                      onTap: () => setState(() => method = 'Cash Office'),
-                    ),
                     const SizedBox(height: 12),
                     _PhoneInput(
                       label: 'Mobile Number',
                       controller: phoneController,
                     ),
+                    if (method != 'EVC Plus') ...[
+                      const SizedBox(height: 12),
+                      _PhoneInput(
+                        label: 'Transaction ID / Reference',
+                        controller: transactionController,
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: _pickPaymentReceipt,
+                        icon: const Icon(Icons.upload_file),
+                        label: Text(widget.draft.paymentReceiptName.isEmpty
+                            ? 'Upload payment receipt'
+                            : widget.draft.paymentReceiptName),
+                      ),
+                    ],
                     const SizedBox(height: 12),
                     _PhoneInput(
                       label: 'Confirm Mobile Number',
@@ -115,25 +120,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       title: 'Payment status',
                     ),
                     const SizedBox(height: 12),
-                    const Wrap(
+                    Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _StatusChip('Not started', Color(0xFFF0F3FA),
-                            Color(0xFF44516A)),
-                        _StatusChip('Processing', AppColors.pastelBlue,
+                        _StatusChip(paymentStatus, AppColors.pastelBlue,
                             AppColors.primaryBlue),
-                        _StatusChip(
-                            'Paid', AppColors.pastelGreen, AppColors.justGreen),
-                        _StatusChip(
-                            'Failed', AppColors.pastelRed, AppColors.danger),
-                        _StatusChip('Pending verification',
-                            AppColors.pastelOrange, Color(0xFFB87500)),
                       ],
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'This is a design prototype \u{2014} no real payment is\nprocessed. Use the buttons below to preview each result.',
+                      'Payment status is confirmed by the university backend. Never enter your wallet PIN in this app.',
                       style: TextStyle(
                         color: AppColors.mutedText,
                         fontSize: 11,
@@ -141,31 +138,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        _DemoButton(
-                          label: 'Demo: success',
-                          background: AppColors.pastelGreen,
-                          color: AppColors.justGreen,
-                          onTap: () => setState(() => demoStatus = 'Paid'),
-                        ),
-                        const SizedBox(width: 8),
-                        _DemoButton(
-                          label: 'Demo: failure',
-                          background: AppColors.pastelRed,
-                          color: AppColors.danger,
-                          onTap: () => setState(() => demoStatus = 'Failed'),
-                        ),
-                      ],
-                    ),
                     const SizedBox(height: 84),
                   ],
                 ),
               ),
               _PayBottomBar(
                 enabled: authorized && !isPaying,
-                status: demoStatus,
+                status: paymentStatus,
                 isLoading: isPaying,
                 onPay: _submitPayment,
               ),
@@ -191,11 +170,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
       _showMessage('Mobile numbers do not match');
       return;
     }
+    if (method != 'EVC Plus' &&
+        (transactionController.text.trim().isEmpty ||
+            widget.draft.paymentReceiptBytes == null)) {
+      _showMessage('Transaction reference and payment receipt are required.');
+      return;
+    }
 
     widget.draft
       ..paymentMethod = method
-      ..phone = phone
-      ..paymentStatus = 'Processing';
+      ..payerPhone = phone
+      ..paymentAmount = '25.00'
+      ..paymentTransactionId = transactionController.text.trim()
+      ..paymentStatus = 'PROCESSING';
 
     final validationError = widget.draft.validateForSubmission();
     if (validationError != null) {
@@ -205,19 +192,125 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     setState(() => isPaying = true);
     try {
-      final data = await repository.submitApplication(widget.draft);
-      if (!mounted) return;
-      setState(() {
+      if (widget.draft.submittedReference?.isNotEmpty != true) {
+        final data = await repository.submitApplication(widget.draft);
         widget.draft.updateFromSubmission(data);
-        demoStatus = widget.draft.paymentStatus;
-      });
-      _showMessage('Application submitted: ${widget.draft.reference}');
-      Navigator.of(context).maybePop();
+      }
+      if (!mounted) return;
+
+      if (method != 'EVC Plus') {
+        setState(() => paymentStatus = widget.draft.paymentStatus);
+        _showMessage('Application submitted: ${widget.draft.reference}');
+        Navigator.of(context).pop(true);
+        return;
+      }
+
+      final previewData = await repository.previewPayment(
+        draft: widget.draft,
+        phoneNumber: phone,
+      );
+      final preview = previewData['preview'];
+      if (preview is! Map<String, dynamic>) {
+        throw const ApiException('Payment preview response is invalid.');
+      }
+      if (!mounted) return;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          icon: const Icon(Icons.verified_user,
+              color: AppColors.justGreen, size: 42),
+          title: const Text('Confirm Payment'),
+          content: Text(
+            'Review these verified payment details.\n\n'
+            'Pay to: ${preview['merchantName']}\n'
+            'Pay from: ${preview['payerPhone']}\n'
+            'Amount: ${preview['amount']} ${preview['currency']}\n'
+            'Registration: ${preview['registrationId']}\n'
+            'Purpose: ${preview['description']}\n\n'
+            'After confirming, check this phone and complete the secure EVC payment confirmation.',
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('Cancel')),
+            ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Pay with EVC Plus')),
+          ],
+        ),
+      );
+      if (confirmed != true) return;
+      setState(() => paymentStatus = 'PROCESSING');
+      var result = await repository.initiatePayment(
+        draft: widget.draft,
+        phoneNumber: phone,
+        idempotencyKey: _idempotencyKey(),
+      );
+      widget.draft.paymentReferenceId = result.referenceId;
+      setState(() => paymentStatus = result.status);
+      for (var attempt = 0;
+          mounted &&
+              ['PENDING', 'PROCESSING'].contains(result.status) &&
+              attempt < 45;
+          attempt++) {
+        await Future<void>.delayed(const Duration(seconds: 2));
+        result = await repository.fetchPaymentStatus(widget.draft);
+        if (mounted) setState(() => paymentStatus = result.status);
+      }
+      if (result.status != 'SUCCESS') {
+        throw ApiException(result.failureMessage ??
+            (['PENDING', 'PROCESSING'].contains(result.status)
+                ? 'EVC confirmation was not completed in time. Check your phone and try again.'
+                : 'Payment was not confirmed (${result.status}).'));
+      }
+      final verified = await repository.fetchPaymentStatus(widget.draft);
+      if (verified.status != 'SUCCESS') {
+        throw const ApiException('The backend has not confirmed this payment.');
+      }
+      final submitted = await repository.submitPaidApplication(widget.draft);
+      widget.draft.updateFromSubmission(submitted);
+      widget.draft.paymentStatus = 'PAID';
+      if (!mounted) return;
+      setState(() => paymentStatus = 'SUCCESS');
+      _showMessage(
+          'Payment confirmed and application submitted: ${widget.draft.reference}');
+      Navigator.of(context).pop(true);
     } catch (error) {
       if (!mounted) return;
       _showMessage(error.toString());
     } finally {
       if (mounted) setState(() => isPaying = false);
+    }
+  }
+
+  String _idempotencyKey() {
+    final random = Random.secure();
+    return 'mobile-${DateTime.now().microsecondsSinceEpoch}-${random.nextInt(1 << 32)}';
+  }
+
+  Future<void> _pickPaymentReceipt() async {
+    try {
+      final data = await const MethodChannel('just_admission/document_picker')
+          .invokeMapMethod<String, dynamic>('pickPaymentReceipt');
+      final bytes = data?['bytes'];
+      final mime = (data?['mimeType'] ?? '').toString();
+      if (data == null ||
+          bytes is! Uint8List ||
+          bytes.isEmpty ||
+          bytes.length > 10 * 1024 * 1024 ||
+          !const ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
+              .contains(mime)) {
+        _showMessage('Receipt must be PDF/JPG/PNG/WEBP and 10MB or smaller.');
+        return;
+      }
+      setState(() {
+        widget.draft.paymentReceiptBytes = bytes;
+        widget.draft.paymentReceiptName =
+            (data['name'] ?? 'receipt').toString();
+        widget.draft.paymentReceiptMimeType = mime;
+      });
+    } on PlatformException catch (error) {
+      _showMessage(error.message ?? 'Unable to select receipt.');
     }
   }
 
@@ -602,8 +695,8 @@ class _PayBottomBar extends StatelessWidget {
                 ),
                 child: Text(
                   isLoading
-                      ? 'Submitting...'
-                      : (status == 'Paid' ? 'Paid \$25.00' : 'Pay \$25.00'),
+                      ? 'Checking...'
+                      : (status == 'SUCCESS' ? 'Paid \$25.00' : 'Continue'),
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
@@ -752,36 +845,6 @@ class _StatusChip extends StatelessWidget {
           fontSize: 10,
           fontWeight: FontWeight.w900,
         ),
-      ),
-    );
-  }
-}
-
-class _DemoButton extends StatelessWidget {
-  const _DemoButton({
-    required this.label,
-    required this.background,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final Color background;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onTap,
-      style: TextButton.styleFrom(
-        backgroundColor: background,
-        foregroundColor: color,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
       ),
     );
   }

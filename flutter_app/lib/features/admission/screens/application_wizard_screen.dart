@@ -6,22 +6,74 @@ import '../data/admission_repository.dart';
 import '../models/admission_models.dart';
 import 'payment_screen.dart';
 
+({String monthly, String semester, String yearly}) _programFee(
+  String program,
+) {
+  if (program == 'Medicine & General Surgery') {
+    return (monthly: '\$120', semester: '\$805', yearly: '\$1,610');
+  }
+  if (const {'Nursing', 'Midwifery'}.contains(program)) {
+    return (monthly: '\$40', semester: '\$325', yearly: '\$650');
+  }
+  if (program == 'Public Health') {
+    return (monthly: '\$35', semester: '\$275', yearly: '\$550');
+  }
+  if (const {
+    'Medical Laboratory Science',
+    'BSc in Medical Radiography and Imaging Technology',
+  }.contains(program)) {
+    return (monthly: '\$45', semester: '\$355', yearly: '\$710');
+  }
+  if (const {
+    'Computer Application',
+    'Computer Network & Security',
+    'Computer Multi-Media',
+    'BSc in Artificial Intelligence and Data Science',
+  }.contains(program)) {
+    return (monthly: '\$65', semester: '\$475', yearly: '\$950');
+  }
+  if (const {
+    'Business Administration',
+    'Banking & Finance',
+    'Accounting',
+    'Public Administration',
+    'Economics',
+    'BSc in Business Analytics',
+    'BSc in Social Work',
+  }.contains(program)) {
+    return (monthly: '\$40', semester: '\$305', yearly: '\$610');
+  }
+  if (const {
+    'Civil Engineering',
+    'Electrical Engineering (Majoring in Power and Energy)',
+    'Electrical Engineering (Majoring in Telecommunications and Networking)',
+  }.contains(program)) {
+    return (monthly: '\$60', semester: '\$445', yearly: '\$890');
+  }
+  return (monthly: '—', semester: '—', yearly: '—');
+}
+
 class _PickedDocument {
   const _PickedDocument({
     required this.uri,
     required this.name,
     required this.mimeType,
+    required this.bytes,
   });
 
   final String uri;
   final String name;
   final String mimeType;
+  final Uint8List bytes;
 
   factory _PickedDocument.fromMap(Map<dynamic, dynamic> data) {
     return _PickedDocument(
       uri: (data['uri'] ?? '').toString(),
       name: (data['name'] ?? 'Selected file').toString(),
       mimeType: (data['mimeType'] ?? '').toString(),
+      bytes: data['bytes'] is Uint8List
+          ? data['bytes'] as Uint8List
+          : Uint8List(0),
     );
   }
 }
@@ -67,12 +119,49 @@ class ApplicationWizardScreen extends StatefulWidget {
 
 class _ApplicationWizardScreenState extends State<ApplicationWizardScreen> {
   late int step = widget.initialStep.clamp(0, 4);
-  final faculties = const AdmissionRepository().fallbackFaculties();
+  final repository = const AdmissionRepository();
+  List<Faculty> faculties = const [];
+  List<String> secondarySchools = const [];
+  List<String> districts = const [];
+  RegistrationStatus? registrationStatus;
+  String? loadError;
+  bool loadingReferenceData = true;
   bool confirmedInfo = false;
   bool agreedTerms = false;
   bool isFinishing = false;
 
   ApplicationDraft get draft => widget.draft;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReferenceData();
+  }
+
+  Future<void> _loadReferenceData() async {
+    try {
+      final results = await Future.wait<Object>([
+        repository.fetchFaculties(),
+        repository.fetchRegistrationStatus(),
+        repository.fetchSecondarySchools(),
+        repository.fetchDistricts(),
+      ]);
+      if (!mounted) return;
+      setState(() {
+        faculties = results[0] as List<Faculty>;
+        registrationStatus = results[1] as RegistrationStatus;
+        secondarySchools = results[2] as List<String>;
+        districts = results[3] as List<String>;
+        loadingReferenceData = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        loadError = error.toString();
+        loadingReferenceData = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,14 +181,48 @@ class _ApplicationWizardScreenState extends State<ApplicationWizardScreen> {
                 child: ListView(
                   padding: EdgeInsets.fromLTRB(16, step == 3 ? 0 : 16, 16, 20),
                   children: [
+                    if (loadingReferenceData)
+                      const LinearProgressIndicator()
+                    else if (loadError != null)
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(children: [
+                            Text(loadError!),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  loadingReferenceData = true;
+                                  loadError = null;
+                                });
+                                _loadReferenceData();
+                              },
+                              child: const Text('Retry'),
+                            ),
+                          ]),
+                        ),
+                      )
+                    else if (registrationStatus?.isOpen != true)
+                      Card(
+                        color: AppColors.pastelOrange,
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Text(
+                            'Admission registration is ${registrationStatus?.status ?? 'closed'}.',
+                          ),
+                        ),
+                      ),
                     if (step == 1)
                       _PersonalDetailsStep(
                         draft: draft,
+                        districts: districts,
                         onChanged: () => setState(() {}),
                       )
                     else if (step == 2)
                       _EmergencySchoolStep(
                         draft: draft,
+                        schools: secondarySchools,
+                        districts: districts,
                         onChanged: () => setState(() {}),
                       )
                     else if (step == 3)
@@ -126,11 +249,13 @@ class _ApplicationWizardScreenState extends State<ApplicationWizardScreen> {
               ),
               _WizardBottomBar(
                 canBack: step > 0,
-                nextLabel:
-                    step == 4
-                        ? (isFinishing ? 'Submitting...' : 'Submit application')
-                        : 'Next step \u{2192}',
+                nextLabel: step == 4
+                    ? (isFinishing ? 'Submitting...' : 'Submit application')
+                    : 'Next step \u{2192}',
                 nextEnabled: !isFinishing &&
+                    !loadingReferenceData &&
+                    loadError == null &&
+                    registrationStatus?.isOpen == true &&
                     (step != 4 || (confirmedInfo && agreedTerms)),
                 onBack: () {
                   if (step == 0) {
@@ -150,6 +275,12 @@ class _ApplicationWizardScreenState extends State<ApplicationWizardScreen> {
   }
 
   Future<void> _next() async {
+    if (registrationStatus?.isOpen != true) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Admission registration is not currently open.'),
+      ));
+      return;
+    }
     final validationError = draft.validateStep(step);
     if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -159,11 +290,11 @@ class _ApplicationWizardScreenState extends State<ApplicationWizardScreen> {
     }
 
     if (step == 3) {
-      Navigator.push(
+      final completed = await Navigator.push<bool>(
         context,
         MaterialPageRoute(builder: (_) => PaymentScreen(draft: draft)),
       );
-      setState(() => step = 4);
+      if (mounted && completed == true) setState(() => step = 4);
       return;
     }
 
@@ -374,12 +505,18 @@ class _ProgramPaymentStep extends StatelessWidget {
                 draft.faculty = faculty.name;
                 draft.campus = faculty.campus;
                 draft.department = faculty.departments.first;
+                if (!_allowsPartTime(draft.department)) {
+                  draft.studyMode = 'Full Time';
+                }
                 onChanged();
               },
               onDepartmentTap: (department) {
                 draft.faculty = faculty.name;
                 draft.campus = faculty.campus;
                 draft.department = department;
+                if (!_allowsPartTime(department)) {
+                  draft.studyMode = 'Full Time';
+                }
                 onChanged();
               },
             ),
@@ -390,6 +527,7 @@ class _ProgramPaymentStep extends StatelessWidget {
         const SizedBox(height: 8),
         _SegmentedMode(
           value: draft.studyMode,
+          partTimeEnabled: _allowsPartTime(draft.department),
           onChanged: (value) {
             draft.studyMode = value;
             onChanged();
@@ -426,7 +564,7 @@ class _ProgramPaymentStep extends StatelessWidget {
           badge: '6m',
           title: 'Semester Payment',
           subtitle: 'Admission fee + first semester tuition',
-          amount: '\$295',
+          amount: _programFee(draft.department).semester,
           selected: draft.paymentPlan == 'Semester payment',
           onTap: () {
             draft.paymentPlan = 'Semester payment';
@@ -438,7 +576,7 @@ class _ProgramPaymentStep extends StatelessWidget {
           badge: '1y',
           title: 'Full-Year Payment',
           subtitle: 'Admission fee + full year, save 5%',
-          amount: '\$538',
+          amount: _programFee(draft.department).yearly,
           selected: draft.paymentPlan == 'Full year payment',
           onTap: () {
             draft.paymentPlan = 'Full year payment';
@@ -448,12 +586,24 @@ class _ProgramPaymentStep extends StatelessWidget {
       ],
     );
   }
+
+  static bool _allowsPartTime(String department) => const {
+        'Computer Application',
+        'Computer Network & Security',
+        'Network and Security',
+        'Business Administration',
+      }.contains(department);
 }
 
 class _PersonalDetailsStep extends StatelessWidget {
-  const _PersonalDetailsStep({required this.draft, required this.onChanged});
+  const _PersonalDetailsStep({
+    required this.draft,
+    required this.districts,
+    required this.onChanged,
+  });
 
   final ApplicationDraft draft;
+  final List<String> districts;
   final VoidCallback onChanged;
 
   @override
@@ -562,11 +712,20 @@ class _PersonalDetailsStep extends StatelessWidget {
         _FieldBox(
           label: 'District',
           value: draft.district,
+          hint: 'Select district',
           required: true,
           trailing: Icons.keyboard_arrow_down,
-          maxLength: 100,
-          inputFormatters: _simpleTextFormatters,
-          onChanged: (value) => draft.district = value,
+          onTap: () async {
+            final district = await _EmergencySchoolStep._showOptionPicker(
+              context,
+              title: 'District',
+              options: districts,
+              searchable: true,
+            );
+            if (district == null) return;
+            draft.district = district;
+            onChanged();
+          },
         ),
         const SizedBox(height: 12),
         _FieldBox(
@@ -616,10 +775,23 @@ class _PersonalDetailsStep extends StatelessWidget {
           onTap: () async {
             final picked = await _MobileDocumentPicker.pickApplicantPhoto();
             if (picked == null) return;
+            if (!const ['image/jpeg', 'image/png', 'image/webp']
+                    .contains(picked.mimeType) ||
+                picked.bytes.isEmpty ||
+                picked.bytes.length > 5 * 1024 * 1024) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text(
+                      'Passport photo must be JPG, PNG, or WEBP and 5MB or smaller.'),
+                ));
+              }
+              return;
+            }
             draft.setApplicantPhoto(
               uri: picked.uri,
               name: picked.name,
               mimeType: picked.mimeType,
+              bytes: picked.bytes,
             );
             onChanged();
           },
@@ -671,10 +843,32 @@ class _PersonalDetailsStep extends StatelessWidget {
             onTap: () async {
               final picked = await _MobileDocumentPicker.pickCertificate();
               if (picked == null) return;
+              final validName = RegExp(
+                r'(certificate|cert|shahaado|shaahado|transcript|result|secondary|school|diploma|degree)',
+                caseSensitive: false,
+              ).hasMatch(picked.name);
+              if (!const [
+                    'application/pdf',
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                  ].contains(picked.mimeType) ||
+                  !validName ||
+                  picked.bytes.isEmpty ||
+                  picked.bytes.length > 10 * 1024 * 1024) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                    content: Text(
+                        'Certificate must be PDF/JPG/PNG/WEBP, 10MB or smaller, with a certificate-related file name.'),
+                  ));
+                }
+                return;
+              }
               draft.setCertificate(
                 uri: picked.uri,
                 name: picked.name,
                 mimeType: picked.mimeType,
+                bytes: picked.bytes,
               );
               onChanged();
             },
@@ -720,9 +914,16 @@ class _PersonalDetailsStep extends StatelessWidget {
 }
 
 class _EmergencySchoolStep extends StatelessWidget {
-  const _EmergencySchoolStep({required this.draft, required this.onChanged});
+  const _EmergencySchoolStep({
+    required this.draft,
+    required this.schools,
+    required this.districts,
+    required this.onChanged,
+  });
 
   final ApplicationDraft draft;
+  final List<String> schools;
+  final List<String> districts;
   final VoidCallback onChanged;
 
   @override
@@ -817,21 +1018,40 @@ class _EmergencySchoolStep extends StatelessWidget {
         _FieldBox(
           label: 'Secondary School Name',
           value: draft.schoolName,
+          hint: 'Select school',
           icon: '\u{1F3EB}',
           required: true,
-          maxLength: 100,
-          inputFormatters: _simpleTextFormatters,
-          onChanged: (value) => draft.schoolName = value,
+          trailing: Icons.keyboard_arrow_down,
+          onTap: () async {
+            final selectedSchool = await _showOptionPicker(
+              context,
+              title: 'Secondary School Name',
+              options: schools,
+              searchable: true,
+            );
+            if (selectedSchool == null) return;
+            draft.schoolName = selectedSchool;
+            onChanged();
+          },
         ),
         const SizedBox(height: 12),
         _FieldBox(
           label: 'School District',
           value: draft.schoolDistrict,
+          hint: 'Select school district',
           required: true,
           trailing: Icons.keyboard_arrow_down,
-          maxLength: 100,
-          inputFormatters: _simpleTextFormatters,
-          onChanged: (value) => draft.schoolDistrict = value,
+          onTap: () async {
+            final district = await _showOptionPicker(
+              context,
+              title: 'School District',
+              options: districts,
+              searchable: true,
+            );
+            if (district == null) return;
+            draft.schoolDistrict = district;
+            onChanged();
+          },
         ),
         const SizedBox(height: 12),
         Row(
@@ -921,65 +1141,103 @@ class _EmergencySchoolStep extends StatelessWidget {
     BuildContext context, {
     required String title,
     required List<String> options,
-  }) {
-    return showModalBottomSheet<String>(
+    bool searchable = false,
+  }) async {
+    final seen = <String>{};
+    final uniqueOptions = options
+        .map((option) => option.trim())
+        .where((option) =>
+            option.isNotEmpty && seen.add(option.toLowerCase()))
+        .toList(growable: false);
+    var searchQuery = '';
+    final selected = await showModalBottomSheet<String>(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
       ),
-      builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(18, 16, 18, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: const TextStyle(
-                          color: AppColors.text,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w900,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          final query = searchQuery.trim().toLowerCase();
+          final filteredOptions = uniqueOptions
+              .where((option) => option.toLowerCase().contains(query))
+              .toList();
+          return SafeArea(
+            child: SizedBox(
+              height: MediaQuery.sizeOf(context).height * .72,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 16, 18, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: const TextStyle(
+                              color: AppColors.text,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (searchable)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                      child: TextField(
+                        autofocus: true,
+                        onChanged: (value) => setModalState(() {
+                          searchQuery = value;
+                        }),
+                        decoration: InputDecoration(
+                          hintText: 'Search school...',
+                          prefixIcon: const Icon(Icons.search),
+                          filled: true,
+                          fillColor: AppColors.background,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide:
+                                const BorderSide(color: AppColors.border),
+                          ),
                         ),
                       ),
                     ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
+                  Expanded(
+                    child: ListView.separated(
+                      itemCount: filteredOptions.length,
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1, color: AppColors.border),
+                      itemBuilder: (context, index) {
+                        final option = filteredOptions[index];
+                        return ListTile(
+                          title: Text(
+                            option,
+                            style: const TextStyle(
+                              color: AppColors.text,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          onTap: () => Navigator.pop(context, option),
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Flexible(
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: options.length,
-                  separatorBuilder: (context, index) =>
-                      const Divider(height: 1, color: AppColors.border),
-                  itemBuilder: (context, index) {
-                    final option = options[index];
-                    return ListTile(
-                      title: Text(
-                        option,
-                        style: const TextStyle(
-                          color: AppColors.text,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      onTap: () => Navigator.pop(context, option),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
+    return selected;
   }
 
   static final _nameFormatters = [
@@ -1103,14 +1361,7 @@ class _FacultyPickerCard extends StatelessWidget {
   }
 
   static String _durationFor(String department) {
-    if (department.contains('Medicine') || department.contains('MBBS')) {
-      return '6 yrs';
-    }
-    if (department.contains('Engineering') ||
-        department.contains('Veterinary')) {
-      return '5 yrs';
-    }
-    return '4 yrs';
+    return department == 'Medicine & General Surgery' ? '7 yrs' : '5 yrs';
   }
 }
 
@@ -1209,9 +1460,14 @@ class _RequiredLabel extends StatelessWidget {
 }
 
 class _SegmentedMode extends StatelessWidget {
-  const _SegmentedMode({required this.value, required this.onChanged});
+  const _SegmentedMode({
+    required this.value,
+    required this.partTimeEnabled,
+    required this.onChanged,
+  });
 
   final String value;
+  final bool partTimeEnabled;
   final ValueChanged<String> onChanged;
 
   @override
@@ -1233,7 +1489,7 @@ class _SegmentedMode extends StatelessWidget {
           _ModeButton(
             label: 'Part Time',
             selected: value == 'Part Time',
-            onTap: () => onChanged('Part Time'),
+            onTap: partTimeEnabled ? () => onChanged('Part Time') : null,
           ),
         ],
       ),
@@ -1250,7 +1506,7 @@ class _ModeButton extends StatelessWidget {
 
   final String label;
   final bool selected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -1268,7 +1524,11 @@ class _ModeButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: selected ? Colors.white : AppColors.mutedText,
+              color: onTap == null
+                  ? AppColors.mutedText.withValues(alpha: .45)
+                  : selected
+                      ? Colors.white
+                      : AppColors.mutedText,
               fontSize: 12,
               fontWeight: FontWeight.w900,
             ),
@@ -1289,9 +1549,9 @@ class _SelectedProgramCard extends StatelessWidget {
     final rows = [
       ('Faculty', draft.faculty),
       ('Department', draft.department),
-      ('Duration', '4 years'),
+      ('Duration', _duration(draft.department)),
       ('Study mode', draft.studyMode),
-      ('Monthly fee', '\$45'),
+      ('Monthly fee', _programFee(draft.department).monthly),
       ('Admission fee', '\$25'),
       ('Campus', 'Campus 1 \u{00B7} Mogadishu'),
     ];
@@ -1314,6 +1574,9 @@ class _SelectedProgramCard extends StatelessWidget {
       ),
     );
   }
+
+  static String _duration(String department) =>
+      department == 'Medicine & General Surgery' ? '7 years' : '5 years';
 }
 
 class _PaymentPlanCard extends StatelessWidget {

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../models/admission_models.dart';
 
 class AiProgramAdvisorScreen extends StatefulWidget {
-  const AiProgramAdvisorScreen({super.key});
+  const AiProgramAdvisorScreen({super.key, required this.draft});
+
+  final ApplicationDraft draft;
 
   @override
   State<AiProgramAdvisorScreen> createState() => _AiProgramAdvisorScreenState();
@@ -16,12 +19,19 @@ class _AiProgramAdvisorScreenState extends State<AiProgramAdvisorScreen> {
 
   static const questions = [
     _AdvisorQuestion(
-      title: 'Which subjects did you enjoy most in\nschool?',
+      title: 'Dooro maaddada aad ugu fiicnayd dugsiga sare',
       options: [
-        'Mathematics & ICT',
-        'Biology & Chemistry',
-        'Business & Economics',
-        'Physics & Technical drawing',
+        'Mathematics (Xisaab)',
+        'Physics (Fiisigis)',
+        'Chemistry (Kimistari)',
+        'Biology (Bayoolaji)',
+        'Computer / ICT',
+        'Economics (Dhaqaale)',
+        'Business Studies',
+        'Geography (Juqraafi)',
+        'Agriculture (Beeraha)',
+        'English',
+        'Somali',
       ],
     ),
     _AdvisorQuestion(
@@ -40,14 +50,6 @@ class _AiProgramAdvisorScreenState extends State<AiProgramAdvisorScreen> {
         'B (70\u{2013}84%)',
         'C (55\u{2013}69%)',
         'Below 55%',
-      ],
-    ),
-    _AdvisorQuestion(
-      title: 'Which study mode do you prefer?',
-      options: [
-        'Full Time',
-        'Part Time',
-        'Not sure yet',
       ],
     ),
   ];
@@ -76,9 +78,15 @@ class _AiProgramAdvisorScreenState extends State<AiProgramAdvisorScreen> {
                   children: [
                     const _AdvisorHero(),
                     const SizedBox(height: 18),
-                    _ProgressCaption(step: step),
+                    _ProgressCaption(
+                      step: step,
+                      total: questions.length,
+                    ),
                     const SizedBox(height: 7),
-                    _ProgressBar(step: step),
+                    _ProgressBar(
+                      step: step,
+                      total: questions.length,
+                    ),
                     const SizedBox(height: 18),
                     Text(
                       question.title,
@@ -90,16 +98,36 @@ class _AiProgramAdvisorScreenState extends State<AiProgramAdvisorScreen> {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    ...List.generate(
-                      question.options.length,
-                      (index) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _AdvisorOption(
-                          title: question.options[index],
-                          selected: currentSelection == index,
-                          onTap: () => setState(() => selected[step] = index),
+                    DropdownButtonFormField<int>(
+                      initialValue:
+                          currentSelection >= 0 ? currentSelection : null,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        hintText:
+                            step == 0 ? 'Dooro maaddada' : 'Select an answer',
+                        prefixIcon: const Icon(
+                          Icons.menu_book_outlined,
+                          color: AppColors.primaryBlue,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.border),
                         ),
                       ),
+                      items: List.generate(
+                        question.options.length,
+                        (index) => DropdownMenuItem(
+                          value: index,
+                          child: Text(question.options[index]),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        if (value != null) {
+                          setState(() => selected[step] = value);
+                        }
+                      },
                     ),
                     const SizedBox(height: 4),
                     const _GuidanceNote(),
@@ -133,19 +161,84 @@ class _AiProgramAdvisorScreenState extends State<AiProgramAdvisorScreen> {
 
   void _goForward(bool isLastStep) {
     if (isLastStep) {
+      final recommendation = _recommendationFor(
+        questions[0].options[selected[0] ?? 0],
+      );
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const AdvisorRecommendationScreen()),
+        MaterialPageRoute(
+          builder: (_) => AdvisorRecommendationScreen(
+            draft: widget.draft,
+            program: recommendation.$1,
+            faculty: recommendation.$2,
+            reason: recommendation.$3,
+            subjects: recommendation.$4,
+          ),
+        ),
       );
       return;
     }
 
     setState(() => step++);
   }
+
+  static (String, String, String, String) _recommendationFor(String subject) {
+    if (subject.contains('Biology') || subject.contains('Chemistry')) {
+      return (
+        'Medical Laboratory Science',
+        'Faculty of Medicine & Health Sciences',
+        'Your strength in Biology and Chemistry fits health-science laboratory work and clinical studies.',
+        'Biology, Chemistry, Laboratory Science',
+      );
+    }
+    if (subject.contains('Physics')) {
+      return (
+        'Electrical Engineering (Majoring in Power and Energy)',
+        'Faculty of Engineering',
+        'Physics supports electrical systems, energy, telecommunications and engineering problem-solving.',
+        'Physics, Mathematics, Electronics',
+      );
+    }
+    if (subject.contains('Economics') || subject.contains('Business')) {
+      return (
+        'Business Administration',
+        'Faculty of Economics & Management',
+        'Your interest in business and economics matches management, finance and entrepreneurship.',
+        'Management, Accounting, Economics',
+      );
+    }
+    if (subject.contains('Geography') || subject.contains('Agriculture')) {
+      return (
+        'Civil Engineering',
+        'Faculty of Engineering',
+        'Your interest in land, environment and practical development aligns with civil engineering.',
+        'Mathematics, Surveying, Construction',
+      );
+    }
+    return (
+      'Computer Application',
+      'Faculty of Computer & IT',
+      'Your selected subject supports logical thinking, communication and technology-based problem-solving.',
+      'Programming, Databases, Networks',
+    );
+  }
 }
 
 class AdvisorRecommendationScreen extends StatelessWidget {
-  const AdvisorRecommendationScreen({super.key});
+  const AdvisorRecommendationScreen({
+    super.key,
+    required this.draft,
+    required this.program,
+    required this.faculty,
+    required this.reason,
+    required this.subjects,
+  });
+
+  final ApplicationDraft draft;
+  final String program;
+  final String faculty;
+  final String reason;
+  final String subjects;
 
   @override
   Widget build(BuildContext context) {
@@ -164,20 +257,27 @@ class AdvisorRecommendationScreen extends StatelessWidget {
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 22),
-                  children: const [
-                    _RecommendationHero(),
-                    SizedBox(height: 18),
-                    _WhyTitle(),
-                    SizedBox(height: 12),
-                    _WhyCard(),
-                    SizedBox(height: 12),
-                    _RecommendationTable(),
-                    SizedBox(height: 12),
-                    _InfoNotice(),
-                    SizedBox(height: 12),
-                    _ChooseProgramButton(),
-                    SizedBox(height: 10),
-                    _OtherRecommendationsButton(),
+                  children: [
+                    _RecommendationHero(program: program, faculty: faculty),
+                    const SizedBox(height: 18),
+                    const _WhyTitle(),
+                    const SizedBox(height: 12),
+                    _WhyCard(reason: reason),
+                    const SizedBox(height: 12),
+                    _RecommendationTable(
+                      program: program,
+                      subjects: subjects,
+                    ),
+                    const SizedBox(height: 12),
+                    const _InfoNotice(),
+                    const SizedBox(height: 12),
+                    _ChooseProgramButton(
+                      draft: draft,
+                      faculty: faculty,
+                      program: program,
+                    ),
+                    const SizedBox(height: 10),
+                    const _OtherRecommendationsButton(),
                   ],
                 ),
               ),
@@ -282,19 +382,20 @@ class _AdvisorHero extends StatelessWidget {
 }
 
 class _ProgressCaption extends StatelessWidget {
-  const _ProgressCaption({required this.step});
+  const _ProgressCaption({required this.step, required this.total});
 
   final int step;
+  final int total;
 
   @override
   Widget build(BuildContext context) {
     final questionNumber = step + 1;
-    final percent = questionNumber * 25;
+    final percent = ((questionNumber / total) * 100).round();
 
     return Row(
       children: [
         Text(
-          'Question $questionNumber of 4',
+          'Question $questionNumber of $total',
           style: const TextStyle(
             color: AppColors.mutedText,
             fontSize: 11,
@@ -316,9 +417,10 @@ class _ProgressCaption extends StatelessWidget {
 }
 
 class _ProgressBar extends StatelessWidget {
-  const _ProgressBar({required this.step});
+  const _ProgressBar({required this.step, required this.total});
 
   final int step;
+  final int total;
 
   @override
   Widget build(BuildContext context) {
@@ -326,75 +428,9 @@ class _ProgressBar extends StatelessWidget {
       borderRadius: BorderRadius.circular(999),
       child: LinearProgressIndicator(
         minHeight: 5,
-        value: (step + 1) / 4,
+        value: (step + 1) / total,
         color: AppColors.primaryBlue,
         backgroundColor: AppColors.border,
-      ),
-    );
-  }
-}
-
-class _AdvisorOption extends StatelessWidget {
-  const _AdvisorOption({
-    required this.title,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String title;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Container(
-          height: 58,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: selected ? AppColors.primaryBlue : AppColors.border,
-            ),
-            boxShadow: AppShadows.card,
-          ),
-          child: Row(
-            children: [
-              const _OptionStar(),
-              const SizedBox(width: 13),
-              Expanded(
-                child: Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.text,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              Container(
-                width: 19,
-                height: 19,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selected
-                        ? AppColors.primaryBlue
-                        : const Color(0xFFB9C3D4),
-                    width: selected ? 5 : 1.2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -489,7 +525,13 @@ class _AdvisorBottomBar extends StatelessWidget {
 }
 
 class _RecommendationHero extends StatelessWidget {
-  const _RecommendationHero();
+  const _RecommendationHero({
+    required this.program,
+    required this.faculty,
+  });
+
+  final String program;
+  final String faculty;
 
   @override
   Widget build(BuildContext context) {
@@ -503,34 +545,34 @@ class _RecommendationHero extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          _IconBox(
+          const _IconBox(
             icon: '\u{1F3AF}',
             background: Color(0xFF6E9CD0),
             size: 46,
           ),
-          SizedBox(width: 13),
+          const SizedBox(width: 13),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _BestMatchPill(),
-                SizedBox(height: 4),
+                const _BestMatchPill(),
+                const SizedBox(height: 4),
                 Text(
-                  'Computer Application',
+                  program,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  'Faculty of Computer Science & IT',
-                  style: TextStyle(
+                  faculty,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -596,35 +638,20 @@ class _WhyTitle extends StatelessWidget {
 }
 
 class _WhyCard extends StatelessWidget {
-  const _WhyCard();
+  const _WhyCard({required this.reason});
+
+  final String reason;
 
   @override
   Widget build(BuildContext context) {
     return _WhiteCard(
-      child: RichText(
-        text: const TextSpan(
-          style: TextStyle(
-            color: Color(0xFF44516A),
-            fontSize: 12,
-            height: 1.45,
-            fontWeight: FontWeight.w600,
-          ),
-          children: [
-            TextSpan(text: 'You enjoyed '),
-            TextSpan(
-              text: 'mathematics and ICT',
-              style: TextStyle(fontWeight: FontWeight.w900),
-            ),
-            TextSpan(text: ', want a '),
-            TextSpan(
-              text: 'technology career',
-              style: TextStyle(fontWeight: FontWeight.w900),
-            ),
-            TextSpan(
-              text:
-                  ', and prefer practical project work. Computer Application builds programming, databases, and app-development skills with strong job demand in Mogadishu\u{2019}s growing tech sector.',
-            ),
-          ],
+      child: Text(
+        reason,
+        style: const TextStyle(
+          color: Color(0xFF44516A),
+          fontSize: 12,
+          height: 1.45,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -632,15 +659,33 @@ class _WhyCard extends StatelessWidget {
 }
 
 class _RecommendationTable extends StatelessWidget {
-  const _RecommendationTable();
+  const _RecommendationTable({
+    required this.program,
+    required this.subjects,
+  });
+
+  final String program;
+  final String subjects;
 
   @override
   Widget build(BuildContext context) {
-    const rows = [
-      ('Duration', '4 years \u{2022} 8 semesters'),
-      ('Study mode', 'Full Time or Part Time'),
-      ('Key\nsubjects', 'Programming, Databases,\nNetworks'),
-      ('Careers', 'Developer, Analyst, IT Officer'),
+    final rows = [
+      (
+        'Duration',
+        program == 'Medicine & General Surgery' ? '7 years' : '5 years',
+      ),
+      (
+        'Study mode',
+        const {
+          'Computer Application',
+          'Computer Network & Security',
+          'Business Administration',
+        }.contains(program)
+            ? 'Full Time or Part Time'
+            : 'Full Time only',
+      ),
+      ('Key subjects', subjects),
+      ('Decision', 'Based on your selected school subject'),
     ];
 
     return _WhiteCard(
@@ -754,15 +799,48 @@ class _InfoNotice extends StatelessWidget {
 }
 
 class _ChooseProgramButton extends StatelessWidget {
-  const _ChooseProgramButton();
+  const _ChooseProgramButton({
+    required this.draft,
+    required this.faculty,
+    required this.program,
+  });
+
+  final ApplicationDraft draft;
+  final String faculty;
+  final String program;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 46,
       child: ElevatedButton(
-        onPressed: () =>
-            Navigator.of(context).popUntil((route) => route.isFirst),
+        onPressed: () {
+          draft.faculty = faculty
+              .replaceFirst('Faculty of ', '')
+              .replaceFirst(' Sciences', ' Science');
+          draft.department = program;
+          draft.campus = switch (draft.faculty) {
+            'Computer & IT' => 'Campus 3',
+            'Engineering' => 'Campus 2',
+            _ => 'Main Campus',
+          };
+          final allowsPartTime = const {
+            'Computer Application',
+            'Computer Network & Security',
+            'Business Administration',
+          }.contains(program);
+          if (!allowsPartTime) {
+            draft.studyMode = 'Full Time';
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '$program was selected and will be pre-filled in your application.',
+              ),
+            ),
+          );
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.justGreen,
           foregroundColor: Colors.white,
@@ -854,32 +932,6 @@ class _IconBox extends StatelessWidget {
       ),
       child: Center(
         child: Text(icon, style: TextStyle(fontSize: fontSize)),
-      ),
-    );
-  }
-}
-
-class _OptionStar extends StatelessWidget {
-  const _OptionStar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 38,
-      height: 38,
-      decoration: BoxDecoration(
-        color: AppColors.pastelPurple,
-        borderRadius: BorderRadius.circular(9),
-      ),
-      child: const Center(
-        child: Text(
-          '\u{2726}',
-          style: TextStyle(
-            color: Color(0xFFB73FD2),
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
       ),
     );
   }

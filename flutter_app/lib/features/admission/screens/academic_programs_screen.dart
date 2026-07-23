@@ -229,56 +229,88 @@ class _FacultyProgramCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(13, 12, 12, 12),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: AppColors.border),
         borderRadius: BorderRadius.circular(13),
         boxShadow: AppShadows.card,
       ),
-      child: Row(
-        children: [
-          _NumberBox(
-              number: index.toString(), color: accent, background: background),
-          const SizedBox(width: 13),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _displayName(faculty.name),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.text,
-                    fontSize: 14,
-                    height: 1.08,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${faculty.departments.length} programs available',
-                  style: const TextStyle(
-                    color: AppColors.mutedText,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(13),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.fromLTRB(13, 6, 12, 6),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          leading: _NumberBox(
+            number: index.toString(),
+            color: accent,
+            background: background,
+          ),
+          title: Text(
+            _displayName(faculty.name),
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 14,
+              height: 1.08,
+              fontWeight: FontWeight.w900,
             ),
           ),
-          const SizedBox(width: 8),
-          Container(
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              color: background,
-              borderRadius: BorderRadius.circular(8),
+          subtitle: Text(
+            '${faculty.departments.length} departments available',
+            style: const TextStyle(
+              color: AppColors.mutedText,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
-            child: Icon(Icons.chevron_right, color: accent, size: 17),
           ),
-        ],
+          iconColor: accent,
+          collapsedIconColor: accent,
+          children: [
+            for (var i = 0; i < faculty.departments.length; i++)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  border: i == faculty.departments.length - 1
+                      ? null
+                      : const Border(
+                          bottom: BorderSide(color: AppColors.border),
+                        ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.school_outlined, color: accent, size: 17),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            faculty.departments[i],
+                            style: const TextStyle(
+                              color: AppColors.text,
+                              fontSize: 12,
+                              height: 1.3,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            '${_durationFor(faculty.departments[i])} • ${_studyModeFor(faculty.departments[i])}',
+                            style: const TextStyle(
+                              color: AppColors.mutedText,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -289,6 +321,17 @@ class _FacultyProgramCard extends StatelessWidget {
     }
     return name;
   }
+
+  static String _durationFor(String program) =>
+      program == 'Medicine & General Surgery' ? '7 years' : '5 years';
+
+  static String _studyModeFor(String program) => const {
+        'Computer Application',
+        'Computer Network & Security',
+        'Business Administration',
+      }.contains(program)
+          ? 'Full Time / Part Time'
+          : 'Full Time only';
 }
 
 class _NumberBox extends StatelessWidget {

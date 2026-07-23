@@ -13,6 +13,7 @@ class MainActivity : FlutterActivity() {
     private val channelName = "just_admission/document_picker"
     private val photoRequestCode = 4101
     private val certificateRequestCode = 4102
+    private val paymentReceiptRequestCode = 4103
     private var pendingResult: MethodChannel.Result? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -42,6 +43,12 @@ class MainActivity : FlutterActivity() {
                             "image/webp"
                         )
                     )
+                    "pickPaymentReceipt" -> openPicker(
+                        result = result,
+                        requestCode = paymentReceiptRequestCode,
+                        mimeType = "*/*",
+                        extraMimeTypes = arrayOf("application/pdf", "image/jpeg", "image/png", "image/webp")
+                    )
                     else -> result.notImplemented()
                 }
             }
@@ -67,7 +74,7 @@ class MainActivity : FlutterActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode != photoRequestCode && requestCode != certificateRequestCode) return
+        if (requestCode != photoRequestCode && requestCode != certificateRequestCode && requestCode != paymentReceiptRequestCode) return
 
         val result = pendingResult ?: return
         pendingResult = null
@@ -91,7 +98,8 @@ class MainActivity : FlutterActivity() {
             mapOf(
                 "uri" to uri.toString(),
                 "name" to displayName(uri),
-                "mimeType" to (contentResolver.getType(uri) ?: "")
+                "mimeType" to (contentResolver.getType(uri) ?: ""),
+                "bytes" to contentResolver.openInputStream(uri)?.use { it.readBytes() }
             )
         )
     }

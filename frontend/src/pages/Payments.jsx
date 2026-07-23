@@ -6,7 +6,7 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
 
-const methods = ['Method', 'EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal'];
+const methods = ['Method', 'EVC Plus', 'eDahab'];
 const statuses = ['All Status', 'SUCCESS', 'PENDING', 'PROCESSING', 'UNKNOWN', 'FAILED', 'Paid', 'Pending', 'Failed', 'Refunded'];
 const money = (value, currency = 'USD') => new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD', minimumFractionDigits: 2 }).format(Number(value || 0));
 const formatDateTime = (value) => value ? new Date(value).toLocaleString() : 'Not available';

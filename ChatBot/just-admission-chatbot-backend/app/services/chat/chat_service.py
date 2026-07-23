@@ -28,11 +28,19 @@ class ChatService:
 
         self.intent_service = IntentService()
 
-        self.retrieval_service = RetrievalService(
-            chroma_db_path=chroma_db_path,
-            collection_name=collection_name,
-            embedding_model_name=embedding_model_name,
-        )
+        try:
+            self.retrieval_service = RetrievalService(
+                chroma_db_path=chroma_db_path,
+                collection_name=collection_name,
+                embedding_model_name=embedding_model_name,
+            )
+        except Exception:
+            # Keep greetings, direct admission answers, and the safe fallback
+            # available when the embedding model cannot be downloaded.
+            logger.exception(
+                "Semantic retrieval is unavailable; chatbot will run in direct-answer mode"
+            )
+            self.retrieval_service = None
 
         self.gemini_service = GeminiService(
             api_key=gemini_api_key,
@@ -81,10 +89,17 @@ class ChatService:
 
         search_query = intent_result.rewritten_query or cleaned_question
 
-        retrieval_result = self.retrieval_service.retrieve(
-            query=search_query,
-            top_k=top_k,
-        )
+        if self.retrieval_service is None:
+            response = ChatResponse(
+                question=cleaned_question,
+                answer=self.gemini_service.fallback_answer(),
+                context_found=False,
+                retrieved_documents=[],
+            )
+            self._save_chat_history(response)
+            return response
+
+        retrieval_result = self.retrieval_service.retrieve(query=search_query, top_k=top_k)
 
         direct_answer = self._grounded_direct_answer(
             cleaned_question,

@@ -7,11 +7,14 @@ import { purchaseWithWaafi } from '../providers/waafiPayProvider.js';
 import { findPaymentByIdempotency, findPaymentByReference } from '../repositories/paymentRepository.js';
 import { requireRegistration } from '../repositories/registrationRepository.js';
 import { registrationBalance, updateRegistrationPaymentStatus } from './registrationPaymentService.js';
-import { formatMinorAmount, parseAmountToMinor, validateIdempotencyKey } from '../validators/paymentValidator.js';
+import { createInsufficientBalanceNotification, scheduleSmsNotification } from './smsService.js';
+import { formatMinorAmount, validateIdempotencyKey } from '../validators/paymentValidator.js';
 import { maskMerchantPhone, maskPhone, normalizeSomaliEvcPhone } from '../validators/phoneValidator.js';
 
 const activeRequests = new Map();
 const description = 'Online registration payment';
+const registrationFeeMinor = 2500;
+const registrationCurrency = 'USD';
 
 const assertOwnership = (owner, registration) => {
   if (owner.role === 'Applicant' && owner.applicationId !== registration.id) fail(403, 'You are not authorized to pay this registration');
@@ -37,14 +40,17 @@ const safePayment = (payment) => ({
   paidAt: payment.paidAt || null
 });
 
-export const previewPayment = async ({ registrationId, amount, phoneNumber, owner }) => {
-  const amountMinor = parseAmountToMinor(amount);
+export const previewPayment = async ({ registrationId, phoneNumber, owner }) => {
+  const amountMinor = registrationFeeMinor;
   const phone = normalizeSomaliEvcPhone(phoneNumber);
   const db = await readDb();
   const registration = requireRegistration(db, registrationId);
   assertOwnership(owner, registration);
   const balance = registrationBalance(db, registration);
-  if (balance.requiredMinor > 0 && amountMinor > balance.remainingMinor) fail(422, 'Payment amount exceeds the remaining registration balance');
+  if (balance.remainingMinor === 0) fail(409, 'This registration fee has already been paid');
+  if (balance.requiredMinor !== registrationFeeMinor || balance.remainingMinor !== registrationFeeMinor) {
+    fail(409, 'The registration payment balance is inconsistent. Contact admissions before retrying.');
+  }
   return {
     registrationId: registration.reference,
     applicantName: registration.fullName,
@@ -52,14 +58,14 @@ export const previewPayment = async ({ registrationId, amount, phoneNumber, owne
     merchantPhone: maskMerchantPhone(paymentConfig.merchantPhone),
     payerPhone: maskPhone(phone),
     amount: Number(formatMinorAmount(amountMinor)),
-    currency: paymentConfig.currency,
+    currency: registrationCurrency,
     description,
     remainingBalance: Number(formatMinorAmount(balance.remainingMinor))
   };
 };
 
-const initiateOnce = async ({ registrationId, amount, phoneNumber, idempotencyKey, owner }) => {
-  const amountMinor = parseAmountToMinor(amount);
+const initiateOnce = async ({ registrationId, phoneNumber, idempotencyKey, owner }) => {
+  const amountMinor = registrationFeeMinor;
   const phone = normalizeSomaliEvcPhone(phoneNumber);
   const key = validateIdempotencyKey(idempotencyKey);
   const prepared = await updateDb((db) => {
@@ -75,7 +81,10 @@ const initiateOnce = async ({ registrationId, amount, phoneNumber, idempotencyKe
     );
     if (unresolved) return { existing: unresolved };
     const balance = registrationBalance(db, registration);
-    if (balance.requiredMinor > 0 && amountMinor > balance.remainingMinor) fail(422, 'Payment amount exceeds the remaining registration balance');
+    if (balance.remainingMinor === 0) fail(409, 'This registration fee has already been paid');
+    if (balance.requiredMinor !== registrationFeeMinor || balance.remainingMinor !== registrationFeeMinor) {
+      fail(409, 'The registration payment balance is inconsistent. Contact admissions before retrying.');
+    }
     const now = new Date().toISOString();
     const payment = {
       id: createId('pay'),
@@ -90,7 +99,7 @@ const initiateOnce = async ({ registrationId, amount, phoneNumber, idempotencyKe
       payerPhoneMasked: maskPhone(phone),
       amountMinor,
       amount: formatMinorAmount(amountMinor),
-      currency: paymentConfig.currency,
+      currency: registrationCurrency,
       provider: paymentConfig.provider,
       paymentMethod: paymentConfig.paymentMethod,
       method: 'EVC Plus',
@@ -133,7 +142,7 @@ const initiateOnce = async ({ registrationId, amount, phoneNumber, idempotencyKe
     };
   }
 
-  return updateDb((db) => {
+  const result = await updateDb((db) => {
     const current = findPaymentByReference(db, payment.referenceId);
     if (!current) fail(500, 'Payment record was not found after provider request');
     current.status = providerResult.status;
@@ -147,8 +156,15 @@ const initiateOnce = async ({ registrationId, amount, phoneNumber, idempotencyKe
     if (current.status === 'SUCCESS') current.paidAt = current.updatedAt;
     const registration = requireRegistration(db, current.applicationId);
     updateRegistrationPaymentStatus(db, registration);
-    return safePayment(current);
+    const insufficientBalance = ['5206', 'E10205'].includes(String(current.failureCode || '').toUpperCase()) ||
+      /not have enough balance|insufficient balance/i.test(current.failureMessage || '');
+    const smsNotification = insufficientBalance
+      ? createInsufficientBalanceNotification(db, registration, current, phone)
+      : null;
+    return { payment: safePayment(current), smsNotification };
   });
+  scheduleSmsNotification(result.smsNotification?.status === 'PENDING' ? result.smsNotification.id : null);
+  return result.payment;
 };
 
 export const initiatePayment = (input) => {

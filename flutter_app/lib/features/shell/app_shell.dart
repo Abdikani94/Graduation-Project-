@@ -43,10 +43,7 @@ class _AppShellState extends State<AppShell> {
         onSelect: (value) {
           if (value == 4) {
             _selectPage(1);
-            return;
           }
-
-          _selectPage(0);
         },
       );
     }
@@ -74,7 +71,11 @@ class _AppShellState extends State<AppShell> {
         indicatorColor: AppColors.justGreen.withValues(alpha: .18),
         shadowColor: AppColors.primaryBlue.withValues(alpha: .08),
         surfaceTintColor: Colors.white,
-        onDestinationSelected: (value) => setState(() => index = value),
+        onDestinationSelected: (value) {
+          if (value == 1) {
+            setState(() => index = value);
+          }
+        },
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),

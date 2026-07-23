@@ -31,7 +31,7 @@ export const buildWaafiPurchasePayload = ({ phone, amountMinor, referenceId, inv
       referenceId,
       invoiceId,
       amount: formatMinorAmount(amountMinor),
-      currency: paymentConfig.currency,
+      currency: 'USD',
       description: 'Online registration payment'
     }
   }

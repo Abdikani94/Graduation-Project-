@@ -62,8 +62,8 @@ export const programFeeGroups = [
     faculty: 'Faculty of Engineering',
     programs: [
       ['Civil Engineering', 60, 50, 445, 890, 5, 140, 25, 4125],
-      ['Electrical Engineering (Power and Energy)', 60, 50, 445, 890, 5, 140, 25, 4125],
-      ['Electrical Engineering (Telecommunications and Networking)', 60, 50, 445, 890, 5, 140, 25, 4125],
+      ['Electrical Engineering (Majoring in Power and Energy)', 60, 50, 445, 890, 5, 140, 25, 4125],
+      ['Electrical Engineering (Majoring in Telecommunications and Networking)', 60, 50, 445, 890, 5, 140, 25, 4125],
     ],
   },
 ];

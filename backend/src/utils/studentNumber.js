@@ -9,13 +9,18 @@
 //
 // To change a department's code, edit the map below — nothing else needs to change.
 const DEPARTMENT_CODES = {
-  // Computer Science & IT
+  // Computer & IT
   'Computer Application': 'C1',
   'Software Engineering': 'C2',
   'Computer Multimedia': 'C5',
   'Computer Networking & Security': 'C6',
+  'Computer Network & Security': 'C6',
+  'Computer Multi-Media': 'C5',
+  'BSc in Artificial Intelligence and Data Science': 'C7',
   // Medicine & Health Science
   'MBBS': 'M1',
+  'Medicine & General Surgery': 'M1',
+  'BSc in Medical Radiography and Imaging Technology': 'M6',
   'Nursing': 'M2',
   'Midwifery': 'M3',
   'Public Health': 'M4',
@@ -30,6 +35,10 @@ const DEPARTMENT_CODES = {
   'Civil Engineering': 'G1',
   'Electrical Engineering': 'G2',
   'Biomedical Engineering': 'G3',
+  'Electrical Engineering (Majoring in Power and Energy)': 'G2',
+  'Electrical Engineering (Majoring in Telecommunications and Networking)': 'G4',
+  'BSc in Business Analytics': 'B6',
+  'BSc in Social Work': 'B7',
   // Agro-Veterinary
   'Agricultural': 'A1',
   'Veterinary': 'A2'

@@ -15,8 +15,6 @@ class AdmissionGuideScreen extends StatefulWidget {
 }
 
 class _AdmissionGuideScreenState extends State<AdmissionGuideScreen> {
-  bool understood = false;
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -38,108 +36,85 @@ class _AdmissionGuideScreenState extends State<AdmissionGuideScreen> {
                     const _BeforeApplyBanner(),
                     const SizedBox(height: 20),
                     const _BlockTitle(
-                      icon: '\u{1F464}',
-                      background: AppColors.pastelBlue,
-                      title: 'Personal information',
+                      icon: '\u{1F393}',
+                      background: AppColors.pastelGreen,
+                      title: 'Education',
                     ),
                     const SizedBox(height: 10),
                     const _InfoTable(
                       rows: [
                         _InfoRow(
-                            'Full name & mother\u{2019}s name', 'Required'),
-                        _InfoRow('Date & place of birth', 'Required'),
-                        _InfoRow('Nationality & national ID', 'If available'),
-                        _InfoRow('Phone, email & district', 'Required'),
-                        _InfoRow('Applicant photo', 'Required'),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const _BlockTitle(
-                      icon: '\u{1F3EB}',
-                      background: AppColors.pastelGreen,
-                      title: 'Education information',
-                    ),
-                    const SizedBox(height: 10),
-                    const _InfoTable(
-                      rows: [
-                        _InfoRow('Secondary-school name', 'Required'),
-                        _InfoRow('School district', 'Required'),
-                        _InfoRow('Graduation year & passing grade', 'Required'),
-                        _InfoRow('Certificate status', 'Required'),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    const _BlockTitle(
-                      icon: '\u{1F4CE}',
-                      background: AppColors.pastelOrange,
-                      title: 'Required documents',
-                    ),
-                    const SizedBox(height: 10),
-                    const _InfoTable(
-                      rows: [
-                        _InfoRow('Passport-size photo', 'JPG / PNG'),
-                        _InfoRow('Secondary-school certificate', 'PDF / JPG'),
+                          'Completed Secondary School Certificate',
+                          'Required',
+                        ),
                         _InfoRow(
-                            'National ID or identity document', 'PDF / JPG'),
-                        _InfoRow('Other supporting documents', 'Optional'),
+                          'Accredited by the Ministry of Higher Education',
+                          'Required',
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
                     const _BlockTitle(
-                      icon: '\u{1F9ED}',
-                      background: AppColors.pastelPurple,
-                      title: 'Admission process',
-                    ),
-                    const SizedBox(height: 10),
-                    const _ProcessStep(
-                      number: '1',
-                      color: AppColors.primaryBlue,
+                      icon: '\u{1F4DC}',
                       background: AppColors.pastelBlue,
-                      title: 'Complete application',
-                      subtitle: 'Personal, emergency & school details',
+                      title: 'Certificate',
                     ),
                     const SizedBox(height: 10),
-                    const _ProcessStep(
-                      number: '2',
-                      color: AppColors.justGreen,
-                      background: AppColors.pastelGreen,
-                      title: 'Upload documents',
-                      subtitle: 'Photo, certificate & ID',
+                    const _InfoTable(
+                      rows: [
+                        _InfoRow(
+                          'Original Secondary School Leaving Certificate',
+                          'Required',
+                        ),
+                        _InfoRow('Certificate photocopies', '2 copies'),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    const _ProcessStep(
-                      number: '3',
-                      color: AppColors.warning,
+                    const SizedBox(height: 20),
+                    const _BlockTitle(
+                      icon: '\u{1F4F7}',
                       background: AppColors.pastelOrange,
-                      title: 'Select program',
-                      subtitle: 'Faculty, department & study mode',
+                      title: 'Passport photos',
                     ),
                     const SizedBox(height: 10),
-                    const _ProcessStep(
-                      number: '4',
-                      color: Color(0xFFB73FD2),
+                    const _InfoTable(
+                      rows: [
+                        _InfoRow('Passport-size photos', '4 photos'),
+                        _InfoRow('Photo background', 'White'),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const _BlockTitle(
+                      icon: '\u{1F4B5}',
                       background: AppColors.pastelPurple,
-                      title: 'Review & pay fee',
-                      subtitle: 'Confirm details and pay admission fee',
+                      title: 'Registration fee',
                     ),
                     const SizedBox(height: 10),
-                    const _ProcessStep(
-                      number: '5',
-                      color: AppColors.danger,
+                    const _InfoTable(
+                      rows: [
+                        _InfoRow('All faculties and programs', '\$25'),
+                        _InfoRow('Registration fee', 'Non-refundable'),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const _BlockTitle(
+                      icon: '\u{1F4BC}',
                       background: AppColors.pastelRed,
-                      title: 'Submit & track',
-                      subtitle: 'Follow your application status',
+                      title: 'Part-time applicants',
                     ),
-                    const SizedBox(height: 16),
-                    _AgreementText(
-                      checked: understood,
-                      onTap: () => setState(() => understood = !understood),
+                    const SizedBox(height: 10),
+                    const _InfoTable(
+                      rows: [
+                        _InfoRow('Work experience', '2 years recommended'),
+                        _InfoRow(
+                          'Time management & employer support',
+                          'May be required',
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 84),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
-              _GuideBottomBar(draft: widget.draft, enabled: understood),
             ],
           ),
         ),
@@ -332,7 +307,7 @@ class _BeforeApplyBanner extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Prepare the following information\nand documents',
+                  'Official requirements published by\nJamhuriya University',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -436,13 +411,15 @@ class _InfoLine extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10),
-          Text(
-            row.value,
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
+          Flexible(
+            child: Text(
+              row.value,
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+              ),
             ),
           ),
         ],

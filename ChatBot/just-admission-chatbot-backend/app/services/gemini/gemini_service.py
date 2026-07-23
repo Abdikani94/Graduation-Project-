@@ -14,12 +14,9 @@ class GeminiService:
         model_name: str,
         admission_contact_phone: str,
     ) -> None:
-        if not api_key:
-            raise ValueError("Gemini API key is not configured.")
-
         self.model_name = model_name
         self.admission_contact_phone = admission_contact_phone
-        self.client = genai.Client(api_key=api_key)
+        self.client = genai.Client(api_key=api_key) if api_key else None
 
     def generate_answer(
         self,
@@ -54,6 +51,9 @@ class GeminiService:
          return best_answer
 
         context = self._build_context(retrieved_documents)
+
+        if self.client is None:
+            return self._best_context_answer(retrieved_documents)
 
         prompt = f"""
 You are a university admission chatbot for JUST.

@@ -5,7 +5,16 @@ import { addActivity } from '../services/audit.js';
 
 const fixedAdmissionFee = 25;
 const minimumProgramDurationYears = 5;
-const withFixedAdmissionFee = (program) => ({ ...program, admissionFee: fixedAdmissionFee });
+const durationForDepartment = (name) =>
+  /^(medicine\s*&\s*general surgery|mbbs)$/i.test(String(name).trim()) ? 7 : 5;
+const withFixedAdmissionFee = (program) => ({
+  ...program,
+  admissionFee: fixedAdmissionFee,
+  departments: (program.departments || []).map((department) => ({
+    ...department,
+    durationYears: durationForDepartment(department.name)
+  }))
+});
 const parseProgramDuration = (value) => {
   const duration = Number(value === undefined || value === null || value === '' ? minimumProgramDurationYears : value);
   if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
@@ -44,7 +53,7 @@ export const createProgram = async (req, res) => {
       departments: departments.map((department) => ({
         id: createId('dep'),
         name: department.name,
-        durationYears: parseProgramDuration(department.durationYears || department.duration)
+        durationYears: durationForDepartment(department.name)
       })),
       createdAt: now,
       updatedAt: now
@@ -99,7 +108,10 @@ export const deleteProgram = async (req, res) => {
 export const createDepartment = async (req, res) => {
   const { name, durationYears, duration } = req.body || {};
   if (!name) fail(422, 'Department name is required');
-  const parsedDuration = parseProgramDuration(durationYears || duration);
+  parseProgramDuration(durationYears || duration);
+  const program = (await readDb()).programs.find((item) => item.id === req.params.id);
+  if (!program) fail(404, 'Faculty not found');
+  const parsedDuration = durationForDepartment(name);
 
   const department = await updateDb((db) => {
     const program = db.programs.find((item) => item.id === req.params.id);
@@ -131,7 +143,10 @@ export const updateDepartment = async (req, res) => {
     const before = found.name;
     if (req.body.name !== undefined) found.name = req.body.name;
     if (req.body.durationYears !== undefined || req.body.duration !== undefined) {
-      found.durationYears = parseProgramDuration(req.body.durationYears || req.body.duration);
+      parseProgramDuration(req.body.durationYears || req.body.duration);
+      found.durationYears = durationForDepartment(found.name);
+    } else if (req.body.name !== undefined) {
+      found.durationYears = durationForDepartment(found.name);
     }
     program.updatedAt = new Date().toISOString();
     addActivity(db, req, {

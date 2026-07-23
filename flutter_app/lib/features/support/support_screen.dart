@@ -22,7 +22,7 @@ class SupportScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _Message('Applicant', 'Which faculty is best for software development?'),
-                _Message('JUST Bot', 'Computer Science & IT is the strongest match. You can choose Computer Application, Networking & Security, Multimedia, or Software Engineering.'),
+                _Message('JUST Bot', 'Computer & IT is the strongest match. You can choose Computer Application, Computer Network & Security, Computer Multi-Media, or Artificial Intelligence and Data Science.'),
               ],
             ),
           ),

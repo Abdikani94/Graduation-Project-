@@ -4,6 +4,8 @@ import { CheckCircle2, CircleHelp, LoaderCircle, ShieldCheck, XCircle } from 'lu
 const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
 const amountPattern = /^\d+(?:\.\d{1,2})?$/;
 const phonePattern = /^(?:\+?252|0)?61\d{7}$/;
+const confirmationTimeoutMs = 60000;
+const statusPollMs = 2000;
 
 const cleanEvcPhone = (value) => {
   let digits = String(value ?? '').replace(/\D/g, '');
@@ -34,7 +36,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
   const continueToPreview = async () => {
     const normalizedPhone = String(phoneNumber).replace(/[\s()-]/g, '');
     if (!amountPattern.test(String(amount).trim()) || Number(amount) <= 0) return setError('Enter an amount greater than zero with no more than two decimals.');
-    if (!phonePattern.test(normalizedPhone)) return setError('Enter 611111111 for the EVC Plus sandbox test wallet. Do not add +252 twice.');
+    if (!phonePattern.test(normalizedPhone)) return setError('Enter a valid EVC Plus number, for example 61XXXXXXX. Do not add +252 twice.');
     setError('');
     setIsLoading(true);
     try {
@@ -55,9 +57,19 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
         method: 'POST',
         body: JSON.stringify({ registrationId: application.reference, amount: String(amount).trim(), phoneNumber, idempotencyKey }),
       });
-      setPayment(result.payment);
-      if (result.payment.status === 'SUCCESS') {
-        const receiptResult = await apiRequest(`/api/payments/${encodeURIComponent(result.payment.referenceId)}/receipt`, paymentToken);
+      let currentPayment = result.payment;
+      setPayment(currentPayment);
+
+      const pollingStartedAt = Date.now();
+      while (['PENDING', 'PROCESSING'].includes(currentPayment.status) && Date.now() - pollingStartedAt < confirmationTimeoutMs) {
+        await new Promise((resolve) => setTimeout(resolve, statusPollMs));
+        const statusResult = await apiRequest(`/api/payments/${encodeURIComponent(currentPayment.referenceId)}/status`, paymentToken);
+        currentPayment = statusResult.payment;
+        setPayment(currentPayment);
+      }
+
+      if (currentPayment.status === 'SUCCESS') {
+        const receiptResult = await apiRequest(`/api/payments/${encodeURIComponent(currentPayment.referenceId)}/receipt`, paymentToken);
         setReceipt(receiptResult.receipt);
       }
     } catch (requestError) { setError(requestError.message); }
@@ -79,14 +91,14 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
         </>}
 
         {preview && !payment && <>
-          <div className="evc-heading"><ShieldCheck /><div><h2 id="evc-title">Confirm Payment</h2><p>Review these verified payment details.</p></div></div>
+          <div className="evc-heading"><ShieldCheck /><div><h2 id="evc-title">Ma hubtaa inaad bixiso?</h2><p>Hubi lacagta iyo lambarka EVC Plus ka hor intaadan xaqiijin.</p></div></div>
           <dl className="evc-confirmation">
             <div><dt>Pay to</dt><dd>{preview.merchantName}</dd></div>
             {preview.merchantPhone && <div><dt>Merchant number</dt><dd>{preview.merchantPhone}</dd></div>}
             <div><dt>Pay from</dt><dd>{preview.payerPhone}</dd></div><div><dt>Amount</dt><dd>{preview.amount.toFixed(2)} {preview.currency}</dd></div>
             <div><dt>Registration</dt><dd>{preview.registrationId}</dd></div><div><dt>Purpose</dt><dd>{preview.description}</dd></div>
           </dl>
-          <p className="evc-secure-message">You are paying ${preview.amount.toFixed(2)} to {preview.merchantName}. After confirming, check your phone and complete the secure EVC payment confirmation.</p>
+          <p className="evc-secure-message">Waxaad ${preview.amount.toFixed(2)} siinaysaa {preview.merchantName}. Markaad xaqiijiso, telefoonkaaga ka oggolow fariinta EVC Plus muddo 60 ilbiriqsi gudahood.</p>
           {isLoading && <p className="evc-processing"><LoaderCircle className="evc-spin" /> Payment request sent. Approve the EVC prompt on your phone within 60 seconds. Keep this window open.</p>}
           {error && <p className="evc-error">{error}</p>}
           <div className="evc-actions"><button className="evc-secondary" disabled={isLoading} onClick={() => setPreview(null)} type="button">Cancel</button><button disabled={isLoading} onClick={confirmPayment} type="button">{isLoading ? 'Processing…' : 'Pay with EVC Plus'}</button></div>

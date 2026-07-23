@@ -62,12 +62,11 @@ const faqs = [
   },
 ];
 
-const programs = [
-  ['Medicine & Health Science', ['MBBS', 'Nursing', 'Midwifery', 'Public Health', 'Medical Laboratory Science']],
-  ['Computer Science & IT', ['Computer Application', 'Computer Networking & Security', 'Computer Multimedia']],
-  ['Economics & Management', ['Business Administration', 'Public Administration', 'Banking & Finance', 'Accounting', 'Economics']],
-  ['Engineering', ['Civil Engineering', 'Electrical Engineering', 'Biomedical Engineering']],
-  ['Agro-Veterinary', ['Agricultural', 'Veterinary']],
+const fallbackPrograms = [
+  ['Medicine & Health Science', ['Medicine & General Surgery', 'Nursing', 'Midwifery', 'Public Health', 'Medical Laboratory Science', 'BSc in Medical Radiography and Imaging Technology']],
+  ['Computer & IT', ['Computer Application', 'Computer Network & Security', 'Computer Multi-Media', 'BSc in Artificial Intelligence and Data Science']],
+  ['Economics & Management', ['Business Administration', 'Banking & Finance', 'Accounting', 'Public Administration', 'Economics', 'BSc in Business Analytics', 'BSc in Social Work']],
+  ['Engineering', ['Civil Engineering', 'Electrical Engineering (Majoring in Power and Energy)', 'Electrical Engineering (Majoring in Telecommunications and Networking)']],
 ];
 
 const today = new Date().toISOString().slice(0, 10);
@@ -80,11 +79,11 @@ const getOneYearFromDate = (dateText) => {
   return new Date(Date.UTC(targetYear, targetMonth, targetDay)).toISOString().slice(0, 10);
 };
 const maximumAppointmentDate = getOneYearFromDate(today);
-const apiBaseUrl = 'http://localhost:5000';
+const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
 const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
-const mobileMoneyMethods = ['EVC Plus', 'eDahab', 'Zaad', 'Sahal'];
+const mobileMoneyMethods = ['EVC Plus', 'eDahab'];
 const paymentSteps = {
   'EVC Plus': [
     'Dial *712#',
@@ -473,6 +472,7 @@ const ageFromDate = (dateText) => {
 };
 const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
 const simpleTextPattern = /^[A-Za-z][A-Za-z\s'.&,/-]{1,99}$/;
+const schoolNamePattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,()/-]{1,149}$/;
 const idPattern = /^\d{3,30}$/;
 const rollNumberPattern = /^\d[\d/-]{2,29}$/;
 const optionValues = {
@@ -484,7 +484,7 @@ const optionValues = {
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
-  paymentMethod: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal'],
+  paymentMethod: ['EVC Plus', 'eDahab'],
 };
 
 const isAllowedOption = (name, value) => optionValues[name]?.includes(value);
@@ -505,10 +505,36 @@ function ApplyPage() {
   const [toast, setToast] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registration, setRegistration] = useState({ loading: true, isOpen: false, status: 'Closed', period: null });
+  const [programs, setPrograms] = useState(fallbackPrograms);
+  const [schools, setSchools] = useState(secondarySchoolNames);
+  const [districts, setDistricts] = useState([]);
 
   useEffect(() => {
-    api.get('/admission-registration/status').then((result) => setRegistration({ loading: false, ...result }))
-      .catch(() => setRegistration({ loading: false, isOpen: false, status: 'Closed', period: null }));
+    Promise.allSettled([
+      api.get('/admission-registration/status'),
+      api.get('/programs'),
+      api.get('/secondary-schools'),
+      api.get('/districts'),
+    ]).then(([statusResult, programsResult, schoolsResult, districtsResult]) => {
+      setRegistration(statusResult.status === 'fulfilled'
+        ? { loading: false, ...statusResult.value }
+        : { loading: false, isOpen: false, status: 'Closed', period: null });
+      if (programsResult.status === 'fulfilled' && Array.isArray(programsResult.value?.data)) {
+        const availablePrograms = programsResult.value.data
+          .map((program) => [
+            program.title,
+            (program.departments || []).map((department) => department.name).filter(Boolean),
+          ])
+          .filter(([title, departments]) => title && departments.length);
+        if (availablePrograms.length) setPrograms(availablePrograms);
+      }
+      if (schoolsResult.status === 'fulfilled' && Array.isArray(schoolsResult.value?.data) && schoolsResult.value.data.length) {
+        setSchools(schoolsResult.value.data);
+      }
+      if (districtsResult.status === 'fulfilled' && Array.isArray(districtsResult.value?.data)) {
+        setDistricts(districtsResult.value.data);
+      }
+    });
   }, []);
 
   const showToast = ({ type = 'info', title, message, duration }) => {
@@ -762,8 +788,12 @@ function ApplyPage() {
         showError('Please select whether a family member studied here.');
         return false;
       }
-      if (!secondarySchoolNames.includes(normalizeValue(form.schoolName))) {
+      if (!schools.includes(normalizeValue(form.schoolName))) {
         showError('Please select a valid Secondary School Name from the list.');
+        return false;
+      }
+      if (!schoolNamePattern.test(normalizeValue(form.schoolName))) {
+        showError('Secondary School Name may contain letters and numbers.');
         return false;
       }
       if (!simpleTextPattern.test(normalizeValue(form.schoolDistrict))) {
@@ -1091,7 +1121,7 @@ function ApplyPage() {
                 <Field label="Roll Number" name="rollNumber" value={form.rollNumber} onChange={updateForm} placeholder="Enter your roll number" maxLength={30} />
                 <Field label="Date Of Birth" name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={updateForm} max={today} />
                 <Field label="Place Of Birth" name="placeOfBirth" value={form.placeOfBirth} onChange={updateForm} placeholder="Enter your place of birth" maxLength={100} />
-                <Field label="District" name="district" value={form.district} onChange={updateForm} placeholder="Enter your district" maxLength={100} />
+                <SearchableSelectField label="District" name="district" value={form.district} onChange={updateForm} options={districts} placeholder="Search district" />
                 <Field label="Your Email" name="email" type="email" value={form.email} onChange={updateForm} placeholder="yourmail@gmail.com" maxLength={254} inputMode="email" />
                 <PhoneField label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} maxLength={16} />
                 <Field label="Area" name="area" value={form.area} onChange={updateForm} placeholder="Enter your area" maxLength={100} />
@@ -1144,8 +1174,8 @@ function ApplyPage() {
               <PhoneField label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} maxLength={16} />
               <OptionGroup className="wide" label="Relationship to applicant" name="relationship" value={form.relationship} options={['Mother', 'Father', 'Brother', 'Sister', 'Other specify']} onChange={updateForm} />
               <OptionGroup className="wide" label="Majiraa qof kamida qoyskaaga oo Jaamacad dhigta?" name="familyStudied" value={form.familyStudied} options={['Haa', 'Maya']} onChange={updateForm} />
-              <SearchableSelectField label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} options={secondarySchoolNames} placeholder="Search for your school" />
-              <Field label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} maxLength={100} />
+              <SearchableSelectField label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} options={schools} placeholder="Search for your school" />
+              <SearchableSelectField label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} options={districts} placeholder="Search school district" />
               <Field label="Graduation Year" name="graduationYear" type="number" value={form.graduationYear} onChange={updateForm} min="1970" max={String(new Date().getFullYear())} inputMode="numeric" />
               <SelectField label="Passing Grade" name="percentage" value={form.percentage} onChange={updateForm} options={gradeOptions} />
               <OptionGroup className="wide" label="How did you know about university?" name="heardFrom" value={form.heardFrom} options={['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify']} onChange={updateForm} />
@@ -1183,7 +1213,7 @@ function ApplyPage() {
                 <input checked={form.integrityDeclaration === 'Yes'} name="integrityDeclaration" onChange={updateForm} type="checkbox" value="Yes" />
                 <span><strong>Statement of Integrity:</strong> I declare that the information provided in this application is true and complete, and I understand that any incomplete or false information may result in delay or cancellation of my enrollment.</span>
               </label>
-              <OptionGroup className="wide" label="Payment Method" name="paymentMethod" value={form.paymentMethod} options={['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal']} onChange={updateForm} />
+              <OptionGroup className="wide" label="Payment Method" name="paymentMethod" value={form.paymentMethod} options={['EVC Plus', 'eDahab']} onChange={updateForm} />
               <PaymentMethodDetails method={form.paymentMethod} form={form} onChange={updateForm} receipt={paymentReceipt} onReceiptChange={handlePaymentReceipt} />
             </div>
           </section>

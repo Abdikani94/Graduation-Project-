@@ -7,6 +7,7 @@ import { generateStudentNumber } from '../utils/studentNumber.js';
 import { assertOpenForApplication } from './admissionPeriodsController.js';
 import { signToken } from '../lib/crypto.js';
 import { createApplicationSubmittedNotification, scheduleSmsNotification } from '../services/smsService.js';
+import { registrationBalance } from '../services/registrationPaymentService.js';
 
 const applicationFields = [
   'fullName',
@@ -64,6 +65,12 @@ const oneYearFromToday = () => {
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
 const fixedAdmissionFee = 25;
+const partTimeDepartments = new Set([
+  'Computer Application',
+  'Computer Network & Security',
+  'Network and Security',
+  'Business Administration'
+]);
 const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
 
 const requiredCreateFields = [
@@ -102,13 +109,14 @@ const optionValues = {
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
-  paymentMethod: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal', 'Cash Office'],
+  paymentMethod: ['EVC Plus', 'eDahab'],
   applicantPhotoUploaded: ['Yes', 'No'],
   certificateUploaded: ['Yes', 'No']
 };
 
 const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
 const simpleTextPattern = /^[A-Za-z][A-Za-z\s'.&,/-]{1,99}$/;
+const schoolNamePattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,()/-]{1,149}$/;
 const idPattern = /^\d{3,30}$/;
 const rollNumberPattern = /^\d[\d/-]{2,29}$/;
 const normalizeField = (value) => String(value ?? '').trim();
@@ -235,7 +243,7 @@ export const createApplication = async (req, res) => {
   if (!isValidPhone(fields.emergencyTell)) fail(422, 'Emergency phone is invalid');
   requireOption(fields, 'relationship', 'Relationship');
   requireOption(fields, 'familyStudied', 'Family Member Studied Here');
-  if (!simpleTextPattern.test(fields.schoolName)) fail(422, 'Secondary School Name must contain text only');
+  if (!schoolNamePattern.test(fields.schoolName)) fail(422, 'Secondary School Name may contain letters and numbers');
   if (!simpleTextPattern.test(fields.schoolDistrict)) fail(422, 'School District must contain text only');
   {
     const graduationYear = Number(fields.graduationYear);
@@ -260,6 +268,12 @@ export const createApplication = async (req, res) => {
     if (!selectedProgram) fail(422, 'Faculty is invalid');
     if (!selectedProgram.departments?.some((item) => item.name === department)) {
       fail(422, 'Department must belong to the selected faculty');
+    }
+    if (fields.modeOfStudy === 'Part Time' && !partTimeDepartments.has(department)) {
+      fail(422, 'Part Time is available only for Computer Application, Computer Network & Security, and Business Administration');
+    }
+    if (!['EVC Plus', 'eDahab'].includes(fields.paymentMethod)) {
+      fail(422, 'Payment method must be EVC Plus or eDahab');
     }
 
     const reference = generateReference(db);
@@ -373,7 +387,10 @@ export const submitPaidApplication = async (req, res) => {
     const admissionPeriod = assertOpenForApplication(db, application);
     if (application.admissionPeriodId && application.admissionPeriodId !== admissionPeriod.id) fail(409, 'The admission period for this application is no longer active.');
     const payment = db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS');
-    if (!payment) fail(409, 'A confirmed payment is required before submitting this application.');
+    const balance = registrationBalance(db, application);
+    if (!payment || balance.requiredMinor !== 2500 || balance.totalPaidMinor < 2500) {
+      fail(409, 'A confirmed payment is required before submitting this application.');
+    }
     application.status = 'Pending';
     application.paymentStatus = 'PAID';
     application.paymentMethod = 'EVC Plus';

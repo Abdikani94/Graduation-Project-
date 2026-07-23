@@ -41,6 +41,7 @@ import { cancelSmsNotification, getSmsNotification, listSmsNotifications, resend
 import { requireScheduledMessagePermission } from '../middleware/scheduledMessageAuth.js';
 import { requireStudentSearchPermission } from '../middleware/studentSearchAuth.js';
 import { searchStudents } from '../controllers/studentSearchController.js';
+import { listSecondarySchools, listSomaliaDistricts } from '../controllers/secondarySchoolsController.js';
 import {
   archiveCampaign, archiveTemplate, cancelCampaign, createCampaign, createTemplate, duplicateCampaign,
   getCampaignDetails, getScheduledMessageOptions, listCampaigns, listTemplates, previewCampaign,
@@ -57,6 +58,8 @@ export const registerRoutes = (router) => {
   router.post('/api/auth/login', login);
   router.get('/api/auth/me', requireAuth(me));
   router.get('/api/admission-registration/status', getRegistrationStatus);
+  router.get('/api/secondary-schools', listSecondarySchools);
+  router.get('/api/districts', listSomaliaDistricts);
 
   const periodPermission = (permission, handler) => requireAuth(requireAdmissionPeriodPermission(permission)(handler), ['Admin']);
   router.get('/api/admission-periods', periodPermission('admission_period.view', listPeriods));

@@ -15,7 +15,7 @@ export const getOptions = async (req, res) => {
     })),
     campuses: [...new Set(db.programs.map((program) => program.campus).filter(Boolean))],
     statuses: ['Pending', 'Approved', 'Rejected', 'Waitlisted', 'Cancelled'],
-    paymentMethods: ['EVC Plus', 'Card', 'eDahab', 'Zaad', 'Sahal'],
+    paymentMethods: ['EVC Plus', 'eDahab'],
     contactTypes: ['Admission', 'Payment', 'Technical Support', 'General']
   });
 };

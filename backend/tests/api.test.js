@@ -17,6 +17,7 @@ process.env.WAAFI_API_KEY = 'super-secret-test-api-key';
 process.env.WAAFI_MINIMUM_AMOUNT = '0.01';
 process.env.WAAFI_MAXIMUM_AMOUNT = '10000';
 process.env.WAAFI_REQUEST_TIMEOUT_MS = '20';
+process.env.WAAFI_ENV = 'sandbox';
 process.env.MAX_STORED_FILE_BYTES = '256';
 process.env.FILE_STORAGE_DIR = path.join(tmpDir, 'centralized-files');
 // Tests must never contact the real Xaliye6 provider.
@@ -68,7 +69,7 @@ const validApplication = (overrides = {}) => ({
   graduationYear: '2022',
   percentage: 'A',
   heardFrom: 'Social Media',
-  program: 'Computer Science & IT',
+  program: 'Computer & IT',
   department: 'Computer Application',
   modeOfStudy: 'Full Time',
   paymentPlan: 'Admission fee only',
@@ -303,7 +304,7 @@ test('applicants cannot bypass a paused registration period through the API', as
     period.status = 'Paused'; period.automaticOpen = false;
   });
   const response = await request({ method: 'POST', path: '/api/applications', body: validApplication({
-    fullName: 'Blocked Period Applicant', nationalId: 'SO-PERIOD-BLOCK', rollNumber: 'PERIOD-BLOCK', email: 'blocked.period@example.com', mobile: '610000099'
+    fullName: 'Blocked Period Applicant', nationalId: '1001099', rollNumber: '1001099', email: 'blocked.period@example.com', mobile: '610000099'
   }) });
   assert.equal(response.status, 409);
   assert.equal(response.body.error.code, 'ADMISSION_REGISTRATION_CLOSED');
@@ -391,8 +392,8 @@ test('university accepts C and C- passing grades', async () => {
       path: '/api/applications',
       body: validApplication({
         fullName: index === 0 ? 'Accepted Grade Applicant One' : 'Accepted Grade Applicant Two',
-        nationalId: `SO-GRADE-${index + 1}`,
-        rollNumber: `GRADE-${index + 1}`,
+        nationalId: `100101${index + 1}`,
+        rollNumber: `100101${index + 1}`,
         email: `accepted.grade.${index + 1}@example.com`,
         mobile: `61000001${index}`,
         percentage: grade
@@ -487,8 +488,8 @@ test('certificate appointment must be within one year', async () => {
     path: '/api/applications',
     body: validApplication({
       fullName: 'Maximum Appointment Applicant',
-      nationalId: 'SO-APPOINTMENT-MAX',
-      rollNumber: 'APPOINTMENT-MAX',
+      nationalId: '1001020',
+      rollNumber: '1001020',
       email: 'maximum.appointment@example.com',
       mobile: '610000020',
       appointmentDate: maximumAppointmentDate
@@ -501,8 +502,8 @@ test('certificate appointment must be within one year', async () => {
     path: '/api/applications',
     body: validApplication({
       fullName: 'Late Appointment Applicant',
-      nationalId: 'SO-APPOINTMENT-LATE',
-      rollNumber: 'APPOINTMENT-LATE',
+      nationalId: '1001021',
+      rollNumber: '1001021',
       email: 'late.appointment@example.com',
       mobile: '610000021',
       appointmentDate: dateBeyondOneYear
@@ -560,7 +561,7 @@ const providerResponse = (body) => async () => ({
 
 const paymentBody = (overrides = {}) => ({
   registrationId: applicantRegistration.reference,
-  amount: '10.00',
+  amount: '25.00',
   phoneNumber: '0618827482',
   idempotencyKey: `idem-${crypto.randomUUID()}`,
   ...overrides
@@ -591,7 +592,7 @@ test('dynamic amounts and Somali EVC phone formats validate safely', () => {
   assert.throws(() => parseAmountToMinor('0'));
   assert.throws(() => parseAmountToMinor('-1'));
   assert.throws(() => parseAmountToMinor('1.001'));
-  assert.throws(() => parseAmountToMinor('1001'));
+  assert.throws(() => parseAmountToMinor('10001'));
   assert.equal(normalizeSomaliEvcPhone('618827482'), '252618827482');
   assert.equal(normalizeSomaliEvcPhone('0618827482'), '252618827482');
   assert.equal(normalizeSomaliEvcPhone('+252618827482'), '252618827482');
@@ -605,7 +606,7 @@ test('payment preview validates ownership, amount, and masks phone numbers', asy
     body: paymentBody()
   });
   assert.equal(response.status, 200);
-  assert.equal(response.body.preview.amount, 10);
+  assert.equal(response.body.preview.amount, 25);
   assert.equal(response.body.preview.payerPhone, '25261****482');
   assert.equal(JSON.stringify(response.body).includes('252618827482'), false);
 
@@ -632,7 +633,7 @@ test('backend rejects submission before a confirmed EVC payment', async () => {
   assert.equal(response.body.error.message, 'A confirmed payment is required before submitting this application.');
 });
 
-test('approved payment is idempotent and produces a safe partial-payment receipt', async () => {
+test('approved fixed-fee payment is idempotent and produces a safe receipt', async () => {
   let calls = 0;
   setWaafiTransportForTests(async () => {
     calls += 1;
@@ -661,8 +662,9 @@ test('approved payment is idempotent and produces a safe partial-payment receipt
 });
 
 test('HTTP 200 without approved provider state is not successful', async () => {
+  const declinedDraft = await createPaymentDraft();
   setWaafiTransportForTests(providerResponse({ responseCode: '2001', params: { state: 'DECLINED' } }));
-  const response = await request({ method: 'POST', path: '/api/payments/initiate', token: applicantPaymentAccess, body: paymentBody({ amount: '2.00' }) });
+  const response = await request({ method: 'POST', path: '/api/payments/initiate', token: declinedDraft.token, body: draftPaymentBody(declinedDraft) });
   assert.equal(response.status, 200);
   assert.equal(response.body.payment.status, 'FAILED');
 });
@@ -681,7 +683,7 @@ test('sandbox authentication failure is reported clearly and safely', async () =
   });
   assert.equal(response.body.payment.status, 'FAILED');
   assert.equal(response.body.payment.failureCode, 'SANDBOX_AUTHENTICATION_FAILED');
-  assert.match(response.body.payment.failureMessage, /not appear to be valid for the Sandbox environment/);
+  assert.match(response.body.payment.failureMessage, /not valid for the configured sandbox environment/i);
   assert.equal(JSON.stringify(response.body).includes('super-secret-test-api-key'), false);
 });
 
@@ -708,15 +710,16 @@ test('provider timeout is UNKNOWN instead of FAILED', async () => {
 });
 
 test('full payment updates registration and overpayment is rejected', async () => {
+  const fullDraft = await createPaymentDraft();
   setWaafiTransportForTests(providerResponse({ responseCode: '2001', params: { state: 'APPROVED', transactionId: 'TX-FINAL' } }));
-  const full = await request({ method: 'POST', path: '/api/payments/initiate', token: applicantPaymentAccess, body: paymentBody({ amount: '15.00' }) });
+  const full = await request({ method: 'POST', path: '/api/payments/initiate', token: fullDraft.token, body: draftPaymentBody(fullDraft) });
   assert.equal(full.body.payment.status, 'SUCCESS');
 
-  const overpayment = await request({ method: 'POST', path: '/api/payments/preview', token: applicantPaymentAccess, body: paymentBody({ amount: '1.00' }) });
-  assert.equal(overpayment.status, 422);
+  const overpayment = await request({ method: 'POST', path: '/api/payments/preview', token: fullDraft.token, body: draftPaymentBody(fullDraft) });
+  assert.equal(overpayment.status, 409);
 
   const submission = await request({
-    method: 'POST', path: `/api/applications/${applicantRegistration.reference}/submit`, token: applicantPaymentAccess
+    method: 'POST', path: `/api/applications/${fullDraft.application.reference}/submit`, token: fullDraft.token
   });
   assert.equal(submission.status, 200);
   assert.equal(submission.body.application.status, 'Pending');
@@ -779,7 +782,7 @@ test('application SMS is persistent, idempotent, uses the stored phone, and send
   assert.equal(providerCall.url, 'https://api.xaliye6.online/sendSMS');
   assert.deepEqual(providerCall.payload, {
     mobile: '+252618833500',
-    message: 'Jamhuriya University: Codsigaaga Diiwaangelinta si Guul leh ayaa loo gudbiyey. Mahadsanid.'
+    message: 'Jamhuuriya University: Codsigaaga diiwaangelinta si guul leh ayaa loo gudbiyay. Mahadsanid.'
   });
   const persisted = await readDb();
   assert.equal(persisted.smsNotifications.find((item) => item.id === notification.id).status, 'SENT');

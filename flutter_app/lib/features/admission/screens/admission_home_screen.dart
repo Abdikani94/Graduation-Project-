@@ -7,7 +7,7 @@ import 'academic_programs_screen.dart';
 import 'admission_chatbot_screen.dart';
 import 'admission_guide_screen.dart';
 import 'ai_program_advisor_screen.dart';
-import 'application_status_screen.dart';
+import 'application_wizard_screen.dart';
 
 class AdmissionHomeScreen extends StatelessWidget {
   const AdmissionHomeScreen({
@@ -58,7 +58,7 @@ class AdmissionHomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
-                                  AdmissionGuideScreen(draft: draft),
+                                  ApplicationWizardScreen(draft: draft),
                             ),
                           ),
                         ),
@@ -96,7 +96,8 @@ class AdmissionHomeScreen extends StatelessWidget {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const AiProgramAdvisorScreen(),
+                              builder: (_) =>
+                                  AiProgramAdvisorScreen(draft: draft),
                             ),
                           ),
                         ),
@@ -109,18 +110,6 @@ class AdmissionHomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (_) => const AdmissionChatbotScreen(),
-                            ),
-                          ),
-                        ),
-                        _AdmissionActionCard(
-                          icon: '\u{1F50E}',
-                          iconBackground: AppColors.pastelRed,
-                          title: 'Track Application',
-                          subtitle: 'Check application\nprogress',
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ApplicationStatusScreen(),
                             ),
                           ),
                         ),

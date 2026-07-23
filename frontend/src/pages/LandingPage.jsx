@@ -34,6 +34,8 @@ const faculties = [
       'Banking & Finance',
       'Accounting',
       'Economics',
+      'B.Sc. in Business Analytics',
+      'B.Sc. in Social Work',
     ],
   },
   {
@@ -46,7 +48,8 @@ const faculties = [
     programs: [
       'B.Sc. in Computer Application',
       'B.Sc. in Computer Networking and Security',
-      'B.Sc. in Computer Multimedia',
+      'B.Sc. in Computer Multi-Media',
+      'B.Sc. in Artificial Intelligence and Data Science',
     ],
   },
   {
@@ -56,7 +59,7 @@ const faculties = [
     image: 'https://i.pinimg.com/736x/c0/97/c5/c097c581971d49090f5096b4d4f8d1de.jpg',
     alt: 'Civil engineers reviewing a bridge design in a professional planning session',
     description: 'Prepare for professional engineering work with strong training in design, infrastructure, systems, and applied science.',
-    programs: ['B.Sc. in Civil Engineering', 'B.Sc. in Electrical Engineering', 'B.Sc. in Biomedical Engineering'],
+    programs: ['B.Sc. in Civil Engineering', 'Electrical Engineering (Power and Energy)', 'Electrical Engineering (Telecommunications and Networking)'],
   },
   {
     number: '04',
@@ -65,16 +68,7 @@ const faculties = [
     image: 'https://i.pinimg.com/736x/e7/2a/c8/e72ac869065166ab50ed62d420b05d43.jpg',
     alt: 'Medical doctor wearing a white coat and stethoscope in a clinical setting',
     description: 'Develop the clinical, laboratory, public health, and patient-care knowledge needed for modern healthcare service.',
-    programs: ['MBBS', 'B.Sc. in Nursing', 'B.Sc. in Midwifery', 'B.Sc. in Public Health', 'B.Sc. in Medical Laboratory Science'],
-  },
-  {
-    number: '05',
-    name: 'Agro-Veterinary',
-    title: 'Faculty of Agriculture and Veterinary Science',
-    image: 'https://images.pexels.com/photos/27421346/pexels-photo-27421346.jpeg?auto=compress&cs=tinysrgb&w=1600',
-    alt: 'Veterinary professional treating livestock during animal-health fieldwork',
-    description: 'Learn agricultural science, animal health, food systems, and community development for sustainable local impact.',
-    programs: ['B.Sc. in Agriculture', 'B.Sc. in Veterinary Science'],
+    programs: ['Medicine & General Surgery', 'B.Sc. in Nursing', 'B.Sc. in Midwifery', 'B.Sc. in Public Health', 'B.Sc. in Medical Laboratory Science', 'B.Sc. in Medical Radiography and Imaging Technology'],
   },
 ];
 
@@ -122,7 +116,7 @@ const faqs = [
   },
 ];
 
-const apiBaseUrl = 'http://localhost:5000';
+const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
 
 const initialContactForm = {
   name: null,

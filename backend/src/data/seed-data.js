@@ -8,24 +8,25 @@ const programs = [
     campus: 'Main Campus',
     image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80',
     departments: [
-      { id: 'dep_mbbs', name: 'MBBS', durationYears: 6 },
+      { id: 'dep_mbbs', name: 'Medicine & General Surgery', durationYears: 7 },
       { id: 'dep_nursing', name: 'Nursing', durationYears: 5 },
       { id: 'dep_midwifery', name: 'Midwifery', durationYears: 5 },
       { id: 'dep_public_health', name: 'Public Health', durationYears: 5 },
-      { id: 'dep_laboratory', name: 'Medical Laboratory Science', durationYears: 5 }
+      { id: 'dep_laboratory', name: 'Medical Laboratory Science', durationYears: 5 },
+      { id: 'dep_radiography', name: 'BSc in Medical Radiography and Imaging Technology', durationYears: 5 }
     ]
   },
   {
     id: 'fac_computing',
-    title: 'Computer Science & IT',
+    title: 'Computer & IT',
     admissionFee: 25,
     campus: 'Campus 3',
     image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80',
     departments: [
       { id: 'dep_computer_application', name: 'Computer Application', durationYears: 5 },
-      { id: 'dep_networking', name: 'Computer Networking & Security', durationYears: 5 },
-      { id: 'dep_multimedia', name: 'Computer Multimedia', durationYears: 5 },
-      { id: 'dep_software', name: 'Software Engineering', durationYears: 5 }
+      { id: 'dep_networking', name: 'Computer Network & Security', durationYears: 5 },
+      { id: 'dep_multimedia', name: 'Computer Multi-Media', durationYears: 5 },
+      { id: 'dep_ai_data', name: 'BSc in Artificial Intelligence and Data Science', durationYears: 5 }
     ]
   },
   {
@@ -39,7 +40,9 @@ const programs = [
       { id: 'dep_public_admin', name: 'Public Administration', durationYears: 5 },
       { id: 'dep_banking', name: 'Banking & Finance', durationYears: 5 },
       { id: 'dep_accounting', name: 'Accounting', durationYears: 5 },
-      { id: 'dep_economics', name: 'Economics', durationYears: 5 }
+      { id: 'dep_economics', name: 'Economics', durationYears: 5 },
+      { id: 'dep_business_analytics', name: 'BSc in Business Analytics', durationYears: 5 },
+      { id: 'dep_social_work', name: 'BSc in Social Work', durationYears: 5 }
     ]
   },
   {
@@ -50,8 +53,8 @@ const programs = [
     image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80',
     departments: [
       { id: 'dep_civil', name: 'Civil Engineering', durationYears: 5 },
-      { id: 'dep_electrical', name: 'Electrical Engineering', durationYears: 5 },
-      { id: 'dep_biomedical', name: 'Biomedical Engineering', durationYears: 5 }
+      { id: 'dep_electrical_power', name: 'Electrical Engineering (Majoring in Power and Energy)', durationYears: 5 },
+      { id: 'dep_electrical_networking', name: 'Electrical Engineering (Majoring in Telecommunications and Networking)', durationYears: 5 }
     ]
   },
   {

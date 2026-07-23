@@ -22,9 +22,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Load the embedding model and open Chroma once during startup. Requests
     # then reuse the warm service instead of paying this cost every time.
     service = get_chat_service()
-    await anyio.to_thread.run_sync(
-        lambda: service.retrieval_service.retrieve("JUST admission", top_k=1)
-    )
+    if service.retrieval_service is not None:
+        await anyio.to_thread.run_sync(
+            lambda: service.retrieval_service.retrieve("JUST admission", top_k=1)
+        )
     logger.info("Application ready: %s", settings.app_name)
     yield
 
@@ -39,8 +40,10 @@ allowed_origins = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
 ]
 
 app.add_middleware(
