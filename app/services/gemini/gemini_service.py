@@ -13,12 +13,11 @@ class GeminiService:
         model_name: str,
         admission_contact_phone: str,
     ) -> None:
-        if not api_key:
-            raise ValueError("Gemini API key is not configured.")
-
         self.model_name = model_name
         self.admission_contact_phone = admission_contact_phone
-        self.client = genai.Client(api_key=api_key)
+        # Keep retrieval/direct answers available during local development
+        # even when Gemini credentials have not been configured.
+        self.client = genai.Client(api_key=api_key) if api_key else None
 
     def generate_answer(
         self,
@@ -48,6 +47,12 @@ class GeminiService:
 
         if self._question_requests_registration(question) and self._answer_contains_registration_steps(best_answer):
          return best_answer
+
+        if self.client is None:
+            return self._safe_retrieved_or_fallback(
+                retrieved_documents=retrieved_documents,
+                fallback_answer=fallback_answer,
+            )
 
         context = self._build_context(retrieved_documents)
 

@@ -1,7 +1,8 @@
 import { readDb } from '../lib/db.js';
 import { sendJson } from '../lib/http.js';
+import { admissionFee } from '../config/admissionFee.js';
 
-const fixedAdmissionFee = 25;
+const fixedAdmissionFee = admissionFee;
 
 export const getOptions = async (req, res) => {
   const db = await readDb();

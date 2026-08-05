@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.schemas.chat.response import ChatResponse
 from app.schemas.retrieval.result import RetrievedDocument
+from app.services.gemini.gemini_service import GeminiService
 
 client = TestClient(app)
 
@@ -56,3 +57,27 @@ def test_chat_endpoint_returns_grounded_answer(monkeypatch) -> None:
     assert data["context_found"] is True
     assert data["retrieved_documents"][0]["category"] == "Fees"
     assert "$120" in data["retrieved_documents"][0]["answer"]
+
+
+def test_chatbot_works_without_gemini_api_key() -> None:
+    service = GeminiService(
+        api_key="",
+        model_name="gemini-test",
+        admission_contact_phone="618833500",
+    )
+    document = RetrievedDocument(
+        id="1",
+        question="Sidee loo codsadaa admission-ka?",
+        answer="Buuxi foomka, geli dukumentiyada, kadib bixi lacagta diiwaangelinta.",
+        category="Admission",
+        content="Question: Sidee loo codsadaa?\nAnswer: Buuxi foomka.",
+        distance=0.1,
+        metadata={"source_id": 1},
+    )
+
+    answer = service.generate_answer(
+        question="Sidee loo codsadaa admission-ka?",
+        retrieved_documents=[document],
+    )
+
+    assert answer == document.answer

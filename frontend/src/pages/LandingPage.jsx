@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ArrowRight,
   Check,
   ChevronDown,
+  ExternalLink,
   MessageCircle,
   Play,
   Send,
@@ -11,22 +12,38 @@ import Toast from '../components/Toast';
 import PublicNav from '../components/PublicNav';
 import PublicFooter from '../components/PublicFooter';
 import agriculture from '../images/agriculture.jpg';
-import computer from '../images/FcaultyComputer.jpg';
-import engineering from '../images/engineering.jpg';
-import j from '../images/j.jpg';
-import jic from '../images/jic.jpg';
+import cabdullahi from '../images/cabdullahi.jpg';
+import education from '../images/education.jpg';
+import jrc from '../images/jrc.jpg';
+import jsc from '../images/jsc.jpg';
 import logo from '../images/logo.jpg';
-import medicine from '../images/medicin.jpg';
-import president from '../images/president.jpg';
+import maxamed from '../images/maxamed.jpg';
+import economics from '../images/econimic.jpg';
+import ruweyda from '../images/ruweydaaaa.jpg';
 import team from '../images/team.jpg';
+import warsame from '../images/warsame.jpeg';
+const centers = [
+  { abbreviation: 'JTECH', name: 'Jamhuriya Technology Solutions', logo: 'https://www.jtech.so/images/jtech-light-logo.svg', accent: '#1866b2', website: 'https://www.jtech.so/' },
+  { abbreviation: 'JIC', name: 'Jamhuriya Incubation Center', logo: 'https://www.jic.just.edu.so/assets/images/logo.png', accent: '#007c66', website: 'https://www.jic.just.edu.so/' },
+  { abbreviation: 'JCGS', name: 'Jamhuriya Center for Graduate Studies', glyph: 'graduate', accent: '#6d4db8', website: 'https://j.just.edu.so/centers/center-for-graduate-studies' },
+  { abbreviation: 'ULC', name: 'University Language Center', glyph: 'language', accent: '#008f9c', website: 'https://j.just.edu.so/announcements' },
+  { abbreviation: 'JRC', name: 'Jamhuriya Research Center', logo: jrc, accent: '#1a9c63', website: 'https://j.just.edu.so/centers/center-for-research-development' },
+  { abbreviation: 'JPTEC', name: 'Jamhuriya Professional Training & Examination Center', glyph: 'certificate', accent: '#d07513', website: 'https://j.just.edu.so/centers/jptec' },
+  { abbreviation: 'PEARSON', name: 'Pearson VUE Authorized Test Center', logo: 'https://www.pearsonvue.com/content/dam/VUE/vue/global/images/test-centers/resources/Pearson-VUE-Authorized-Test-Center-US.jpg', accent: '#2673a8', website: 'https://j.just.edu.so/centers/jptec' },
+  { abbreviation: 'ACCA', name: 'Association of Chartered Certified Accountants', glyph: 'finance', accent: '#b54242' },
+  { abbreviation: 'SAIL', name: 'Somali-language AI and Innovation Lab', logo: 'https://www.sail.just.edu.so/assets/images/footer_logo.png', accent: '#7946aa', website: 'https://www.sail.just.edu.so/' },
+  { abbreviation: 'CAPR', name: 'Center for Antimicrobial Resistance Research', glyph: 'antimicrobial', accent: '#0b8491' },
+  { abbreviation: 'NSP', name: 'Neuroscience Psychologists', glyph: 'neuroscience', accent: '#cc5b47' },
+  { abbreviation: 'JSC', name: 'Jamhuriya STEM Center', logo: jsc, accent: '#2564c4' },
+];
 
 const faculties = [
   {
     number: '01',
-    name: 'Business',
+    name: 'Faculty of Economics & Management',
     title: 'Faculty of Economics and Management',
-    image: 'https://i.pinimg.com/736x/c6/b4/34/c6b434d082daf34cbb8deea330c9ddfd.jpg',
-    alt: 'Business professionals reviewing documents together around a meeting table',
+    image: economics,
+    alt: 'Faculty of Economics and Management',
     description: 'Build strong foundations in leadership, accounting, administration, finance, and practical business decision-making.',
     programs: [
       'Business Administration',
@@ -40,10 +57,11 @@ const faculties = [
   },
   {
     number: '02',
-    name: 'Computer Science',
+    name: 'Faculty of Computer & Information Technology',
     title: 'Faculty of Computer Science and Information Technology',
-    image: 'https://i.pinimg.com/736x/96/d1/cc/96d1cc416bfc7a2a0a16feb235f1defa.jpg',
-    alt: 'Software developer working with source code across multiple computer screens',
+    image: maxamed,
+    alt: 'Mohamed, Faculty of Computer and Information Technology',
+    imageClassName: 'faculty-image-no-circle',
     description: 'Study software, networking, multimedia, and applied computing through practical labs and modern technology projects.',
     programs: [
       'B.Sc. in Computer Application',
@@ -54,23 +72,43 @@ const faculties = [
   },
   {
     number: '03',
-    name: 'Engineering',
+    name: 'Faculty of Engineering',
     title: 'Faculty of Engineering',
-    image: 'https://i.pinimg.com/736x/c0/97/c5/c097c581971d49090f5096b4d4f8d1de.jpg',
-    alt: 'Civil engineers reviewing a bridge design in a professional planning session',
+    image: ruweyda,
+    alt: 'Ruweyda, Faculty of Engineering',
     description: 'Prepare for professional engineering work with strong training in design, infrastructure, systems, and applied science.',
     programs: ['B.Sc. in Civil Engineering', 'Electrical Engineering (Power and Energy)', 'Electrical Engineering (Telecommunications and Networking)'],
   },
   {
     number: '04',
-    name: 'Health Science',
+    name: 'Faculty of Medicine & Health Science',
     title: 'Faculty of Medicine and Health Science',
-    image: 'https://i.pinimg.com/736x/e7/2a/c8/e72ac869065166ab50ed62d420b05d43.jpg',
-    alt: 'Medical doctor wearing a white coat and stethoscope in a clinical setting',
+    image: cabdullahi,
+    alt: 'Cabdulhi, Faculty of Medicine and Health Science',
     description: 'Develop the clinical, laboratory, public health, and patient-care knowledge needed for modern healthcare service.',
     programs: ['Medicine & General Surgery', 'B.Sc. in Nursing', 'B.Sc. in Midwifery', 'B.Sc. in Public Health', 'B.Sc. in Medical Laboratory Science', 'B.Sc. in Medical Radiography and Imaging Technology'],
   },
+  {
+    number: '05',
+    name: 'Faculty of Education',
+    title: 'Faculty of Education',
+    image: education,
+    alt: 'Education books, globe, and graduation cap',
+    description: 'Develop the academic knowledge, teaching practice, and critical thinking needed to help shape Somalia’s next generation of learners.',
+    programs: ['B.Sc. in Mathematics and Physics', 'B.Sc. in Biology and Chemistry', 'B.Sc. in History and Geography'],
+  },
+  {
+    number: '06',
+    name: 'Faculty of Animal Husbandry & Agriculture',
+    title: 'Faculty of Animal Husbandry & Agriculture',
+    image: agriculture,
+    alt: 'Agricultural practical learning field',
+    description: 'Build practical expertise in agricultural production, animal health, and sustainable food systems that support communities and national development.',
+    programs: ['B.Sc. in Agricultural Sciences', 'B.Sc. in Veterinary Sciences'],
+  },
 ];
+
+const facultyNavigation = faculties.map((faculty, index) => ({ ...faculty, index }));
 
 const stats = [
   ['15,000+', 'Students'],
@@ -116,7 +154,7 @@ const faqs = [
   },
 ];
 
-const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
+const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '');
 
 const initialContactForm = {
   name: null,
@@ -130,12 +168,55 @@ function SectionTitle({ children }) {
   return <h2 className="section-title">{children}</h2>;
 }
 
+function CenterFallbackIcon({ type }) {
+  const iconProps = { fill: 'none', viewBox: '0 0 64 64', xmlns: 'http://www.w3.org/2000/svg' };
+  const strokeProps = { stroke: 'currentColor', strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2.8 };
+
+  const glyphs = {
+    graduate: <><path {...strokeProps} d="M7 24 32 12l25 12-25 12L7 24Z" /><path {...strokeProps} d="M17 30v10c8 8 22 8 30 0V30" /><path {...strokeProps} d="M53 28v14" /></>,
+    language: <><circle {...strokeProps} cx="32" cy="32" r="21" /><path {...strokeProps} d="M11 32h42M32 11c6 6 9 13 9 21s-3 15-9 21c-6-6-9-13-9-21s3-15 9-21Z" /><path {...strokeProps} d="M18 19h13M18 45h10" /></>,
+    certificate: <><rect {...strokeProps} x="13" y="11" width="38" height="35" rx="5" /><path {...strokeProps} d="M22 22h20M22 30h13" /><path {...strokeProps} d="m28 46 4 8 4-8" /></>,
+    finance: <><path {...strokeProps} d="M12 49h40M17 43V29M30 43V20M43 43V13" /><path {...strokeProps} d="m16 24 13-9 10 5 10-10" /><path {...strokeProps} d="M44 10h5v5" /></>,
+    antimicrobial: <><path {...strokeProps} d="M32 9c8 7 15 8 19 9v13c0 11-7 19-19 24-12-5-19-13-19-24V18c4-1 11-2 19-9Z" /><path {...strokeProps} d="M24 31h16M32 23v16" /><circle {...strokeProps} cx="32" cy="31" r="8" /></>,
+    neuroscience: <><path {...strokeProps} d="M27 14c-7-5-15 1-13 9-6 4-4 14 3 15 0 7 8 11 13 6 3 7 16 5 16-4 6-4 5-14-1-16 1-8-10-12-15-5-1-2-2-4-3-5Z" /><path {...strokeProps} d="M25 25c3 1 5 3 5 7m-13 0c4-1 7 0 9 3m5-12c2 2 5 3 8 2m-7 14c2-3 5-4 9-3" /></>,
+  };
+
+  return <svg {...iconProps} aria-hidden="true">{glyphs[type]}</svg>;
+}
+
 function LandingPage() {
-  const [activeFacultyIndex, setActiveFacultyIndex] = useState(1);
+  const [activeFacultyIndex, setActiveFacultyIndex] = useState(0);
+  const [visibleCards, setVisibleCards] = useState(() => new Array(centers.length).fill(false));
+  const cardRefs = useRef([]);
   const [contactForm, setContactForm] = useState(initialContactForm);
   const [contactToast, setContactToast] = useState(null);
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
   const activeFaculty = faculties[activeFacultyIndex];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = Number(entry.target.dataset.index);
+          if (entry.isIntersecting) {
+            setVisibleCards((current) => {
+              if (current[index]) return current;
+              const next = [...current];
+              next[index] = true;
+              return next;
+            });
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    cardRefs.current.forEach((card) => {
+      if (card) observer.observe(card);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const showContactToast = (type, message, title) => {
     setContactToast({ type, message, title });
@@ -188,7 +269,7 @@ function LandingPage() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error?.message || 'Contact message failed.');
       setContactForm(initialContactForm);
-      showContactToast('success', 'Fariintaada waa la diray. Mahadsanid!', 'Message sent');
+      showContactToast('success', 'Your message has been sent. Thank you!', 'Message sent');
     } catch (error) {
       showContactToast('error', error.message || 'Contact message failed.', 'Submit error');
     } finally {
@@ -244,17 +325,17 @@ function LandingPage() {
       <main>
         <section className="section-wrap -mt-28">
           <div className="stats-panel">
-            <div className="relative z-10 max-w-sm text-3xl font-bold leading-tight sm:text-4xl">
+            <div className="facts-title">
               Everything You Need to Know: Facts, Figures, and Results
             </div>
-            <div className="relative z-10 mt-20 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="facts-grid">
               {stats.map(([value, label]) => (
-                <div key={label} className="flex items-start justify-between gap-4">
+                <div key={label} className="facts-item">
                   <div>
-                    <div className="text-3xl font-semibold">{value}</div>
-                    <div className="mt-2 text-sm text-white/75">{label}</div>
+                    <div className="facts-value">{value}</div>
+                    <div className="facts-label">{label}</div>
                   </div>
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15">
+                  <span className="facts-check">
                     <Check size={15} />
                   </span>
                 </div>
@@ -263,39 +344,70 @@ function LandingPage() {
           </div>
         </section>
 
-        <section id="programs" className="section-wrap">
-          <SectionTitle>
-            Our <span>faculties</span> and <br /> Programs of our <span>university</span>
-          </SectionTitle>
+        <section className="section-wrap">
+          <div className="welcome-card">
+            <div className="flex-1 p-8 sm:p-12">
+              <h2 className="max-w-md text-5xl font-bold leading-tight">Welcome to Jamhuriya</h2>
+              <p className="mt-5 max-w-md text-sm leading-6 text-white/75">
+                Congratulations on completing your secondary education. The university is ready to support you with
+                knowledge, research, and career opportunities.
+              </p>
+              <div className="mt-12 flex gap-4">
+                <span className="h-1 w-10 rounded-full bg-white" />
+                <span className="h-1 w-10 rounded-full bg-white/55" />
+                <span className="h-1 w-10 rounded-full bg-white/25" />
+              </div>
+            </div>
+            <div className="relative min-h-[360px] flex-1 overflow-hidden rounded-[28px] bg-[#eef0ff]">
+              <div className="absolute inset-x-8 bottom-0 top-10 rounded-t-full bg-emerald-100" />
+              <img src={warsame} alt="Abdirisakh Warsame Abdulle" className="absolute inset-x-0 bottom-0 mx-auto h-full object-cover" />
+              <div className="absolute bottom-8 left-8 right-8 rounded-2xl bg-white/75 p-4 text-[#20113b] backdrop-blur">
+                <p className="text-xl font-extrabold">Abdirisakh Warsame Abdulle</p>
+                <p className="text-sm font-semibold text-[#4b376b]">Vice president</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="programs" className="faculty-showcase-section" aria-labelledby="faculty-showcase-heading">
+          <header className="faculty-showcase-heading">
+            <span>ACADEMIC EXCELLENCE</span>
+            <h2 id="faculty-showcase-heading">Explore our <em>faculties</em></h2>
+            <p>Discover career-ready programs, expert teaching, and a community designed to help you thrive.</p>
+          </header>
           <div className="program-panel home-program-panel">
             <aside className="faculty-tabs home-faculty-tabs" aria-label="University faculties">
-              {faculties.map((faculty, index) => (
+              {facultyNavigation.map((faculty) => (
                 <button
-                  className={index === activeFacultyIndex ? 'active' : ''}
+                  className={faculty.index === activeFacultyIndex ? 'active' : ''}
                   key={faculty.name}
-                  onClick={() => setActiveFacultyIndex(index)}
+                  onClick={() => setActiveFacultyIndex(faculty.index)}
                   type="button"
-                  aria-pressed={index === activeFacultyIndex}
+                  aria-pressed={faculty.index === activeFacultyIndex}
                 >
                   <span>{faculty.number}</span>
-                  {faculty.name}
+                  <b>{faculty.name}</b>
                 </button>
               ))}
             </aside>
             <article className="home-faculty-card min-w-0 flex-1" key={activeFaculty.name}>
-              <div className="number-pill">{activeFaculty.number}</div>
-              <h3 className="mt-7 max-w-xl text-3xl font-bold leading-tight sm:text-4xl">{activeFaculty.title}</h3>
-              <p className="home-faculty-description mt-4 max-w-2xl text-sm leading-7">{activeFaculty.description}</p>
-              <div className="home-program-list mt-5 flex flex-wrap gap-4 text-xs font-semibold text-white/85">
-                {activeFaculty.programs.map((program) => (
-                  <span key={program} className="inline-flex items-center gap-2">
-                    <i className="h-4 w-4 rounded-full border border-white/20 bg-[#2D368D]" />
-                    {program}
-                  </span>
-                ))}
+              <div className="home-faculty-copy">
+                <div className="number-pill">{activeFaculty.number}</div>
+                <p className="home-faculty-label">Faculty</p>
+                <h3>{activeFaculty.title}</h3>
+                <p className="home-faculty-description">{activeFaculty.description}</p>
+                <div className="home-program-list" aria-label={`${activeFaculty.title} programs`}>
+                  {activeFaculty.programs.map((program) => (
+                    <span key={program}>
+                      <i aria-hidden="true" />
+                      {program}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div className="home-faculty-image relative mt-7 overflow-hidden rounded-[28px] border-4 border-[#2D368D]">
-                <img src={activeFaculty.image} alt={activeFaculty.alt} className="h-72 w-full object-cover" />
+              <div className="home-faculty-image">
+                <img className={activeFaculty.imageClassName || ''} src={activeFaculty.image} alt={activeFaculty.alt} />
+                <span>JUST</span>
               </div>
             </article>
           </div>
@@ -319,53 +431,64 @@ function LandingPage() {
           </div>
         </section>
 
-        <section className="section-wrap">
-          <div className="welcome-card">
-            <div className="flex-1 p-8 sm:p-12">
-              <div className="mb-8 flex items-center gap-8">
-                <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FBAB19] text-lg font-extrabold text-[#182B49]">
-                  03
-                </span>
-                <div className="h-1 w-40 rounded-full bg-white/30">
-                  <div className="h-1 w-14 rounded-full bg-white" />
-                </div>
-                <span className="text-sm font-semibold">03</span>
-              </div>
-              <h2 className="max-w-md text-5xl font-bold leading-tight">Welcome to Jamhuriya</h2>
-              <p className="mt-5 max-w-md text-sm leading-6 text-white/75">
-                Waxaan kugu hambalyeynayaa inaad waxbarasho dhigato sare dhamaystay. Jaamacaddu waxay diyaar u tahay
-                inay kugu taageerto aqoon, cilmi, iyo fursad shaqo.
+        <section className="centers-of-excellence" aria-labelledby="centers-heading">
+          <div className="centers-of-excellence__inner">
+            <header className="centers-of-excellence__header">
+              <span className="centers-of-excellence__eyebrow">JAMHUURIYA UNIVERSITY</span>
+              <h2 id="centers-heading">Centers of Excellence</h2>
+              <p>
+                Explore Jamhuuriya University's specialized centers, innovation labs, research institutes, professional certifications, graduate studies, and academic excellence.
               </p>
-              <div className="mt-12 flex gap-4">
-                <span className="h-1 w-10 rounded-full bg-white" />
-                <span className="h-1 w-10 rounded-full bg-white/55" />
-                <span className="h-1 w-10 rounded-full bg-white/25" />
-              </div>
-            </div>
-            <div className="relative min-h-[360px] flex-1 overflow-hidden rounded-[28px] bg-[#eef0ff]">
-              <div className="absolute inset-x-8 bottom-0 top-10 rounded-t-full bg-emerald-100" />
-              <img src={president} alt="Dr. Mohamed Ali" className="absolute inset-x-0 bottom-0 mx-auto h-full object-cover" />
-              <div className="absolute bottom-8 left-8 right-8 rounded-2xl bg-white/75 p-4 text-[#20113b] backdrop-blur">
-                <p className="text-xl font-extrabold">Dr. Mohamed Ali</p>
-                <p className="text-sm font-semibold text-[#4b376b]">Vice president</p>
-              </div>
-            </div>
-          </div>
-        </section>
+            </header>
 
-        <section className="section-wrap innovation-section">
-          <SectionTitle>
-            Heart of Innovation <br /> Where <span>Excellence</span> Lives
-          </SectionTitle>
-          <div className="network-panel">
-            <p className="max-w-xs text-2xl font-bold leading-tight">Connect more than 6000+ students</p>
-            <div className="network-map">
-              {[agriculture, computer, engineering, logo, medicine, jic, j].map((src, index) => (
-                <img src={src} alt="" className={`network-node node-${index + 1}`} key={src} />
-              ))}
-              <div className="center-logo">
-                <img src={logo} alt="Jamhuriya University logo" />
-              </div>
+            <div className="centers-of-excellence__grid">
+              {centers.map((center, index) => {
+                const cardProps = {
+                  ref: (node) => (cardRefs.current[index] = node),
+                  'data-index': index,
+                  className: `center-excellence-card ${visibleCards[index] ? 'is-visible' : ''}`,
+                  style: { '--center-accent': center.accent, '--card-delay': `${index * 70}ms` },
+                };
+                const cardContent = <>
+                  <div className="center-excellence-card__art" aria-hidden="true">
+                    {center.logo ? (
+                      <img src={center.logo} alt="" />
+                    ) : (
+                      <CenterFallbackIcon type={center.glyph} />
+                    )}
+                  </div>
+                  <div className="center-excellence-card__body">
+                    <h3>{center.abbreviation}</h3>
+                    <p>{center.name}</p>
+                  </div>
+                  {center.website ? (
+                    <span className="center-excellence-card__link">
+                      Visit Website <ExternalLink aria-hidden="true" size={14} />
+                    </span>
+                  ) : (
+                    <span className="center-excellence-card__coming-soon">Coming Soon</span>
+                  )}
+                </>;
+
+                return (
+                  center.website ? (
+                    <a
+                      key={center.abbreviation}
+                      {...cardProps}
+                      href={center.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Visit ${center.name} website (opens in a new tab)`}
+                    >
+                      {cardContent}
+                    </a>
+                  ) : (
+                    <article key={center.abbreviation} {...cardProps}>
+                      {cardContent}
+                    </article>
+                  )
+                );
+              })}
             </div>
           </div>
         </section>

@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { env } from '../config/env.js';
 
 const allowedTypes = new Set([
@@ -14,6 +15,21 @@ const certificateNamePattern = /(certificate|cert|shahaado|shaahado|transcript|r
 
 const sanitizeName = (filename) =>
   path.basename(filename || 'upload.bin').replace(/[^a-zA-Z0-9._-]/g, '_').slice(-120);
+
+// A SHA-256 digest identifies the image content, regardless of its filename.
+export const fingerprintApplicationFile = (file) => crypto.createHash('sha256').update(file.buffer).digest('hex');
+
+export const storedPassportPhotoHash = async (photo) => {
+  if (!photo) return null;
+  if (photo.imageHash) return photo.imageHash;
+  if (!photo.filename) return null;
+  try {
+    const filePath = path.join(env.uploadDir, 'applications', path.basename(photo.filename));
+    return crypto.createHash('sha256').update(await fs.readFile(filePath)).digest('hex');
+  } catch {
+    return null;
+  }
+};
 
 const validateApplicationFile = (file, type) => {
   if (type === 'passportPhoto') {
@@ -55,6 +71,7 @@ export const saveApplicationFile = async (file, reference, type = 'document') =>
     filename,
     contentType: file.contentType,
     size: file.size,
-    url: `/uploads/applications/${filename}`
+    url: `/uploads/applications/${filename}`,
+    ...(type === 'passportPhoto' ? { imageHash: file.imageHash || fingerprintApplicationFile(file) } : {})
   };
 };

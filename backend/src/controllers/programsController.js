@@ -2,8 +2,9 @@ import { createId, readDb, updateDb } from '../lib/db.js';
 import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
+import { admissionFee } from '../config/admissionFee.js';
 
-const fixedAdmissionFee = 25;
+const fixedAdmissionFee = admissionFee;
 const minimumProgramDurationYears = 5;
 const durationForDepartment = (name) =>
   /^(medicine\s*&\s*general surgery|mbbs)$/i.test(String(name).trim()) ? 7 : 5;

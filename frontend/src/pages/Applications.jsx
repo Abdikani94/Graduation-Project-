@@ -49,7 +49,7 @@ const EDIT_SECTIONS = [
       { key: 'emergencyName', label: 'Emergency Contact Name' },
       { key: 'emergencyTell', label: 'Emergency Phone' },
       { key: 'relationship', label: 'Relationship', options: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'] },
-      { key: 'familyStudied', label: 'Family Studied Here', options: ['Haa', 'Maya'] },
+      { key: 'familyStudied', label: 'Family Studied Here', options: ['Yes', 'No'] },
       { key: 'schoolName', label: 'Secondary School' },
       { key: 'schoolDistrict', label: 'School District' },
       { key: 'graduationYear', label: 'Graduation Year' },

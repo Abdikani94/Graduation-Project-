@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Bot, MessageCircle, RotateCcw, Send, X } from 'lucide-react';
+import { RotateCcw, Send, X } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { askAdmissionChatbot } from '../services/chatbotService';
+import logo from '../images/logo.jpg';
 
 const welcomeMessage = {
   id: 'welcome',
   role: 'assistant',
-  text: '👋 Welcome to the JUST Admission Assistant. Ask me anything about admission in English or Somali.',
+  text: '👋 Welcome to the JUST Admission Assistant. Ask me anything about admission.',
 };
 
 export default function AdmissionChatbot() {
@@ -49,7 +50,7 @@ export default function AdmissionChatbot() {
       setMessages((current) => [...current, {
         id: crypto.randomUUID(),
         role: 'error',
-        text: 'Chatbot-ka hadda lama xiriiri karo. Fadlan mar kale isku day.',
+        text: 'The chatbot is currently unavailable. Please try again.',
       }]);
     } finally {
       setIsLoading(false);
@@ -66,7 +67,7 @@ export default function AdmissionChatbot() {
       {isOpen && (
         <section className="admission-chatbot-panel" aria-label="JUST Admission Assistant">
           <header>
-            <span className="admission-chatbot-avatar"><Bot size={19} /></span>
+            <span className="admission-chatbot-avatar"><img src={logo} alt="Jamhuriya University logo" /></span>
             <div><strong>Admission Assistant</strong><small>JUST online support</small></div>
             <button type="button" onClick={restart} aria-label="Restart conversation"><RotateCcw size={17} /></button>
             <button type="button" onClick={() => setIsOpen(false)} aria-label="Close assistant"><X size={19} /></button>
@@ -100,7 +101,7 @@ export default function AdmissionChatbot() {
         onClick={() => setIsOpen((current) => !current)}
         aria-label={isOpen ? 'Close admission assistant' : 'Open admission assistant'}
       >
-        {isOpen ? <X size={23} /> : <MessageCircle size={25} />}
+        {isOpen ? <X size={23} /> : <img src={logo} alt="Jamhuriya University logo" />}
       </button>
     </div>
   );

@@ -17,7 +17,7 @@ class ChatbotRepository {
 
   static const baseUrl = String.fromEnvironment(
     'CHATBOT_API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8001/api/v1',
+    defaultValue: 'http://10.0.2.2:8025/api/v1',
   );
 
   final HttpClient _httpClient;

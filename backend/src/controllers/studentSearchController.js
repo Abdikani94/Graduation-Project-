@@ -1,6 +1,7 @@
 import { readDb } from '../lib/db.js';
 import { fail, sendJson } from '../lib/http.js';
 import { normalize, paginate, sortNewest } from '../lib/query.js';
+import { admissionFee } from '../config/admissionFee.js';
 
 const hasPermission = (user, permission) => Array.isArray(user.permissions) && user.permissions.includes(permission);
 const searchableText = (values) => values.map((value) => normalize(value)).join(' ');
@@ -9,7 +10,7 @@ const paymentSummaryFor = (db, application) => {
   const payments = sortNewest(db.payments.filter((payment) => payment.applicationId === application.id));
   const successful = payments.filter((payment) => ['SUCCESS', 'Paid'].includes(payment.status));
   const paid = successful.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
-  const required = Number(application.admissionFee || 25);
+  const required = Number(application.admissionFee ?? admissionFee);
   const latest = payments[0] || null;
   return {
     requiredAmount: required,

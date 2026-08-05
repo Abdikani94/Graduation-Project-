@@ -1,4 +1,4 @@
-const API_BASE_URL = `${(import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '')}/api`;
+const API_BASE_URL = `${(import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '')}/api`;
 
 const buildUrl = (path, params) => {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;

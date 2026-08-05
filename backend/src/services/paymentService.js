@@ -10,11 +10,12 @@ import { registrationBalance, updateRegistrationPaymentStatus } from './registra
 import { createInsufficientBalanceNotification, scheduleSmsNotification } from './smsService.js';
 import { formatMinorAmount, validateIdempotencyKey } from '../validators/paymentValidator.js';
 import { maskMerchantPhone, maskPhone, normalizeSomaliEvcPhone } from '../validators/phoneValidator.js';
+import { admissionFeeMinor, admissionFeeCurrency } from '../config/admissionFee.js';
 
 const activeRequests = new Map();
 const description = 'Online registration payment';
-const registrationFeeMinor = 2500;
-const registrationCurrency = 'USD';
+const registrationFeeMinor = admissionFeeMinor;
+const registrationCurrency = admissionFeeCurrency;
 
 const assertOwnership = (owner, registration) => {
   if (owner.role === 'Applicant' && owner.applicationId !== registration.id) fail(403, 'You are not authorized to pay this registration');

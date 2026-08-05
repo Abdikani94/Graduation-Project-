@@ -54,7 +54,7 @@ cd frontend
 npm.cmd run dev
 ```
 
-The frontend uses `http://127.0.0.1:5000` as its default API address. To use another address, configure `VITE_API_URL` in a private frontend environment file.
+The frontend runs on `http://127.0.0.1:5180` and uses `http://127.0.0.1:5055` as its default API address. The chatbot API runs on `http://127.0.0.1:8025`. To use other addresses, configure `VITE_API_URL` and `VITE_CHATBOT_API_URL` in a private frontend environment file.
 
 ## Verification
 

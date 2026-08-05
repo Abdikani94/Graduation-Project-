@@ -20,7 +20,7 @@ function ProgramFeesPage() {
       <main className="admission-info-main fees-main">
         <aside className="registration-fee-note">
           <CircleDollarSign size={32} />
-          <div><strong>$25 registration fee</strong><p>A one-time registration fee applies to every faculty and program.</p></div>
+          <div><strong>$0.10 registration fee</strong><p>A one-time registration fee applies to every faculty and program.</p></div>
         </aside>
 
         <section className="program-fees-table-wrap">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle2, CircleHelp, LoaderCircle, ShieldCheck, XCircle } from 'lucide-react';
 
-const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
+const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '');
 const amountPattern = /^\d+(?:\.\d{1,2})?$/;
 const phonePattern = /^(?:\+?252|0)?61\d{7}$/;
 const confirmationTimeoutMs = 60000;
@@ -84,21 +84,21 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
         {!preview && !payment && <>
           <div className="evc-heading"><ShieldCheck /><div><h2 id="evc-title">Secure EVC Plus Payment</h2><p>Your EVC confirmation happens only on your phone.</p></div></div>
           <dl className="evc-registration"><div><dt>Application</dt><dd>{application.reference}</dd></div><div><dt>Applicant</dt><dd>{application.fullName}</dd></div></dl>
-          <label><span>Amount</span><div className="evc-input-row"><input inputMode="decimal" value={amount} onChange={(event) => setAmount(event.target.value)} placeholder="10.00" /><b>USD</b></div></label>
+          <label><span>Amount</span><div className="evc-input-row"><input inputMode="decimal" value={amount} readOnly /><b>USD</b></div></label>
           <label><span>EVC Plus phone number</span><input inputMode="tel" value={phoneNumber} onChange={(event) => setPhoneNumber(cleanEvcPhone(event.target.value))} placeholder="611111111" /></label>
           {error && <p className="evc-error">{error}</p>}
           <div className="evc-actions"><button className="evc-secondary" onClick={onClose} type="button">Pay later</button><button disabled={isLoading} onClick={continueToPreview} type="button">{isLoading ? 'Checking…' : 'Continue'}</button></div>
         </>}
 
         {preview && !payment && <>
-          <div className="evc-heading"><ShieldCheck /><div><h2 id="evc-title">Ma hubtaa inaad bixiso?</h2><p>Hubi lacagta iyo lambarka EVC Plus ka hor intaadan xaqiijin.</p></div></div>
+          <div className="evc-heading"><ShieldCheck /><div><h2 id="evc-title">Confirm your payment</h2><p>Check the amount and EVC Plus number before confirming.</p></div></div>
           <dl className="evc-confirmation">
             <div><dt>Pay to</dt><dd>{preview.merchantName}</dd></div>
             {preview.merchantPhone && <div><dt>Merchant number</dt><dd>{preview.merchantPhone}</dd></div>}
             <div><dt>Pay from</dt><dd>{preview.payerPhone}</dd></div><div><dt>Amount</dt><dd>{preview.amount.toFixed(2)} {preview.currency}</dd></div>
             <div><dt>Registration</dt><dd>{preview.registrationId}</dd></div><div><dt>Purpose</dt><dd>{preview.description}</dd></div>
           </dl>
-          <p className="evc-secure-message">Waxaad ${preview.amount.toFixed(2)} siinaysaa {preview.merchantName}. Markaad xaqiijiso, telefoonkaaga ka oggolow fariinta EVC Plus muddo 60 ilbiriqsi gudahood.</p>
+          <p className="evc-secure-message">EVCPlus -&gt; Ma hubtaa in aad u dirtid JAAMACADDA JAMHURIYA lacag dhan $0.1 ?<br />1. Haa<br />2. Maya</p>
           {isLoading && <p className="evc-processing"><LoaderCircle className="evc-spin" /> Payment request sent. Approve the EVC prompt on your phone within 60 seconds. Keep this window open.</p>}
           {error && <p className="evc-error">{error}</p>}
           <div className="evc-actions"><button className="evc-secondary" disabled={isLoading} onClick={() => setPreview(null)} type="button">Cancel</button><button disabled={isLoading} onClick={confirmPayment} type="button">{isLoading ? 'Processing…' : 'Pay with EVC Plus'}</button></div>

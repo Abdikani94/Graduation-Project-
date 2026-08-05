@@ -377,7 +377,7 @@ test('public applicant can submit an application', async () => {
   });
   assert.equal(response.status, 201);
   assert.equal(response.body.application.status, 'DRAFT');
-  assert.equal(response.body.application.admissionFee, 25);
+  assert.equal(response.body.application.admissionFee, 0.1);
   assert.equal(response.body.application.paymentStatus, 'UNPAID');
   assert.equal(response.body.payment, null);
   assert.ok(response.body.paymentAccessToken);
@@ -561,7 +561,7 @@ const providerResponse = (body) => async () => ({
 
 const paymentBody = (overrides = {}) => ({
   registrationId: applicantRegistration.reference,
-  amount: '25.00',
+  amount: '0.10',
   phoneNumber: '0618827482',
   idempotencyKey: `idem-${crypto.randomUUID()}`,
   ...overrides
@@ -606,7 +606,7 @@ test('payment preview validates ownership, amount, and masks phone numbers', asy
     body: paymentBody()
   });
   assert.equal(response.status, 200);
-  assert.equal(response.body.preview.amount, 25);
+  assert.equal(response.body.preview.amount, 0.1);
   assert.equal(response.body.preview.payerPhone, '25261****482');
   assert.equal(JSON.stringify(response.body).includes('252618827482'), false);
 
@@ -635,8 +635,10 @@ test('backend rejects submission before a confirmed EVC payment', async () => {
 
 test('approved fixed-fee payment is idempotent and produces a safe receipt', async () => {
   let calls = 0;
-  setWaafiTransportForTests(async () => {
+  let providerPayload;
+  setWaafiTransportForTests(async (_url, options) => {
     calls += 1;
+    providerPayload = JSON.parse(options.body);
     return { ok: true, status: 200, json: async () => ({ responseCode: '2001', params: { state: 'approved', transactionId: 'TX-1268666' } }) };
   });
   const body = paymentBody();
@@ -648,6 +650,8 @@ test('approved fixed-fee payment is idempotent and produces a safe receipt', asy
   assert.equal(first.body.payment.status, 'SUCCESS');
   assert.equal(duplicate.body.payment.referenceId, first.body.payment.referenceId);
   assert.equal(calls, 1);
+  assert.equal(providerPayload.serviceParams.transactionInfo.amount, '0.10');
+  assert.equal(first.body.payment.amount, 0.1);
 
   const receiptResponse = await request({
     path: `/api/payments/${first.body.payment.referenceId}/receipt`, token: applicantPaymentAccess
@@ -679,7 +683,7 @@ test('sandbox authentication failure is reported clearly and safely', async () =
   }));
   const response = await request({
     method: 'POST', path: '/api/payments/initiate', token: authDraft.token,
-    body: draftPaymentBody(authDraft, { amount: '1.00' })
+    body: draftPaymentBody(authDraft, { amount: '0.10' })
   });
   assert.equal(response.body.payment.status, 'FAILED');
   assert.equal(response.body.payment.failureCode, 'SANDBOX_AUTHENTICATION_FAILED');
@@ -731,22 +735,24 @@ test('frontend has no EVC PIN input field', async () => {
   const source = await fs.readFile(new URL('../../frontend/src/components/EvcPaymentFlow.jsx', import.meta.url), 'utf8');
   assert.equal(/name=["'](?:evc)?pin["']/i.test(source), false);
   assert.equal(/type=["']password["']/i.test(source), false);
+  assert.match(source, /EVCPlus -&gt; Ma hubtaa in aad u dirtid JAAMACADDA JAMHURIYA lacag dhan \$0\.1 \?<br \/>1\. Haa<br \/>2\. Maya/);
   const applyPage = await fs.readFile(new URL('../../frontend/src/pages/ApplyPage.jsx', import.meta.url), 'utf8');
   assert.match(applyPage, /confirmedEvcPayment\?\.status !== 'SUCCESS'/);
+  assert.match(applyPage, /name="paymentAmount" value="0\.10"/);
 });
 
-test('all public and backend admission fees are fixed at 25 USD', async () => {
+test('all public and backend admission fees are fixed at 0.10 USD', async () => {
   const admissionsPage = await fs.readFile(new URL('../../frontend/src/pages/AdmissionsPage.jsx', import.meta.url), 'utf8');
   const feesData = await import('../../frontend/src/data/admissionsData.js');
-  assert.match(admissionsPage, /fixed, non-refundable admission fee of <strong>\$25<\/strong>/);
+  assert.match(admissionsPage, /fixed, non-refundable admission fee of <strong>\$0\.10<\/strong>/);
   assert.equal(/<strong>\$(?:30|35)<\/strong>/.test(admissionsPage), false);
   for (const group of feesData.programFeeGroups) {
-    for (const program of group.programs) assert.equal(program[7], 25, `${program[0]} registration fee must be 25`);
+    for (const program of group.programs) assert.equal(program[7], 0.1, `${program[0]} registration fee must be 0.1`);
   }
   const db = await readDb();
   assert.ok(db.programs.length > 0);
-  assert.equal(db.programs.every((program) => Number(program.admissionFee) === 25), true);
-  assert.equal(db.applications.every((application) => Number(application.admissionFee) === 25), true);
+  assert.equal(db.programs.every((program) => Number(program.admissionFee) === 0.1), true);
+  assert.equal(db.applications.every((application) => Number(application.admissionFee) === 0.1), true);
 });
 
 test('Somali SMS phone numbers normalize to international format and invalid numbers are rejected', () => {

@@ -1,9 +1,10 @@
 import { readDb } from '../lib/db.js';
+import { admissionFee } from '../config/admissionFee.js';
 import { sendCsv, sendJson } from '../lib/http.js';
 import { countBy, toCsv, topCounts } from '../lib/query.js';
 
 const colors = ['#f97316', '#22c55e', '#9b51e0', '#3b82f6', '#fb923c', '#ef4444'];
-const fixedAdmissionFee = 25;
+const fixedAdmissionFee = admissionFee;
 
 const filterByDate = (items, query) => {
   const from = query.from ? new Date(query.from) : null;

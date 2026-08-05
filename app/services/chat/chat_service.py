@@ -26,11 +26,15 @@ class ChatService:
 
         self.intent_service = IntentService()
 
-        self.retrieval_service = RetrievalService(
-            chroma_db_path=chroma_db_path,
-            collection_name=collection_name,
-            embedding_model_name=embedding_model_name,
-        )
+        # Loading the multilingual embedding model may require a large local
+        # model/cache. Delay it until a question actually needs semantic
+        # retrieval so greetings and direct FAQ answers always remain fast.
+        self.retrieval_service = None
+        self.retrieval_config = {
+            "chroma_db_path": chroma_db_path,
+            "collection_name": collection_name,
+            "embedding_model_name": embedding_model_name,
+        }
 
         self.gemini_service = GeminiService(
             api_key=gemini_api_key,
@@ -75,10 +79,24 @@ class ChatService:
 
         search_query = intent_result.rewritten_query or cleaned_question
 
-        retrieval_result = self.retrieval_service.retrieve(
-            query=search_query,
-            top_k=top_k,
-        )
+        try:
+            if self.retrieval_service is None:
+                self.retrieval_service = RetrievalService(**self.retrieval_config)
+
+            retrieval_result = self.retrieval_service.retrieve(
+                query=search_query,
+                top_k=top_k,
+            )
+        except Exception:
+            logger.exception("Semantic retrieval is unavailable")
+            response = ChatResponse(
+                question=cleaned_question,
+                answer=self.gemini_service.fallback_answer(),
+                context_found=False,
+                retrieved_documents=[],
+            )
+            self._save_chat_history(response)
+            return response
 
         answer = self.gemini_service.generate_answer(
             question=cleaned_question,

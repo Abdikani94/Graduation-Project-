@@ -39,10 +39,10 @@ if (nodeEnv === 'production' && jwtSecret === insecureDefaultJwtSecret) {
 
 export const env = {
   host: process.env.HOST || '127.0.0.1',
-  port: toNumber(process.env.PORT, 5000),
+  port: toNumber(process.env.PORT, 5055),
   nodeEnv,
   dbDriver: process.env.DB_DRIVER || (process.env.MONGODB_URI ? 'mongodb' : 'json'),
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5180',
   jwtSecret,
   tokenExpiresInSeconds: toNumber(process.env.TOKEN_EXPIRES_IN_SECONDS, 60 * 60 * 24),
   maxBodyBytes: toNumber(process.env.MAX_BODY_BYTES, 15 * 1024 * 1024),

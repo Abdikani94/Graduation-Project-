@@ -38,7 +38,7 @@ function AdmissionsPage() {
             <article className="admission-center-card">
               <span className="admission-center-icon"><CircleDollarSign size={29} /></span>
               <h3>Admission Fee</h3>
-              <p>Every faculty and program has the same fixed, non-refundable admission fee of <strong>$25</strong>.</p>
+              <p>Every faculty and program has the same fixed, non-refundable admission fee of <strong>$0.10</strong>.</p>
               <a href="/program-fees">View Program Fees <ArrowRight size={15} /></a>
             </article>
             <article className="admission-center-card">

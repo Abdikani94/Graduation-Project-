@@ -1,4 +1,4 @@
-const CHATBOT_API_URL = (import.meta.env.VITE_CHATBOT_API_URL || 'http://127.0.0.1:8001').replace(/\/$/, '');
+const CHATBOT_API_URL = (import.meta.env.VITE_CHATBOT_API_URL || 'http://127.0.0.1:8025').replace(/\/$/, '');
 
 export const askAdmissionChatbot = async (question, { signal } = {}) => {
   const response = await fetch(`${CHATBOT_API_URL}/api/v1/chat/ask`, {

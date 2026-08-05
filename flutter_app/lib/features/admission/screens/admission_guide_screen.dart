@@ -32,16 +32,16 @@ class _AdmissionGuideScreenState extends State<AdmissionGuideScreen> {
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 20),
-                  children: [
-                    const _BeforeApplyBanner(),
-                    const SizedBox(height: 20),
-                    const _BlockTitle(
+                  children: const [
+                    _BeforeApplyBanner(),
+                    SizedBox(height: 20),
+                    _BlockTitle(
                       icon: '\u{1F393}',
                       background: AppColors.pastelGreen,
                       title: 'Education',
                     ),
-                    const SizedBox(height: 10),
-                    const _InfoTable(
+                    SizedBox(height: 10),
+                    _InfoTable(
                       rows: [
                         _InfoRow(
                           'Completed Secondary School Certificate',
@@ -53,14 +53,14 @@ class _AdmissionGuideScreenState extends State<AdmissionGuideScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    const _BlockTitle(
+                    SizedBox(height: 20),
+                    _BlockTitle(
                       icon: '\u{1F4DC}',
                       background: AppColors.pastelBlue,
                       title: 'Certificate',
                     ),
-                    const SizedBox(height: 10),
-                    const _InfoTable(
+                    SizedBox(height: 10),
+                    _InfoTable(
                       rows: [
                         _InfoRow(
                           'Original Secondary School Leaving Certificate',
@@ -69,40 +69,40 @@ class _AdmissionGuideScreenState extends State<AdmissionGuideScreen> {
                         _InfoRow('Certificate photocopies', '2 copies'),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    const _BlockTitle(
+                    SizedBox(height: 20),
+                    _BlockTitle(
                       icon: '\u{1F4F7}',
                       background: AppColors.pastelOrange,
                       title: 'Passport photos',
                     ),
-                    const SizedBox(height: 10),
-                    const _InfoTable(
+                    SizedBox(height: 10),
+                    _InfoTable(
                       rows: [
                         _InfoRow('Passport-size photos', '4 photos'),
                         _InfoRow('Photo background', 'White'),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    const _BlockTitle(
+                    SizedBox(height: 20),
+                    _BlockTitle(
                       icon: '\u{1F4B5}',
                       background: AppColors.pastelPurple,
                       title: 'Registration fee',
                     ),
-                    const SizedBox(height: 10),
-                    const _InfoTable(
+                    SizedBox(height: 10),
+                    _InfoTable(
                       rows: [
                         _InfoRow('All faculties and programs', '\$25'),
                         _InfoRow('Registration fee', 'Non-refundable'),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    const _BlockTitle(
+                    SizedBox(height: 20),
+                    _BlockTitle(
                       icon: '\u{1F4BC}',
                       background: AppColors.pastelRed,
                       title: 'Part-time applicants',
                     ),
-                    const SizedBox(height: 10),
-                    const _InfoTable(
+                    SizedBox(height: 10),
+                    _InfoTable(
                       rows: [
                         _InfoRow('Work experience', '2 years recommended'),
                         _InfoRow(
@@ -111,7 +111,7 @@ class _AdmissionGuideScreenState extends State<AdmissionGuideScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                   ],
                 ),
               ),

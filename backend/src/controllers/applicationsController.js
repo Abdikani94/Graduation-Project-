@@ -8,6 +8,8 @@ import { assertOpenForApplication } from './admissionPeriodsController.js';
 import { signToken } from '../lib/crypto.js';
 import { createApplicationSubmittedNotification, scheduleSmsNotification } from '../services/smsService.js';
 import { registrationBalance } from '../services/registrationPaymentService.js';
+import { admissionFee, admissionFeeMinor } from '../config/admissionFee.js';
+import { fingerprintApplicationFile, storedPassportPhotoHash } from '../utils/files.js';
 
 const applicationFields = [
   'fullName',
@@ -64,7 +66,7 @@ const oneYearFromToday = () => {
 };
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
-const fixedAdmissionFee = 25;
+const fixedAdmissionFee = admissionFee;
 const partTimeDepartments = new Set([
   'Computer Application',
   'Computer Network & Security',
@@ -105,7 +107,7 @@ const optionValues = {
   maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
   hasCertificate: ['Yes', 'No'],
   relationship: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'],
-  familyStudied: ['Haa', 'Maya'],
+  familyStudied: ['Haa', 'Maya', 'Yes', 'No'],
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
@@ -275,6 +277,15 @@ export const createApplication = async (req, res) => {
     if (!['EVC Plus', 'eDahab'].includes(fields.paymentMethod)) {
       fail(422, 'Payment method must be EVC Plus or eDahab');
     }
+    if (passportFile) {
+      const photoHash = fingerprintApplicationFile(passportFile);
+      const existingPhoto = await Promise.all(db.applications.map(async (application) => ({
+        application,
+        hash: await storedPassportPhotoHash(application.documents?.passportPhoto)
+      }))).then((photos) => photos.find(({ hash }) => hash === photoHash));
+      if (existingPhoto) fail(422, 'This photo has already been used in another application.');
+      passportFile.imageHash = photoHash;
+    }
 
     const reference = generateReference(db);
     const documents = {};
@@ -388,7 +399,7 @@ export const submitPaidApplication = async (req, res) => {
     if (application.admissionPeriodId && application.admissionPeriodId !== admissionPeriod.id) fail(409, 'The admission period for this application is no longer active.');
     const payment = db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS');
     const balance = registrationBalance(db, application);
-    if (!payment || balance.requiredMinor !== 2500 || balance.totalPaidMinor < 2500) {
+    if (!payment || balance.requiredMinor !== admissionFeeMinor || balance.totalPaidMinor < admissionFeeMinor) {
       fail(409, 'A confirmed payment is required before submitting this application.');
     }
     application.status = 'Pending';

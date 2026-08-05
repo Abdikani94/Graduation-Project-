@@ -29,14 +29,14 @@ const conditions = [
   'Should bring four (4) passport-size photos.',
   'Should bring the original Secondary School Leaving Certificate with two copies.',
   'For part-time registration, two years experience is recommended.',
-  'Should pay a fixed Admission Fee of $25 for all programs.',
+  'Should pay a fixed Admission Fee of $0.10 for all programs.',
 ];
 
 const admissionRequirements = [
   ['High education completion', 'Submit evidence that you completed secondary school.'],
   ['Four passport pictures', 'Bring four clear passport-size photos with a white background.'],
   ['Have certificate high school', 'Bring the original high school certificate with two copies.'],
-  ['Pay fees of Admission', 'Pay the fixed $25 admission fee for any selected faculty.'],
+  ['Pay fees of Admission', 'Pay the fixed $0.10 admission fee for any selected faculty.'],
 ];
 
 const faqs = [
@@ -79,7 +79,7 @@ const getOneYearFromDate = (dateText) => {
   return new Date(Date.UTC(targetYear, targetMonth, targetDay)).toISOString().slice(0, 10);
 };
 const maximumAppointmentDate = getOneYearFromDate(today);
-const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000').replace(/\/$/, '');
+const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '');
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
 const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -174,7 +174,7 @@ function Stepper({ currentStep }) {
   );
 }
 
-function Field({ label, name, type = 'text', value, onChange, placeholder, min, max, maxLength, inputMode, step }) {
+function Field({ label, name, type = 'text', value, onChange, placeholder, min, max, maxLength, inputMode, step, readOnly = false }) {
   return (
     <label className="apply-field">
       <span>{label}</span>
@@ -189,6 +189,7 @@ function Field({ label, name, type = 'text', value, onChange, placeholder, min, 
         maxLength={maxLength}
         inputMode={inputMode}
         step={step}
+        readOnly={readOnly}
       />
     </label>
   );
@@ -347,7 +348,7 @@ function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange
         {mobileMoneyMethods.includes(method) && (
           <PhoneField label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={16} />
         )}
-        <Field label="Payment Amount" name="paymentAmount" value={form.paymentAmount} onChange={onChange} placeholder="Amount to pay" type="number" min="0.01" step="0.01" inputMode="decimal" />
+        <Field label="Application Fee" name="paymentAmount" value="0.10" onChange={onChange} type="number" min="0.10" max="0.10" step="0.01" inputMode="decimal" readOnly />
         {mobileMoneyMethods.includes(method) && method !== 'EVC Plus' && (
           <Field label="Transaction ID / Reference Number" name="paymentTransactionId" value={form.paymentTransactionId} onChange={onChange} maxLength={50} />
         )}
@@ -480,7 +481,7 @@ const optionValues = {
   maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
   hasCertificate: ['Yes', 'No'],
   relationship: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'],
-  familyStudied: ['Haa', 'Maya'],
+  familyStudied: ['Yes', 'No'],
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
@@ -572,7 +573,7 @@ function ApplyPage() {
       ...(name === 'hasCertificate' && nextValue === 'Yes' ? { appointmentDate: null, appointmentTime: null } : {}),
       ...(name === 'paymentMethod' ? {
         paymentPhone: '+252',
-        paymentAmount: null,
+        paymentAmount: '0.10',
         paymentTransactionId: null,
         cardHolderName: null,
         cardNumber: null,
@@ -637,7 +638,7 @@ function ApplyPage() {
     if (!file) return;
     const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.type) || !fileNameLooksLikeCertificate(file.name)) {
-      showError('Certificate upload accepts certificate files only. Use PDF/JPG/PNG/WEBP and include certificate, shahaado, transcript, or result in the file name.');
+      showError('Certificate upload accepts certificate files only. Use PDF/JPG/PNG/WEBP and include certificate, transcript, or result in the file name.');
       event.target.value = '';
       return;
     }
@@ -925,7 +926,7 @@ function ApplyPage() {
       showToast({
         type: 'success',
         title: 'Application submitted',
-        message: 'Xogtaada wala xareeyay Mahadsanid!',
+        message: 'Your application has been submitted successfully. Thank you!',
         duration: 6500,
       });
       setForm(initialForm);
@@ -1173,7 +1174,7 @@ function ApplyPage() {
               <Field label="Emergency Contact Name" name="emergencyName" value={form.emergencyName} onChange={updateForm} placeholder="Name" maxLength={80} />
               <PhoneField label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} maxLength={16} />
               <OptionGroup className="wide" label="Relationship to applicant" name="relationship" value={form.relationship} options={['Mother', 'Father', 'Brother', 'Sister', 'Other specify']} onChange={updateForm} />
-              <OptionGroup className="wide" label="Majiraa qof kamida qoyskaaga oo Jaamacad dhigta?" name="familyStudied" value={form.familyStudied} options={['Haa', 'Maya']} onChange={updateForm} />
+              <OptionGroup className="wide" label="Does a family member study at the university?" name="familyStudied" value={form.familyStudied} options={['Yes', 'No']} onChange={updateForm} />
               <SearchableSelectField label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} options={schools} placeholder="Search for your school" />
               <SearchableSelectField label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} options={districts} placeholder="Search school district" />
               <Field label="Graduation Year" name="graduationYear" type="number" value={form.graduationYear} onChange={updateForm} min="1970" max={String(new Date().getFullYear())} inputMode="numeric" />
