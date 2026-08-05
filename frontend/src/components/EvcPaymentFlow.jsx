@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { CheckCircle2, CircleHelp, LoaderCircle, ShieldCheck, XCircle } from 'lucide-react';
+import { readResponsePayload, responseMessage } from '../api/response';
 
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 const amountPattern = /^\d+(?:\.\d{1,2})?$/;
@@ -18,8 +19,9 @@ const apiRequest = async (path, token, options = {}) => {
     ...options,
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(options.headers || {}) },
   });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error?.message || 'Payment request failed.');
+  const { data: result, text } = await readResponsePayload(response);
+  if (!response.ok) throw new Error(responseMessage(result, text, 'Payment request failed.'));
+  if (!result || typeof result !== 'object') throw new Error(responseMessage(result, text, 'The server returned an invalid response.'));
   return result;
 };
 

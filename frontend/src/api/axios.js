@@ -29,15 +29,13 @@ const request = async (path, options = {}) => {
 
   if (response.status === 204) return null;
 
-  const contentType = response.headers.get('content-type') || '';
-  const data = contentType.includes('application/json') ? await response.json() : await response.text();
+  const { data, text } = await readResponsePayload(response);
 
   if (!response.ok) {
-    const message = data?.error?.message || data?.message || 'Request failed';
-    throw new Error(message);
+    throw new Error(responseMessage(data, text, 'Request failed'));
   }
 
-  return data;
+  return data ?? text;
 };
 
 const api = {
@@ -53,8 +51,8 @@ const api = {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!response.ok) {
-      const data = await response.json().catch(() => ({}));
-      throw new Error(data?.error?.message || 'Unable to export CSV');
+      const { data, text } = await readResponsePayload(response);
+      throw new Error(responseMessage(data, text, 'Unable to export CSV'));
     }
     const blob = await response.blob();
     const href = URL.createObjectURL(blob);
@@ -72,8 +70,8 @@ const api = {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!response.ok) {
-      const data = await response.json().catch(() => ({}));
-      throw new Error(data?.error?.message || 'Unable to access file');
+      const { data, text } = await readResponsePayload(response);
+      throw new Error(responseMessage(data, text, 'Unable to access file'));
     }
     return {
       blob: await response.blob(),
@@ -84,3 +82,4 @@ const api = {
 
 export { API_BASE_URL };
 export default api;
+import { readResponsePayload, responseMessage } from './response';

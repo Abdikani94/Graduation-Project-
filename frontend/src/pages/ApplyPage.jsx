@@ -15,6 +15,7 @@ import PublicFooter from '../components/PublicFooter';
 import logo from '../images/logo.jpg';
 import secondarySchoolNames from '../data/secondarySchools';
 import api from '../api/axios';
+import { readResponsePayload, responseMessage } from '../api/response';
 
 const steps = [
   ['01', 'Requirement'],
@@ -877,8 +878,9 @@ function ApplyPage() {
         let session = draftApplication;
         if (!session) {
           const response = await fetch(`${apiBaseUrl}/applications`, { method: 'POST', body: buildApplicationPayload() });
-          const result = await response.json();
-          if (!response.ok) throw new Error(result.error?.message || 'Unable to prepare payment.');
+          const { data: result, text } = await readResponsePayload(response);
+          if (!response.ok) throw new Error(responseMessage(result, text, 'Unable to prepare payment.'));
+          if (!result || typeof result !== 'object') throw new Error(responseMessage(result, text, 'The server returned an invalid response.'));
           session = { application: result.application, paymentToken: result.paymentAccessToken };
           setDraftApplication(session);
         }
@@ -907,9 +909,9 @@ function ApplyPage() {
         const statusResponse = await fetch(`${apiBaseUrl}/payments/${encodeURIComponent(confirmedEvcPayment.referenceId)}/status`, {
           headers: { Authorization: `Bearer ${draftApplication.paymentToken}` },
         });
-        const statusResult = await statusResponse.json();
-        if (!statusResponse.ok || statusResult.payment?.status !== 'SUCCESS') {
-          throw new Error('A confirmed payment is required before submitting this application.');
+        const { data: statusResult, text: statusText } = await readResponsePayload(statusResponse);
+        if (!statusResponse.ok || statusResult?.payment?.status !== 'SUCCESS') {
+          throw new Error(responseMessage(statusResult, statusText, 'A confirmed payment is required before submitting this application.'));
         }
         response = await fetch(`${apiBaseUrl}/applications/${encodeURIComponent(draftApplication.application.reference)}/submit`, {
           method: 'POST', headers: { Authorization: `Bearer ${draftApplication.paymentToken}` },
@@ -917,11 +919,12 @@ function ApplyPage() {
       } else {
         response = await fetch(`${apiBaseUrl}/applications`, { method: 'POST', body: buildApplicationPayload() });
       }
-      const result = await response.json();
+      const { data: result, text } = await readResponsePayload(response);
 
       if (!response.ok) {
-        throw new Error(result.error?.message || 'Application submission failed.');
+        throw new Error(responseMessage(result, text, 'Application submission failed.'));
       }
+      if (!result || typeof result !== 'object') throw new Error(responseMessage(result, text, 'The server returned an invalid response.'));
 
       showToast({
         type: 'success',

@@ -22,6 +22,7 @@ import economics from '../images/econimic.jpg';
 import ruweyda from '../images/ruweydaaaa.jpg';
 import team from '../images/team.jpg';
 import warsame from '../images/warsame.jpeg';
+import { readResponsePayload, responseMessage } from '../api/response';
 const centers = [
   { abbreviation: 'JTECH', name: 'Jamhuriya Technology Solutions', logo: 'https://www.jtech.so/images/jtech-light-logo.svg', accent: '#1866b2', website: 'https://www.jtech.so/' },
   { abbreviation: 'JIC', name: 'Jamhuriya Incubation Center', logo: 'https://www.jic.just.edu.so/assets/images/logo.png', accent: '#007c66', website: 'https://www.jic.just.edu.so/' },
@@ -266,8 +267,9 @@ function LandingPage() {
           message: contactForm.message,
         }),
       });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error?.message || 'Contact message failed.');
+      const { data: result, text } = await readResponsePayload(response);
+      if (!response.ok) throw new Error(responseMessage(result, text, 'Contact message failed.'));
+      if (!result || typeof result !== 'object') throw new Error(responseMessage(result, text, 'The server returned an invalid response.'));
       setContactForm(initialContactForm);
       showContactToast('success', 'Your message has been sent. Thank you!', 'Message sent');
     } catch (error) {

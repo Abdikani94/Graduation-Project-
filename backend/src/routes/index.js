@@ -1,4 +1,5 @@
 import { requireAuth } from '../middleware/auth.js';
+import { sendJson } from '../lib/http.js';
 import { login, me } from '../controllers/authController.js';
 import {
   createApplication,
@@ -50,9 +51,7 @@ import {
 
 export const registerRoutes = (router) => {
   router.get('/health', (req, res) => {
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.end(JSON.stringify({ status: 'ok', service: 'jamhuriya-admission-backend' }));
+    sendJson(res, 200, { status: 'ok', service: 'jamhuriya-admission-backend' });
   });
 
   router.post('/api/auth/login', login);
