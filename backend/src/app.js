@@ -7,6 +7,12 @@ import {
 } from './lib/http.js';
 import { registerRoutes } from './routes/index.js';
 
+const normalizeApiPath = (pathname) => {
+  if (pathname === '/api' || pathname === '/api/') return '/';
+  if (pathname.startsWith('/api/')) return pathname.slice('/api'.length);
+  return pathname;
+};
+
 export const createApp = () => {
   const router = new Router();
 
@@ -29,14 +35,16 @@ export const createApp = () => {
 
       req.query = Object.fromEntries(url.searchParams.entries());
 
-      if (url.pathname.startsWith('/uploads/')) {
-        await serveUpload(res, url.pathname);
+      const pathname = normalizeApiPath(url.pathname);
+
+      if (pathname.startsWith('/uploads/')) {
+        await serveUpload(res, pathname);
         return;
       }
 
       req.body = await parseRequestBody(req);
 
-      await router.handle(req, res, url.pathname);
+      await router.handle(req, res, pathname);
     } catch (error) {
       sendError(res, error);
     }

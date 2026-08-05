@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { CheckCircle2, CircleHelp, LoaderCircle, ShieldCheck, XCircle } from 'lucide-react';
 
-const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '');
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 const amountPattern = /^\d+(?:\.\d{1,2})?$/;
 const phonePattern = /^(?:\+?252|0)?61\d{7}$/;
 const confirmationTimeoutMs = 60000;
@@ -40,7 +40,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
     setError('');
     setIsLoading(true);
     try {
-      const result = await apiRequest('/api/payments/preview', paymentToken, {
+      const result = await apiRequest('/payments/preview', paymentToken, {
         method: 'POST', body: JSON.stringify({ registrationId: application.reference, amount: String(amount).trim(), phoneNumber }),
       });
       setPreview(result.preview);
@@ -53,7 +53,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
     setError('');
     setIsLoading(true);
     try {
-      const result = await apiRequest('/api/payments/initiate', paymentToken, {
+      const result = await apiRequest('/payments/initiate', paymentToken, {
         method: 'POST',
         body: JSON.stringify({ registrationId: application.reference, amount: String(amount).trim(), phoneNumber, idempotencyKey }),
       });

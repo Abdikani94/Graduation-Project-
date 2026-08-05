@@ -8,7 +8,7 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api, { API_BASE_URL } from '../api/axios';
 
-const backendOrigin = API_BASE_URL.replace(/\/api\/?$/, '');
+const backendOrigin = new URL(API_BASE_URL, window.location.origin).origin;
 const money = (value, currency = 'USD') => new Intl.NumberFormat('en-US', {
   style: 'currency', currency: currency || 'USD', minimumFractionDigits: 2
 }).format(Number(value || 0));

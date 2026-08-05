@@ -1,6 +1,10 @@
 import { fail } from './http.js';
 
 const splitPath = (path) => path.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
+const normalizeApiPath = (path) => {
+  if (path === '/api' || path === '/api/') return '/';
+  return path.startsWith('/api/') ? path.slice('/api'.length) : path;
+};
 
 export class Router {
   constructor() {
@@ -8,7 +12,8 @@ export class Router {
   }
 
   add(method, path, handler) {
-    this.routes.push({ method, path, parts: splitPath(path), handler });
+    const normalizedPath = normalizeApiPath(path);
+    this.routes.push({ method, path: normalizedPath, parts: splitPath(normalizedPath), handler });
   }
 
   get(path, handler) {

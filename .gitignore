@@ -110,3 +110,6 @@ Desktop.ini
 **/.pub-cache/
 **/.flutter-plugins-dependencies
 >>>>>>> 8653d910e1f8cd100c4151b742285e8624c401d9
+
+# Public production frontend configuration. It contains no secrets.
+!frontend/.env.production

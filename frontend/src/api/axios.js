@@ -1,8 +1,8 @@
-const API_BASE_URL = `${(import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '')}/api`;
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
 const buildUrl = (path, params) => {
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const url = new URL(`${API_BASE_URL}${cleanPath}`);
+  const url = new URL(`${API_BASE_URL}${cleanPath}`, window.location.origin);
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       url.searchParams.set(key, value);

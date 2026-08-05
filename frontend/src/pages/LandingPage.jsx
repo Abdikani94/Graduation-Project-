@@ -154,7 +154,7 @@ const faqs = [
   },
 ];
 
-const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '');
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
 const initialContactForm = {
   name: null,
@@ -255,7 +255,7 @@ function LandingPage() {
 
     setIsContactSubmitting(true);
     try {
-      const response = await fetch(`${apiBaseUrl}/api/contact-messages`, {
+      const response = await fetch(`${apiBaseUrl}/contact-messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

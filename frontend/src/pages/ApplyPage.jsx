@@ -79,7 +79,7 @@ const getOneYearFromDate = (dateText) => {
   return new Date(Date.UTC(targetYear, targetMonth, targetDay)).toISOString().slice(0, 10);
 };
 const maximumAppointmentDate = getOneYearFromDate(today);
-const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://127.0.0.1:5055').replace(/\/$/, '');
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
 const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
@@ -876,7 +876,7 @@ function ApplyPage() {
       try {
         let session = draftApplication;
         if (!session) {
-          const response = await fetch(`${apiBaseUrl}/api/applications`, { method: 'POST', body: buildApplicationPayload() });
+          const response = await fetch(`${apiBaseUrl}/applications`, { method: 'POST', body: buildApplicationPayload() });
           const result = await response.json();
           if (!response.ok) throw new Error(result.error?.message || 'Unable to prepare payment.');
           session = { application: result.application, paymentToken: result.paymentAccessToken };
@@ -904,18 +904,18 @@ function ApplyPage() {
         if (!draftApplication || confirmedEvcPayment?.status !== 'SUCCESS') {
           throw new Error('Complete the EVC Plus payment before submitting your application.');
         }
-        const statusResponse = await fetch(`${apiBaseUrl}/api/payments/${encodeURIComponent(confirmedEvcPayment.referenceId)}/status`, {
+        const statusResponse = await fetch(`${apiBaseUrl}/payments/${encodeURIComponent(confirmedEvcPayment.referenceId)}/status`, {
           headers: { Authorization: `Bearer ${draftApplication.paymentToken}` },
         });
         const statusResult = await statusResponse.json();
         if (!statusResponse.ok || statusResult.payment?.status !== 'SUCCESS') {
           throw new Error('A confirmed payment is required before submitting this application.');
         }
-        response = await fetch(`${apiBaseUrl}/api/applications/${encodeURIComponent(draftApplication.application.reference)}/submit`, {
+        response = await fetch(`${apiBaseUrl}/applications/${encodeURIComponent(draftApplication.application.reference)}/submit`, {
           method: 'POST', headers: { Authorization: `Bearer ${draftApplication.paymentToken}` },
         });
       } else {
-        response = await fetch(`${apiBaseUrl}/api/applications`, { method: 'POST', body: buildApplicationPayload() });
+        response = await fetch(`${apiBaseUrl}/applications`, { method: 'POST', body: buildApplicationPayload() });
       }
       const result = await response.json();
 
