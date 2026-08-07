@@ -1,5 +1,5 @@
 import { sendJson } from '../lib/http.js';
-import { secondarySchoolNames } from '../../../frontend/src/data/secondarySchools.js';
+import { secondarySchoolNames } from '../data/secondarySchools.js';
 
 export const listSecondarySchools = (_req, res) => {
   sendJson(res, 200, { data: secondarySchoolNames });
