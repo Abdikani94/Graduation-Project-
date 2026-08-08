@@ -9,7 +9,6 @@ export const paymentConfig = {
   merchantName: env.waafiMerchantDisplayName,
   merchantPhone: env.waafiMerchantPhone,
   minimumAmount: env.waafiMinimumAmount,
-  maximumAmount: env.waafiMaximumAmount,
   timeoutMs: env.waafiRequestTimeoutMs,
   endpoint: env.waafiEnv === 'production' ? env.waafiProductionUrl : env.waafiSandboxUrl,
   credentials: {

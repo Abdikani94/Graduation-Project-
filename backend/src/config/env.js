@@ -74,7 +74,7 @@ export const env = {
   waafiCurrency: process.env.WAAFI_CURRENCY || 'USD',
   waafiMerchantDisplayName: process.env.WAAFI_MERCHANT_DISPLAY_NAME || process.env.WAAFI_MERCHANT_NAME || 'Online Registration System',
   waafiMerchantPhone: process.env.WAAFI_MERCHANT_PHONE || '',
-  waafiMinimumAmount: toNumber(process.env.WAAFI_MINIMUM_AMOUNT, 1),
+  waafiMinimumAmount: toNumber(process.env.WAAFI_MINIMUM_AMOUNT, 0.01),
   waafiMaximumAmount: toNumber(process.env.WAAFI_MAXIMUM_AMOUNT, 1000),
   waafiRequestTimeoutMs: toNumber(process.env.WAAFI_REQUEST_TIMEOUT_MS, 30000),
   waafiPhoneEncryptionKey: process.env.WAAFI_PHONE_ENCRYPTION_KEY || jwtSecret

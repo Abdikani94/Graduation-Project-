@@ -5,6 +5,7 @@ import { MongoClient } from 'mongodb';
 import { env } from '../config/env.js';
 import { createSeedData } from '../data/seed-data.js';
 import { hashPassword } from './crypto.js';
+import { admissionFee } from '../config/admissionFee.js';
 
 const collections = [
   'users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities', 'classes',
@@ -75,6 +76,9 @@ const normalizeData = (data = {}) => {
     if (user.role === 'Admin') user.permissions = [...new Set([...(user.permissions || []), ...admissionPeriodPermissions, ...scheduledMessagePermissions, ...studentSearchPermissions])];
     if (user.role === 'Officer') user.permissions = [...new Set([...(user.permissions || []), ...staffStudentSearchPermissions])];
   }
+  // Keep the official admission fee consistent for existing and newly seeded data.
+  for (const program of normalized.programs) program.admissionFee = admissionFee;
+  for (const application of normalized.applications) application.admissionFee = admissionFee;
   return normalized;
 };
 

@@ -37,7 +37,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
 
   const continueToPreview = async () => {
     const normalizedPhone = String(phoneNumber).replace(/[\s()-]/g, '');
-    if (!amountPattern.test(String(amount).trim()) || Number(amount) <= 0) return setError('Enter an amount greater than zero with no more than two decimals.');
+    if (!amountPattern.test(String(amount).trim()) || Number(amount) < 0.01) return setError('Minimum payment amount is 0.01 USD. Use no more than two decimal places.');
     if (!phonePattern.test(normalizedPhone)) return setError('Enter a valid EVC Plus number, for example 61XXXXXXX. Do not add +252 twice.');
     setError('');
     setIsLoading(true);
@@ -86,7 +86,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
         {!preview && !payment && <>
           <div className="evc-heading"><ShieldCheck /><div><h2 id="evc-title">Secure EVC Plus Payment</h2><p>Your EVC confirmation happens only on your phone.</p></div></div>
           <dl className="evc-registration"><div><dt>Application</dt><dd>{application.reference}</dd></div><div><dt>Applicant</dt><dd>{application.fullName}</dd></div></dl>
-          <label><span>Amount</span><div className="evc-input-row"><input inputMode="decimal" value={amount} readOnly /><b>USD</b></div></label>
+          <label><span>Amount</span><div className="evc-input-row"><input inputMode="decimal" min="0.01" step="0.01" value={amount} onChange={(event) => setAmount(event.target.value)} /><b>USD</b></div></label>
           <label><span>EVC Plus phone number</span><input inputMode="tel" value={phoneNumber} onChange={(event) => setPhoneNumber(cleanEvcPhone(event.target.value))} placeholder="611111111" /></label>
           {error && <p className="evc-error">{error}</p>}
           <div className="evc-actions"><button className="evc-secondary" onClick={onClose} type="button">Pay later</button><button disabled={isLoading} onClick={continueToPreview} type="button">{isLoading ? 'Checking…' : 'Continue'}</button></div>
@@ -100,7 +100,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
             <div><dt>Pay from</dt><dd>{preview.payerPhone}</dd></div><div><dt>Amount</dt><dd>{preview.amount.toFixed(2)} {preview.currency}</dd></div>
             <div><dt>Registration</dt><dd>{preview.registrationId}</dd></div><div><dt>Purpose</dt><dd>{preview.description}</dd></div>
           </dl>
-          <p className="evc-secure-message">EVCPlus -&gt; Ma hubtaa in aad u dirtid JAAMACADDA JAMHURIYA lacag dhan $0.1 ?<br />1. Haa<br />2. Maya</p>
+          <p className="evc-secure-message">EVCPlus -&gt; Ma hubtaa in aad u dirtid JAAMACADDA JAMHURIYA lacag dhan ${Number(preview.amount).toFixed(2)}?<br />1. Haa<br />2. Maya</p>
           {isLoading && <p className="evc-processing"><LoaderCircle className="evc-spin" /> Payment request sent. Approve the EVC prompt on your phone within 60 seconds. Keep this window open.</p>}
           {error && <p className="evc-error">{error}</p>}
           <div className="evc-actions"><button className="evc-secondary" disabled={isLoading} onClick={() => setPreview(null)} type="button">Cancel</button><button disabled={isLoading} onClick={confirmPayment} type="button">{isLoading ? 'Processing…' : 'Pay with EVC Plus'}</button></div>
@@ -109,8 +109,8 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
         {payment && <>
           <div className={`evc-result ${payment.status === 'SUCCESS' ? 'success' : 'failed'}`}>
             {payment.status === 'SUCCESS' ? <CheckCircle2 /> : payment.status === 'PROCESSING' ? <LoaderCircle className="evc-spin" /> : payment.status === 'UNKNOWN' ? <CircleHelp /> : <XCircle />}
-            <h2 id="evc-title">{payment.status === 'SUCCESS' ? 'Payment Successful' : payment.status === 'PROCESSING' ? 'Payment Processing' : payment.status === 'UNKNOWN' ? 'Payment Status Unknown' : 'Payment Not Completed'}</h2>
-            <p>{payment.status === 'SUCCESS' ? 'Your registration payment was approved.' : payment.failureMessage || 'Please check your EVC confirmation message before trying again.'}</p>
+            <h2 id="evc-title">{payment.status === 'SUCCESS' ? Number(payment.remainingBalance) > 0 ? 'Partial Payment Successful' : 'Payment Successful' : payment.status === 'PROCESSING' ? 'Payment Processing' : payment.status === 'UNKNOWN' ? 'Payment Status Unknown' : 'Payment Not Completed'}</h2>
+            <p>{payment.status === 'SUCCESS' ? Number(payment.remainingBalance) > 0 ? `Your payment was approved. ${Number(payment.remainingBalance).toFixed(2)} USD remains before the application can be submitted.` : 'Your registration payment was approved.' : payment.failureMessage || 'Please check your EVC confirmation message before trying again.'}</p>
           </div>
           <dl className="evc-confirmation">
             <div><dt>Amount</dt><dd>{Number(payment.amount).toFixed(2)} {payment.currency}</dd></div><div><dt>Reference</dt><dd>{payment.referenceId}</dd></div>
@@ -119,7 +119,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
           </dl>
           {receipt?.walletBalanceMessage && <p className="evc-secure-message">{receipt.walletBalanceMessage}</p>}
           {payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE' && <p className="evc-secure-message">The request could not reach WaafiPay. No approval was received. Check your EVC balance or SMS first, then retry.</p>}
-          <div className="evc-actions">{((['FAILED', 'CANCELLED'].includes(payment.status) && payment.failureCode !== 'SANDBOX_AUTHENTICATION_FAILED') || (payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE')) && <button className="evc-secondary" onClick={retry} type="button">Retry</button>}<button onClick={() => payment.status === 'SUCCESS' ? onSuccess(payment, receipt) : onClose()} type="button">Done</button></div>
+          <div className="evc-actions">{((['FAILED', 'CANCELLED'].includes(payment.status) && payment.failureCode !== 'SANDBOX_AUTHENTICATION_FAILED') || (payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE')) && <button className="evc-secondary" onClick={retry} type="button">Retry</button>}{payment.status === 'SUCCESS' && Number(payment.remainingBalance) > 0 && <button className="evc-secondary" onClick={() => { setAmount(Number(payment.remainingBalance).toFixed(2)); retry(); }} type="button">Pay remaining</button>}<button onClick={() => payment.status === 'SUCCESS' && Number(payment.remainingBalance) <= 0 ? onSuccess(payment, receipt) : onClose()} type="button">Done</button></div>
         </>}
       </section>
     </div>

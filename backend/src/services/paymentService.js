@@ -8,7 +8,7 @@ import { findPaymentByIdempotency, findPaymentByReference } from '../repositorie
 import { requireRegistration } from '../repositories/registrationRepository.js';
 import { registrationBalance, updateRegistrationPaymentStatus } from './registrationPaymentService.js';
 import { createInsufficientBalanceNotification, scheduleSmsNotification } from './smsService.js';
-import { formatMinorAmount, validateIdempotencyKey } from '../validators/paymentValidator.js';
+import { formatMinorAmount, parseAmountToMinor, validateIdempotencyKey } from '../validators/paymentValidator.js';
 import { maskMerchantPhone, maskPhone, normalizeSomaliEvcPhone } from '../validators/phoneValidator.js';
 import { admissionFeeMinor, admissionFeeCurrency } from '../config/admissionFee.js';
 
@@ -24,7 +24,7 @@ const assertOwnership = (owner, registration) => {
 const makeReference = () => `PAY-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${crypto.randomBytes(5).toString('hex').toUpperCase()}`;
 const makeInvoice = (registration) => `INV-${registration.reference.replace(/[^A-Za-z0-9._-]/g, '-')}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
 
-const safePayment = (payment) => ({
+const safePayment = (payment, balance = null) => ({
   referenceId: payment.referenceId,
   registrationId: payment.registrationReference,
   status: payment.status,
@@ -38,20 +38,18 @@ const safePayment = (payment) => ({
   description: payment.description,
   createdAt: payment.createdAt,
   updatedAt: payment.updatedAt,
-  paidAt: payment.paidAt || null
+  paidAt: payment.paidAt || null,
+  remainingBalance: balance ? Number(formatMinorAmount(balance.remainingMinor)) : null
 });
 
-export const previewPayment = async ({ registrationId, phoneNumber, owner }) => {
-  const amountMinor = registrationFeeMinor;
+export const previewPayment = async ({ registrationId, phoneNumber, amount, owner }) => {
+  const amountMinor = parseAmountToMinor(amount);
   const phone = normalizeSomaliEvcPhone(phoneNumber);
   const db = await readDb();
   const registration = requireRegistration(db, registrationId);
   assertOwnership(owner, registration);
   const balance = registrationBalance(db, registration);
   if (balance.remainingMinor === 0) fail(409, 'This registration fee has already been paid');
-  if (balance.requiredMinor !== registrationFeeMinor || balance.remainingMinor !== registrationFeeMinor) {
-    fail(409, 'The registration payment balance is inconsistent. Contact admissions before retrying.');
-  }
   return {
     registrationId: registration.reference,
     applicantName: registration.fullName,
@@ -65,27 +63,24 @@ export const previewPayment = async ({ registrationId, phoneNumber, owner }) => 
   };
 };
 
-const initiateOnce = async ({ registrationId, phoneNumber, idempotencyKey, owner }) => {
-  const amountMinor = registrationFeeMinor;
+const initiateOnce = async ({ registrationId, phoneNumber, amount, idempotencyKey, owner }) => {
+  const amountMinor = parseAmountToMinor(amount);
   const phone = normalizeSomaliEvcPhone(phoneNumber);
   const key = validateIdempotencyKey(idempotencyKey);
   const prepared = await updateDb((db) => {
     const registration = requireRegistration(db, registrationId);
     assertOwnership(owner, registration);
     const existing = findPaymentByIdempotency(db, registration.id, owner.id, key);
-    if (existing) return { existing };
+    if (existing) return { existing, existingBalance: registrationBalance(db, registration) };
     const unresolved = db.payments.find((item) =>
       item.applicationId === registration.id &&
       ['PENDING', 'PROCESSING', 'UNKNOWN'].includes(item.status) &&
       !(item.status === 'UNKNOWN' && item.failureCode === 'PROVIDER_UNAVAILABLE') &&
       Date.now() - new Date(item.createdAt).getTime() < 15 * 60 * 1000
     );
-    if (unresolved) return { existing: unresolved };
+    if (unresolved) return { existing: unresolved, existingBalance: registrationBalance(db, registration) };
     const balance = registrationBalance(db, registration);
     if (balance.remainingMinor === 0) fail(409, 'This registration fee has already been paid');
-    if (balance.requiredMinor !== registrationFeeMinor || balance.remainingMinor !== registrationFeeMinor) {
-      fail(409, 'The registration payment balance is inconsistent. Contact admissions before retrying.');
-    }
     const now = new Date().toISOString();
     const payment = {
       id: createId('pay'),
@@ -120,7 +115,7 @@ const initiateOnce = async ({ registrationId, phoneNumber, idempotencyKey, owner
     return { payment, phone };
   });
 
-  if (prepared.existing) return safePayment(prepared.existing);
+  if (prepared.existing) return safePayment(prepared.existing, prepared.existingBalance);
   const { payment } = prepared;
   let providerResult;
   try {
@@ -156,13 +151,13 @@ const initiateOnce = async ({ registrationId, phoneNumber, idempotencyKey, owner
     current.updatedAt = new Date().toISOString();
     if (current.status === 'SUCCESS') current.paidAt = current.updatedAt;
     const registration = requireRegistration(db, current.applicationId);
-    updateRegistrationPaymentStatus(db, registration);
+    const balance = updateRegistrationPaymentStatus(db, registration);
     const insufficientBalance = ['5206', 'E10205'].includes(String(current.failureCode || '').toUpperCase()) ||
       /not have enough balance|insufficient balance/i.test(current.failureMessage || '');
     const smsNotification = insufficientBalance
       ? createInsufficientBalanceNotification(db, registration, current, phone)
       : null;
-    return { payment: safePayment(current), smsNotification };
+    return { payment: safePayment(current, balance), smsNotification };
   });
   scheduleSmsNotification(result.smsNotification?.status === 'PENDING' ? result.smsNotification.id : null);
   return result.payment;
@@ -182,7 +177,7 @@ export const getPaymentStatus = async ({ referenceId, owner }) => {
   if (!payment) fail(404, 'Payment not found');
   const registration = requireRegistration(db, payment.applicationId);
   assertOwnership(owner, registration);
-  return safePayment(payment);
+  return safePayment(payment, registrationBalance(db, registration));
 };
 
 export const getPaymentReceipt = async ({ referenceId, owner }) => {

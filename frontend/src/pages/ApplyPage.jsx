@@ -30,14 +30,14 @@ const conditions = [
   'Should bring four (4) passport-size photos.',
   'Should bring the original Secondary School Leaving Certificate with two copies.',
   'For part-time registration, two years experience is recommended.',
-  'Should pay a fixed Admission Fee of $0.10 for all programs.',
+  'Should pay a fixed Admission Fee of $25 for all programs.',
 ];
 
 const admissionRequirements = [
   ['High education completion', 'Submit evidence that you completed secondary school.'],
   ['Four passport pictures', 'Bring four clear passport-size photos with a white background.'],
   ['Have certificate high school', 'Bring the original high school certificate with two copies.'],
-  ['Pay fees of Admission', 'Pay the fixed $0.10 admission fee for any selected faculty.'],
+  ['Pay fees of Admission', 'Pay the fixed $25 admission fee for any selected faculty.'],
 ];
 
 const faqs = [
@@ -349,7 +349,7 @@ function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange
         {mobileMoneyMethods.includes(method) && (
           <PhoneField label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={16} />
         )}
-        <Field label="Application Fee" name="paymentAmount" value="0.10" onChange={onChange} type="number" min="0.10" max="0.10" step="0.01" inputMode="decimal" readOnly />
+        <Field label="Application Fee" name="paymentAmount" value="25.00" onChange={onChange} type="number" min="25.00" max="25.00" step="0.01" inputMode="decimal" readOnly />
         {mobileMoneyMethods.includes(method) && method !== 'EVC Plus' && (
           <Field label="Transaction ID / Reference Number" name="paymentTransactionId" value={form.paymentTransactionId} onChange={onChange} maxLength={50} />
         )}
@@ -574,7 +574,7 @@ function ApplyPage() {
       ...(name === 'hasCertificate' && nextValue === 'Yes' ? { appointmentDate: null, appointmentTime: null } : {}),
       ...(name === 'paymentMethod' ? {
         paymentPhone: '+252',
-        paymentAmount: '0.10',
+        paymentAmount: '25.00',
         paymentTransactionId: null,
         cardHolderName: null,
         cardNumber: null,

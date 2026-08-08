@@ -76,7 +76,7 @@ export const createInsufficientBalanceNotification = (db, application, payment, 
     {
       eventType: 'PAYMENT_INSUFFICIENT_BALANCE',
       enabled: true,
-      message: 'Haraaga EVC-ga kuguma filna bixinta khidmada diiwaangelinta ee USD 0.10. Fadlan lacag ku shubo kadibna mar kale isku day.'
+      message: 'Haraaga EVC-ga kuguma filna bixinta khidmada diiwaangelinta ee USD 25.00. Fadlan lacag ku shubo kadibna mar kale isku day.'
     },
     { idempotencyKey: `PAYMENT_INSUFFICIENT_BALANCE:${payment.referenceId}` }
   );

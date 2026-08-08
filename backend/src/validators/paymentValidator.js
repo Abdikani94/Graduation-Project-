@@ -8,9 +8,7 @@ export const parseAmountToMinor = (value) => {
   const minor = Number(whole) * 100 + Number(fraction.padEnd(2, '0'));
   if (!Number.isSafeInteger(minor) || minor <= 0) fail(422, 'Amount must be greater than zero');
   const minimum = Math.round(paymentConfig.minimumAmount * 100);
-  const maximum = Math.round(paymentConfig.maximumAmount * 100);
   if (minor < minimum) fail(422, `Minimum payment amount is ${paymentConfig.minimumAmount.toFixed(2)} ${paymentConfig.currency}`);
-  if (minor > maximum) fail(422, `Maximum payment amount is ${paymentConfig.maximumAmount.toFixed(2)} ${paymentConfig.currency}`);
   return minor;
 };
 

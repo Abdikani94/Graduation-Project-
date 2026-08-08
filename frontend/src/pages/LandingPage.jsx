@@ -11,15 +11,15 @@ import {
 import Toast from '../components/Toast';
 import PublicNav from '../components/PublicNav';
 import PublicFooter from '../components/PublicFooter';
-import agriculture from '../images/agriculture.jpg';
-import cabdullahi from '../images/cabdullahi.jpg';
+import facultyVeterinary from '../images/faculty-veterinary.jpg';
+import facultyMedicine from '../images/faculty-medicine.jpg';
+import facultyComputer from '../images/faculty-computer.jpg';
+import facultyEngineering from '../images/faculty-engineering.jpg';
 import education from '../images/education.jpg';
 import jrc from '../images/jrc.jpg';
 import jsc from '../images/jsc.jpg';
 import logo from '../images/logo.jpg';
-import maxamed from '../images/maxamed.jpg';
 import economics from '../images/econimic.jpg';
-import ruweyda from '../images/ruweydaaaa.jpg';
 import team from '../images/team.jpg';
 import warsame from '../images/warsame.jpeg';
 import { readResponsePayload, responseMessage } from '../api/response';
@@ -60,9 +60,8 @@ const faculties = [
     number: '02',
     name: 'Faculty of Computer & Information Technology',
     title: 'Faculty of Computer Science and Information Technology',
-    image: maxamed,
-    alt: 'Mohamed, Faculty of Computer and Information Technology',
-    imageClassName: 'faculty-image-no-circle',
+    image: facultyComputer,
+    alt: 'Computer and Information Technology students learning in a modern computer lab',
     description: 'Study software, networking, multimedia, and applied computing through practical labs and modern technology projects.',
     programs: [
       'B.Sc. in Computer Application',
@@ -75,8 +74,8 @@ const faculties = [
     number: '03',
     name: 'Faculty of Engineering',
     title: 'Faculty of Engineering',
-    image: ruweyda,
-    alt: 'Ruweyda, Faculty of Engineering',
+    image: facultyEngineering,
+    alt: 'Professional engineer at a construction site',
     description: 'Prepare for professional engineering work with strong training in design, infrastructure, systems, and applied science.',
     programs: ['B.Sc. in Civil Engineering', 'Electrical Engineering (Power and Energy)', 'Electrical Engineering (Telecommunications and Networking)'],
   },
@@ -84,8 +83,8 @@ const faculties = [
     number: '04',
     name: 'Faculty of Medicine & Health Science',
     title: 'Faculty of Medicine and Health Science',
-    image: cabdullahi,
-    alt: 'Cabdulhi, Faculty of Medicine and Health Science',
+    image: facultyMedicine,
+    alt: 'Medical doctor providing professional patient care',
     description: 'Develop the clinical, laboratory, public health, and patient-care knowledge needed for modern healthcare service.',
     programs: ['Medicine & General Surgery', 'B.Sc. in Nursing', 'B.Sc. in Midwifery', 'B.Sc. in Public Health', 'B.Sc. in Medical Laboratory Science', 'B.Sc. in Medical Radiography and Imaging Technology'],
   },
@@ -102,8 +101,8 @@ const faculties = [
     number: '06',
     name: 'Faculty of Animal Husbandry & Agriculture',
     title: 'Faculty of Animal Husbandry & Agriculture',
-    image: agriculture,
-    alt: 'Agricultural practical learning field',
+    image: facultyVeterinary,
+    alt: 'Veterinary doctor caring for livestock',
     description: 'Build practical expertise in agricultural production, animal health, and sustainable food systems that support communities and national development.',
     programs: ['B.Sc. in Agricultural Sciences', 'B.Sc. in Veterinary Sciences'],
   },
