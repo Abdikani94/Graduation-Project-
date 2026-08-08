@@ -713,7 +713,7 @@ test('provider timeout is UNKNOWN instead of FAILED', async () => {
   assert.equal(response.body.payment.failureCode, 'PROVIDER_TIMEOUT');
 });
 
-test('payments accept 0.01 minimum, track the remaining 25 USD fee, and reject payment after completion', async () => {
+test('payments accept 0.01 minimum, allow submission, track the remaining 25 USD fee, and reject payment after completion', async () => {
   const fullDraft = await createPaymentDraft();
   setWaafiTransportForTests(providerResponse({ responseCode: '2001', params: { state: 'APPROVED', transactionId: 'TX-FINAL' } }));
   const partial = await request({ method: 'POST', path: '/api/payments/initiate', token: fullDraft.token, body: draftPaymentBody(fullDraft, { amount: '0.01' }) });
@@ -724,7 +724,9 @@ test('payments accept 0.01 minimum, track the remaining 25 USD fee, and reject p
   const earlySubmission = await request({
     method: 'POST', path: `/api/applications/${fullDraft.application.reference}/submit`, token: fullDraft.token
   });
-  assert.equal(earlySubmission.status, 409);
+  assert.equal(earlySubmission.status, 200);
+  assert.equal(earlySubmission.body.application.status, 'Pending');
+  assert.equal(earlySubmission.body.application.paymentStatus, 'PARTIALLY_PAID');
 
   const full = await request({ method: 'POST', path: '/api/payments/initiate', token: fullDraft.token, body: draftPaymentBody(fullDraft, { amount: '24.99' }) });
   assert.equal(full.body.payment.status, 'SUCCESS');
@@ -749,7 +751,9 @@ test('frontend has no EVC PIN input field', async () => {
   assert.match(source, /Number\(preview\.amount\)\.toFixed\(2\)/);
   const applyPage = await fs.readFile(new URL('../../frontend/src/pages/ApplyPage.jsx', import.meta.url), 'utf8');
   assert.match(applyPage, /confirmedEvcPayment\?\.status !== 'SUCCESS'/);
-  assert.match(applyPage, /name="paymentAmount" value="25\.00"/);
+  assert.match(applyPage, /name="paymentAmount" value=\{form\.paymentAmount\}/);
+  assert.match(applyPage, /name="paymentAmount"[^>]*min="0\.01"/);
+  assert.doesNotMatch(applyPage, /name="paymentAmount"[^>]*readOnly/);
 });
 
 test('all public and backend admission fees are fixed at 25 USD', async () => {

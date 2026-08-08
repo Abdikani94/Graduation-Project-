@@ -110,7 +110,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
           <div className={`evc-result ${payment.status === 'SUCCESS' ? 'success' : 'failed'}`}>
             {payment.status === 'SUCCESS' ? <CheckCircle2 /> : payment.status === 'PROCESSING' ? <LoaderCircle className="evc-spin" /> : payment.status === 'UNKNOWN' ? <CircleHelp /> : <XCircle />}
             <h2 id="evc-title">{payment.status === 'SUCCESS' ? Number(payment.remainingBalance) > 0 ? 'Partial Payment Successful' : 'Payment Successful' : payment.status === 'PROCESSING' ? 'Payment Processing' : payment.status === 'UNKNOWN' ? 'Payment Status Unknown' : 'Payment Not Completed'}</h2>
-            <p>{payment.status === 'SUCCESS' ? Number(payment.remainingBalance) > 0 ? `Your payment was approved. ${Number(payment.remainingBalance).toFixed(2)} USD remains before the application can be submitted.` : 'Your registration payment was approved.' : payment.failureMessage || 'Please check your EVC confirmation message before trying again.'}</p>
+            <p>{payment.status === 'SUCCESS' ? Number(payment.remainingBalance) > 0 ? `Your payment was approved. You can now review and submit your application. The remaining admission-fee balance is ${Number(payment.remainingBalance).toFixed(2)} USD.` : 'Your registration payment was approved.' : payment.failureMessage || 'Please check your EVC confirmation message before trying again.'}</p>
           </div>
           <dl className="evc-confirmation">
             <div><dt>Amount</dt><dd>{Number(payment.amount).toFixed(2)} {payment.currency}</dd></div><div><dt>Reference</dt><dd>{payment.referenceId}</dd></div>
@@ -119,7 +119,7 @@ export default function EvcPaymentFlow({ application, paymentToken, initialAmoun
           </dl>
           {receipt?.walletBalanceMessage && <p className="evc-secure-message">{receipt.walletBalanceMessage}</p>}
           {payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE' && <p className="evc-secure-message">The request could not reach WaafiPay. No approval was received. Check your EVC balance or SMS first, then retry.</p>}
-          <div className="evc-actions">{((['FAILED', 'CANCELLED'].includes(payment.status) && payment.failureCode !== 'SANDBOX_AUTHENTICATION_FAILED') || (payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE')) && <button className="evc-secondary" onClick={retry} type="button">Retry</button>}{payment.status === 'SUCCESS' && Number(payment.remainingBalance) > 0 && <button className="evc-secondary" onClick={() => { setAmount(Number(payment.remainingBalance).toFixed(2)); retry(); }} type="button">Pay remaining</button>}<button onClick={() => payment.status === 'SUCCESS' && Number(payment.remainingBalance) <= 0 ? onSuccess(payment, receipt) : onClose()} type="button">Done</button></div>
+          <div className="evc-actions">{((['FAILED', 'CANCELLED'].includes(payment.status) && payment.failureCode !== 'SANDBOX_AUTHENTICATION_FAILED') || (payment.status === 'UNKNOWN' && payment.failureCode === 'PROVIDER_UNAVAILABLE')) && <button className="evc-secondary" onClick={retry} type="button">Retry</button>}{payment.status === 'SUCCESS' && Number(payment.remainingBalance) > 0 && <button className="evc-secondary" onClick={() => { setAmount(Number(payment.remainingBalance).toFixed(2)); retry(); }} type="button">Pay remaining</button>}<button onClick={() => payment.status === 'SUCCESS' ? onSuccess(payment, receipt) : onClose()} type="button">Done</button></div>
         </>}
       </section>
     </div>

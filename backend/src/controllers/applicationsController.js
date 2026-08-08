@@ -399,11 +399,11 @@ export const submitPaidApplication = async (req, res) => {
     if (application.admissionPeriodId && application.admissionPeriodId !== admissionPeriod.id) fail(409, 'The admission period for this application is no longer active.');
     const payment = db.payments.find((item) => item.applicationId === application.id && item.status === 'SUCCESS');
     const balance = registrationBalance(db, application);
-    if (!payment || balance.requiredMinor !== admissionFeeMinor || balance.totalPaidMinor < admissionFeeMinor) {
+    if (!payment || balance.totalPaidMinor < 1) {
       fail(409, 'A confirmed payment is required before submitting this application.');
     }
     application.status = 'Pending';
-    application.paymentStatus = 'PAID';
+    application.paymentStatus = balance.remainingMinor > 0 ? 'PARTIALLY_PAID' : 'PAID';
     application.paymentMethod = 'EVC Plus';
     application.paymentPhone = payment.payerPhoneMasked;
     application.paymentAmount = payment.amount;

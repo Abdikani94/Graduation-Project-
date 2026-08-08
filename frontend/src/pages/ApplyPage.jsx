@@ -151,7 +151,7 @@ const initialForm = {
   integrityDeclaration: null,
   paymentMethod: null,
   paymentPhone: '+252',
-  paymentAmount: null,
+  paymentAmount: '0.01',
   paymentTransactionId: null,
   cardHolderName: null,
   cardNumber: null,
@@ -349,7 +349,7 @@ function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange
         {mobileMoneyMethods.includes(method) && (
           <PhoneField label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={16} />
         )}
-        <Field label="Application Fee" name="paymentAmount" value="25.00" onChange={onChange} type="number" min="25.00" max="25.00" step="0.01" inputMode="decimal" readOnly />
+        <Field label="Payment Amount" name="paymentAmount" value={form.paymentAmount} onChange={onChange} type="number" min="0.01" step="0.01" inputMode="decimal" />
         {mobileMoneyMethods.includes(method) && method !== 'EVC Plus' && (
           <Field label="Transaction ID / Reference Number" name="paymentTransactionId" value={form.paymentTransactionId} onChange={onChange} maxLength={50} />
         )}
@@ -574,7 +574,7 @@ function ApplyPage() {
       ...(name === 'hasCertificate' && nextValue === 'Yes' ? { appointmentDate: null, appointmentTime: null } : {}),
       ...(name === 'paymentMethod' ? {
         paymentPhone: '+252',
-        paymentAmount: '25.00',
+        paymentAmount: '0.01',
         paymentTransactionId: null,
         cardHolderName: null,
         cardNumber: null,
@@ -828,6 +828,11 @@ function ApplyPage() {
       }
       if (!isAllowedOption('paymentMethod', form.paymentMethod)) {
         showError('Please select a valid payment method.');
+        return false;
+      }
+      const paymentAmount = Number(form.paymentAmount);
+      if (!Number.isFinite(paymentAmount) || paymentAmount < 0.01) {
+        showError('Minimum payment amount is 0.01 USD.');
         return false;
       }
       if (form.paymentMethod === 'Card') {
