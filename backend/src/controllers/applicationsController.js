@@ -20,7 +20,6 @@ const applicationFields = [
   'dateOfBirth',
   'placeOfBirth',
   'district',
-  'area',
   'email',
   'mobile',
   'sex',
@@ -29,6 +28,7 @@ const applicationFields = [
   'emergencyName',
   'emergencyTell',
   'relationship',
+  'relationshipOther',
   'familyStudied',
   'schoolName',
   'schoolDistrict',
@@ -55,7 +55,26 @@ const applicationFields = [
 
 const getBodyFields = (req) => (req.body?.fields ? req.body.fields : (req.body || {}));
 const getBodyFiles = (req) => (req.body?.files ? req.body.files : []);
-const today = () => new Date().toISOString().slice(0, 10);
+const admissionTimeZone = 'Africa/Mogadishu';
+const getAdmissionDateTime = (date = new Date()) => {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: admissionTimeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23'
+    }).formatToParts(date).map(({ type, value }) => [type, value])
+  );
+
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    time: `${parts.hour}:${parts.minute}`
+  };
+};
+const today = () => getAdmissionDateTime().date;
 const oneYearFromToday = () => {
   const current = new Date(`${today()}T00:00:00Z`);
   const targetYear = current.getUTCFullYear() + 1;
@@ -66,6 +85,10 @@ const oneYearFromToday = () => {
 };
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
+const appointmentIsNotInFuture = (date, time) => {
+  const appointment = new Date(`${date}T${time}:00+03:00`);
+  return Number.isNaN(appointment.getTime()) || appointment.getTime() <= Date.now();
+};
 const fixedAdmissionFee = admissionFee;
 const partTimeDepartments = new Set([
   'Computer Application',
@@ -79,6 +102,7 @@ const requiredCreateFields = [
   'fullName',
   'motherName',
   'nationality',
+  'nationalId',
   'rollNumber',
   'dateOfBirth',
   'placeOfBirth',
@@ -99,7 +123,8 @@ const requiredCreateFields = [
   'heardFrom',
   'modeOfStudy',
   'paymentPlan',
-  'paymentMethod'
+  'paymentMethod',
+  'paymentPhone'
 ];
 
 const optionValues = {
@@ -110,7 +135,7 @@ const optionValues = {
   familyStudied: ['Haa', 'Maya', 'Yes', 'No'],
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
-  paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
+  paymentPlan: ['Admission fee only', 'Admission fee + Semester fee', 'Admission fee + Full payment'],
   paymentMethod: ['EVC Plus', 'eDahab'],
   applicantPhotoUploaded: ['Yes', 'No'],
   certificateUploaded: ['Yes', 'No']
@@ -118,16 +143,22 @@ const optionValues = {
 
 const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
 const simpleTextPattern = /^[A-Za-z][A-Za-z\s'.&,/-]{1,99}$/;
+const addressPattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,()#/-]{1,149}$/;
 const schoolNamePattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,()/-]{1,149}$/;
-const idPattern = /^\d{3,30}$/;
-const rollNumberPattern = /^\d[\d/-]{2,29}$/;
+const idPattern = /^[1-9]\d{9,14}$/;
+const rollNumberPattern = /^[1-9]\d{9,14}$/;
 const normalizeField = (value) => String(value ?? '').trim();
 const isEmptyField = (value) => normalizeField(value) === '';
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeField(email)) && normalizeField(email).length <= 254;
 const isValidPhone = (phone) => {
   const text = normalizeField(phone);
-  const digits = text.replace(/\D/g, '');
-  return /^\+?[\d\s-]{7,20}$/.test(text) && digits.length >= 7 && digits.length <= 15;
+  if (!/^\+?\d+$/.test(text)) return false;
+
+  const internationalDigits = text.startsWith('+') ? text.slice(1) : text;
+  const localDigits = internationalDigits.startsWith('252')
+    ? internationalDigits.slice(3)
+    : internationalDigits;
+  return /^[1-9]\d{7,11}$/.test(localDigits);
 };
 const isValidDate = (date) => {
   const text = normalizeField(date);
@@ -204,14 +235,17 @@ export const createApplication = async (req, res) => {
     if (!fields.appointmentDate) missing.push('appointmentDate');
     if (!fields.appointmentTime) missing.push('appointmentTime');
   }
+  if (fields.relationship === 'Other specify' && isEmptyField(fields.relationshipOther)) {
+    missing.push('relationshipOther');
+  }
   if (missing.length) fail(422, 'Required application fields are missing', missing);
   if (!personNamePattern.test(fields.fullName)) fail(422, 'Full Name must contain only letters, spaces, apostrophes, hyphens, or periods');
   if (!personNamePattern.test(fields.motherName)) fail(422, "Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods");
   if (!simpleTextPattern.test(fields.nationality)) fail(422, 'Nationality must contain text only');
-  if (!isEmptyField(fields.nationalId) && !idPattern.test(fields.nationalId)) fail(422, 'National ID must be 3-30 digits when provided');
-  if (!rollNumberPattern.test(fields.rollNumber)) fail(422, 'Roll Number must contain numbers only. Hyphens and slashes are allowed');
+  if (!idPattern.test(fields.nationalId)) fail(422, 'National ID must contain 10 to 15 digits and cannot start with zero');
+  if (!rollNumberPattern.test(fields.rollNumber)) fail(422, 'Roll Number must contain 10 to 15 digits and cannot start with zero');
   if (!isValidEmail(fields.email)) fail(422, 'Please enter a valid email address');
-  if (!isValidPhone(fields.mobile)) fail(422, 'Please enter a valid phone number');
+  if (!isValidPhone(fields.mobile)) fail(422, 'Phone Number must contain 8 to 12 digits after +252 and cannot start with zero');
   if (!isValidDate(fields.dateOfBirth)) fail(422, 'Date of birth is invalid');
   if (fields.dateOfBirth > today()) fail(422, 'Date of birth cannot be in the future');
   {
@@ -219,8 +253,7 @@ export const createApplication = async (req, res) => {
     if (age < 14 || age > 100) fail(422, 'Applicant age must be between 14 and 100 years');
   }
   if (!simpleTextPattern.test(fields.placeOfBirth)) fail(422, 'Place Of Birth must contain text only');
-  if (!simpleTextPattern.test(fields.district)) fail(422, 'District must contain text only');
-  if (!isEmptyField(fields.area) && !simpleTextPattern.test(fields.area)) fail(422, 'Area must contain text only');
+  if (!addressPattern.test(fields.district)) fail(422, 'District / Address may contain letters, numbers, and normal address punctuation');
   requireOption(fields, 'sex', 'Sex');
   requireOption(fields, 'maritalStatus', 'Marital Status');
   requireOption(fields, 'hasCertificate', 'Certificate status');
@@ -237,13 +270,23 @@ export const createApplication = async (req, res) => {
     if (fields.appointmentDate > oneYearFromToday()) {
       fail(422, 'Certificate appointment date cannot be more than one year from today');
     }
+    if (appointmentIsNotInFuture(fields.appointmentDate, fields.appointmentTime)) {
+      fail(422, 'Appointment date and time must be in the future');
+    }
     if (fields.appointmentTime < appointmentStartTime || fields.appointmentTime > appointmentEndTime) {
       fail(422, 'Appointment time must be between 8:00 AM and 5:00 PM');
     }
   }
   if (!personNamePattern.test(fields.emergencyName)) fail(422, 'Emergency Contact Name is invalid');
-  if (!isValidPhone(fields.emergencyTell)) fail(422, 'Emergency phone is invalid');
+  if (!isValidPhone(fields.emergencyTell)) fail(422, 'Emergency phone must contain 8 to 12 digits after +252 and cannot start with zero');
   requireOption(fields, 'relationship', 'Relationship');
+  if (fields.relationship === 'Other specify') {
+    if (!simpleTextPattern.test(fields.relationshipOther)) {
+      fail(422, 'Please specify a valid relationship to the applicant');
+    }
+  } else {
+    fields.relationshipOther = null;
+  }
   requireOption(fields, 'familyStudied', 'Family Member Studied Here');
   if (!schoolNamePattern.test(fields.schoolName)) fail(422, 'Secondary School Name may contain letters and numbers');
   if (!simpleTextPattern.test(fields.schoolDistrict)) fail(422, 'School District must contain text only');
@@ -263,6 +306,9 @@ export const createApplication = async (req, res) => {
   requireOption(fields, 'modeOfStudy', 'Mode Of Study');
   requireOption(fields, 'paymentPlan', 'Payment Plan');
   requireOption(fields, 'paymentMethod', 'Payment Method');
+  if (!isValidPhone(fields.paymentPhone)) {
+    fail(422, 'Payment Phone Number must contain 8 to 12 digits after +252 and cannot start with zero');
+  }
 
   const result = await updateDb(async (db) => {
     const admissionPeriod = assertOpenForApplication(db, fields);
@@ -458,6 +504,16 @@ export const updateApplication = async (req, res) => {
     const found = db.applications.find((item) => item.id === req.params.id || item.reference === req.params.id);
     if (!found) fail(404, 'Application not found');
     const before = { ...found };
+
+    if (Object.hasOwn(req.body || {}, 'nationalId') && !idPattern.test(normalizeField(req.body.nationalId))) {
+      fail(422, 'National ID must contain 10 to 15 digits and cannot start with zero');
+    }
+    if (Object.hasOwn(req.body || {}, 'rollNumber') && !rollNumberPattern.test(normalizeField(req.body.rollNumber))) {
+      fail(422, 'Roll Number must contain 10 to 15 digits and cannot start with zero');
+    }
+    if (Object.hasOwn(req.body || {}, 'mobile') && !isValidPhone(req.body.mobile)) {
+      fail(422, 'Phone Number must contain 8 to 12 digits after +252 and cannot start with zero');
+    }
 
     let selectedClass;
     if (req.body?.classId !== undefined && req.body.classId !== null && req.body.classId !== '') {

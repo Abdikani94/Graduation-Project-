@@ -216,14 +216,14 @@ const Reports = () => {
           <div className="flex justify-between items-start mb-6">
             <div>
               <h3 className="text-white text-[16px] font-semibold mb-1">Top 5 Geographic Analysis</h3>
-              <p className="text-gray-500 text-[12px]">Districts with most applicants</p>
+              <p className="text-gray-500 text-[12px]">Districts / addresses with most applicants</p>
             </div>
             <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors"><Eye size={12} /> View all</button>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-white/5">
-                <th className="pb-3 text-[11px] font-medium text-gray-500 uppercase">Districts</th>
+                <th className="pb-3 text-[11px] font-medium text-gray-500 uppercase">District / Address</th>
                 <th className="pb-3 text-[11px] font-medium text-gray-500 uppercase text-right">Applicants</th>
               </tr>
             </thead>

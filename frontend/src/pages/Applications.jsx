@@ -34,8 +34,7 @@ const EDIT_SECTIONS = [
       { key: 'rollNumber', label: 'Roll Number' },
       { key: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
       { key: 'placeOfBirth', label: 'Place of Birth' },
-      { key: 'district', label: 'District' },
-      { key: 'area', label: 'Area' },
+      { key: 'district', label: 'District / Address' },
       { key: 'email', label: 'Email', type: 'email' },
       { key: 'mobile', label: 'Mobile' },
       { key: 'sex', label: 'Sex', options: ['Male', 'Female'] },
@@ -49,6 +48,7 @@ const EDIT_SECTIONS = [
       { key: 'emergencyName', label: 'Emergency Contact Name' },
       { key: 'emergencyTell', label: 'Emergency Phone' },
       { key: 'relationship', label: 'Relationship', options: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'] },
+      { key: 'relationshipOther', label: 'Specified Relationship' },
       { key: 'familyStudied', label: 'Family Studied Here', options: ['Yes', 'No'] },
       { key: 'schoolName', label: 'Secondary School' },
       { key: 'schoolDistrict', label: 'School District' },
@@ -63,7 +63,7 @@ const EDIT_SECTIONS = [
       { key: 'faculty', label: 'Faculty' },
       { key: 'department', label: 'Program' },
       { key: 'modeOfStudy', label: 'Mode of Study', options: ['Full Time', 'Part Time'] },
-      { key: 'paymentPlan', label: 'Payment Plan', options: ['Admission fee only', 'Semester payment', 'Full year payment'] },
+      { key: 'paymentPlan', label: 'Payment Plan', options: ['Admission fee only', 'Admission fee + Semester fee', 'Admission fee + Full payment'] },
       { key: 'paymentMethod', label: 'Payment Method', options: ['EVC Plus', 'eDahab'] },
       { key: 'paymentPhone', label: 'Payment Phone' },
       { key: 'paymentAmount', label: 'Payment Amount' },
@@ -337,20 +337,20 @@ const Applications = () => {
                   </td>
                   <td className="px-6 py-4 text-[13px] text-gray-400">{formatDate(app.createdAt)}</td>
                   <td className="min-w-[270px] px-6 py-4">
-                    <div className="flex flex-wrap gap-1.5">
-                      <button onClick={() => setSelectedApplication(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-bold text-slate-600 transition-colors hover:border-blue-300 hover:text-blue-700" type="button">
+                    <div className="admin-action-group">
+                      <button onClick={() => setSelectedApplication(app)} className="admin-action-button" type="button">
                         <Eye size={14} /> View
                       </button>
-                      <button onClick={() => openEdit(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-bold text-slate-600 transition-colors hover:border-violet-300 hover:text-violet-700" type="button">
+                      <button onClick={() => openEdit(app)} className="admin-action-button" type="button">
                         <Edit2 size={14} /> Edit
                       </button>
-                      <button disabled={isSaving || app.status === 'Approved'} onClick={() => openApprove(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-[11px] font-bold text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-40" type="button">
+                      <button disabled={isSaving || app.status === 'Approved'} onClick={() => openApprove(app)} className="admin-action-button" type="button">
                         <Check size={14} /> Approve
                       </button>
-                      <button disabled={isSaving} onClick={() => handleStatus(app, 'Rejected')} className="inline-flex items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[11px] font-bold text-amber-700 transition-colors hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-40" type="button">
+                      <button disabled={isSaving} onClick={() => handleStatus(app, 'Rejected')} className="admin-action-button" type="button">
                         <X size={14} /> Reject
                       </button>
-                      <button disabled={isSaving} onClick={() => handleDelete(app)} className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-2.5 py-1.5 text-[11px] font-bold text-red-700 transition-colors hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-40" type="button">
+                      <button disabled={isSaving} onClick={() => handleDelete(app)} className="admin-action-button admin-action-button--danger" type="button">
                         <Trash2 size={14} /> Delete
                       </button>
                     </div>
@@ -364,8 +364,8 @@ const Applications = () => {
         <div className="flex items-center justify-between p-6 mt-auto border-t border-white/5">
           <div className="text-[13px] font-medium text-gray-500">Page {pagination.page} of {pagination.pages} - {pagination.total} applications</div>
           <div className="flex gap-3">
-            <button disabled={page <= 1 || isLoading} onClick={() => setPage((value) => Math.max(value - 1, 1))} className="px-5 py-2 rounded-full border border-white/10 text-gray-400 text-[13px] font-medium hover:text-white hover:border-white/20 transition-all bg-transparent cursor-pointer disabled:opacity-40" type="button">Previous</button>
-            <button disabled={page >= pagination.pages || isLoading} onClick={() => setPage((value) => Math.min(value + 1, pagination.pages))} className="px-5 py-2 rounded-full border border-primary bg-primary text-white text-[13px] font-medium cursor-pointer disabled:opacity-40" type="button">Next</button>
+            <button disabled={page <= 1 || isLoading} onClick={() => setPage((value) => Math.max(value - 1, 1))} className="admin-button admin-button--secondary admin-button--compact" type="button">Previous</button>
+            <button disabled={page >= pagination.pages || isLoading} onClick={() => setPage((value) => Math.min(value + 1, pagination.pages))} className="admin-button admin-button--primary admin-button--compact" type="button">Next</button>
           </div>
         </div>
       </Card>
@@ -373,7 +373,7 @@ const Applications = () => {
       {selectedApplication && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-[620px] max-h-[90vh] overflow-y-auto p-7 relative">
-            <button onClick={() => setSelectedApplication(null)} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
+            <button onClick={() => setSelectedApplication(null)} className="admin-icon-button absolute right-5 top-5" aria-label="Close application details" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">{selectedApplication.fullName}</h2>
             <p className="text-gray-500 text-[12px] mb-6">{selectedApplication.reference}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[13px]">
@@ -396,7 +396,7 @@ const Applications = () => {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setSelectedApplication(null)}
-                className="px-6 py-3 rounded-full border border-white/10 text-gray-400 text-[13px] font-semibold"
+                className="admin-button admin-button--secondary"
                 type="button"
               >
                 Close
@@ -409,7 +409,7 @@ const Applications = () => {
       {editingApplication && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-[760px] max-h-[90vh] overflow-y-auto p-7 relative">
-            <button onClick={() => setEditingApplication(null)} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
+            <button onClick={() => setEditingApplication(null)} className="admin-icon-button absolute right-5 top-5" aria-label="Close edit dialog" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">Edit Student Information</h2>
             <p className="text-gray-500 text-[12px] mb-6">{editingApplication.reference}</p>
             <form onSubmit={handleEditSubmit} className="flex flex-col gap-7">
@@ -473,8 +473,8 @@ const Applications = () => {
               </div>
 
               <div className="flex justify-end gap-3 mt-1">
-                <button type="button" onClick={() => setEditingApplication(null)} className="px-6 py-3 rounded-full border border-border-color text-text-muted text-[13px] font-semibold hover:bg-main-bg transition-colors">Cancel</button>
-                <button disabled={isSaving} type="submit" className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold disabled:opacity-50">
+                <button type="button" onClick={() => setEditingApplication(null)} className="admin-button admin-button--secondary">Cancel</button>
+                <button disabled={isSaving} type="submit" className="admin-button admin-button--primary">
                   {isSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
@@ -486,7 +486,7 @@ const Applications = () => {
       {approvingApp && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-[560px] max-h-[90vh] overflow-y-auto p-7 relative">
-            <button onClick={closeApprove} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
+            <button onClick={closeApprove} className="admin-icon-button absolute right-5 top-5" aria-label="Close approval dialog" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">Approve Application</h2>
             <p className="text-gray-500 text-[12px] mb-6">{approvingApp.fullName} - {approvingApp.reference}</p>
 
@@ -517,11 +517,11 @@ const Applications = () => {
             )}
 
             <div className="flex justify-end gap-3 mt-6">
-              <button onClick={closeApprove} className="px-6 py-3 rounded-full border border-white/10 text-gray-400 text-[13px] font-semibold" type="button">
+              <button onClick={closeApprove} className="admin-button admin-button--secondary" type="button">
                 Cancel
               </button>
               {approveClasses.length > 0 && (
-                <button disabled={isSaving || !selectedClassId} onClick={confirmApprove} className="px-6 py-3 rounded-full bg-primary text-white text-[13px] font-semibold disabled:opacity-50" type="button">
+                <button disabled={isSaving || !selectedClassId} onClick={confirmApprove} className="admin-button admin-button--primary" type="button">
                   {isSaving ? 'Approving...' : 'Approve & Assign'}
                 </button>
               )}

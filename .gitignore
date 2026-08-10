@@ -1,35 +1,3 @@
-<<<<<<< HEAD
-# Python virtual environment
-.venv/
-venv/
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Environment secrets
-.env
-.env.*
-!.env.example
-
-# Local databases / vector store
-chroma_db/
-*.db
-
-# Test/cache folders
-.pytest_cache/
-.cache/
-
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-=======
 # Dependencies
 node_modules/
 frontend/node_modules/
@@ -45,6 +13,7 @@ backend/.env.*
 !.env.example
 !frontend/.env.example
 !backend/.env.example
+!frontend/.env.production
 
 # Generated frontend output
 dist/
@@ -52,11 +21,15 @@ frontend/dist/
 build/
 coverage/
 
-# Runtime data and user uploads
-backend/data/database.json
-backend/data/database.json.bak
+# Runtime databases, migration backups, and uploads
+backend/data/*.json
+backend/data/*.bak
+backend/data/*.tmp
+backend/data/mongo-backups/
 backend/uploads/*
 !backend/uploads/.gitkeep
+*.db
+**/chroma_db/
 
 # Package-manager caches
 .npm-cache/
@@ -81,12 +54,10 @@ temp/
 *.swp
 *.swo
 
-# Editor settings
+# Editor and operating-system files
 .vscode/
 .idea/
 *.code-workspace
-
-# Operating-system files
 .DS_Store
 Thumbs.db
 Desktop.ini
@@ -96,20 +67,22 @@ Desktop.ini
 .cache/
 .vite/
 .nyc_output/
-
-# Python / chatbot generated files
-**/.venv*/
-**/__pycache__/
-**/*.py[cod]
+.pytest_cache/
 **/.pytest_cache/
 **/.ruff_cache/
-**/chroma_db/
+
+# Python / chatbot generated files
+.venv/
+venv/
+**/.venv*/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+**/*.py[cod]
 
 # Flutter generated files
 **/.dart_tool/
 **/.pub-cache/
 **/.flutter-plugins-dependencies
->>>>>>> 8653d910e1f8cd100c4151b742285e8624c401d9
-
-# Public production frontend configuration. It contains no secrets.
-!frontend/.env.production

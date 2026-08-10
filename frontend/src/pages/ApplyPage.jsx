@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -70,7 +70,26 @@ const fallbackPrograms = [
   ['Engineering', ['Civil Engineering', 'Electrical Engineering (Majoring in Power and Energy)', 'Electrical Engineering (Majoring in Telecommunications and Networking)']],
 ];
 
-const today = new Date().toISOString().slice(0, 10);
+const admissionTimeZone = 'Africa/Mogadishu';
+const getAdmissionDateTime = (date = new Date()) => {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-CA', {
+      timeZone: admissionTimeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(date).map(({ type, value }) => [type, value])
+  );
+
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    time: `${parts.hour}:${parts.minute}`,
+  };
+};
+const today = getAdmissionDateTime().date;
 const getOneYearFromDate = (dateText) => {
   const current = new Date(`${dateText}T00:00:00Z`);
   const targetYear = current.getUTCFullYear() + 1;
@@ -83,7 +102,24 @@ const maximumAppointmentDate = getOneYearFromDate(today);
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 const appointmentStartTime = '08:00';
 const appointmentEndTime = '17:00';
+const appointmentIsNotInFuture = (date, time) => {
+  const appointment = new Date(`${date}T${time}:00+03:00`);
+  return Number.isNaN(appointment.getTime()) || appointment.getTime() <= Date.now();
+};
+const minimumAppointmentTime = (date) => {
+  const current = getAdmissionDateTime();
+  if (date !== current.date || current.time < appointmentStartTime) return appointmentStartTime;
+  if (current.time >= appointmentEndTime) return '23:59';
+
+  const nextMinute = getAdmissionDateTime(new Date(Date.now() + 60_000));
+  return nextMinute.date === date ? nextMinute.time : '23:59';
+};
 const gradeOptions = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-'];
+const paymentPlanOptions = [
+  'Admission fee only',
+  'Admission fee + Semester fee',
+  'Admission fee + Full payment',
+];
 const mobileMoneyMethods = ['EVC Plus', 'eDahab'];
 const paymentSteps = {
   'EVC Plus': [
@@ -129,7 +165,6 @@ const initialForm = {
   dateOfBirth: null,
   placeOfBirth: null,
   district: null,
-  area: null,
   email: null,
   mobile: '+252',
   sex: null,
@@ -138,6 +173,7 @@ const initialForm = {
   emergencyName: null,
   emergencyTell: '+252',
   relationship: null,
+  relationshipOther: null,
   familyStudied: null,
   schoolName: null,
   schoolDistrict: null,
@@ -162,6 +198,18 @@ const initialForm = {
   appointmentTime: null,
 };
 
+const FieldErrorContext = createContext({});
+
+function FieldErrorMessage({ name }) {
+  const errors = useContext(FieldErrorContext);
+  const error = errors[name];
+  if (!error) return null;
+
+  return (
+    <span className="apply-field-error-sr" id={`${name}-error`} role="alert">{error}</span>
+  );
+}
+
 function Stepper({ currentStep }) {
   return (
     <div className="apply-stepper">
@@ -175,36 +223,63 @@ function Stepper({ currentStep }) {
   );
 }
 
-function Field({ label, name, type = 'text', value, onChange, placeholder, min, max, maxLength, inputMode, step, readOnly = false }) {
+function Field({ label, name, type = 'text', value, onChange, placeholder, min, max, minLength, maxLength, inputMode, pattern, title, step, readOnly = false, digitsOnly = false }) {
+  const errors = useContext(FieldErrorContext);
+  const error = errors[name];
+  const handleChange = (event) => {
+    if (!digitsOnly) {
+      onChange(event);
+      return;
+    }
+
+    const numericValue = event.target.value
+      .replace(/\D/g, '')
+      .replace(/^0+/, '')
+      .slice(0, maxLength);
+    onChange({ target: { name, value: numericValue, type: 'text', checked: false } });
+  };
+
   return (
-    <label className="apply-field">
+    <label className={`apply-field ${error ? 'has-error' : ''}`} data-field-name={name}>
       <span>{label}</span>
       <input
         name={name}
         type={type}
         value={value ?? ''}
-        onChange={onChange}
+        onChange={handleChange}
         placeholder={placeholder || label}
         min={min}
         max={max}
+        minLength={minLength}
         maxLength={maxLength}
         inputMode={inputMode}
+        pattern={pattern}
+        title={title}
         step={step}
         readOnly={readOnly}
+        aria-describedby={error ? `${name}-error` : undefined}
+        aria-invalid={Boolean(error)}
       />
+      <FieldErrorMessage name={name} />
     </label>
   );
 }
 
 function PhoneField({ label, name, value, onChange, placeholder, maxLength }) {
+  const errors = useContext(FieldErrorContext);
+  const error = errors[name];
   const localNumber = (value || '').replace(/^\+252/, '');
 
   const handleChange = (event) => {
-    onChange({ target: { name, value: `+252${event.target.value}`, type: 'text', checked: false } });
+    const numericValue = event.target.value
+      .replace(/\D/g, '')
+      .replace(/^0+/, '')
+      .slice(0, maxLength);
+    onChange({ target: { name, value: `+252${numericValue}`, type: 'text', checked: false } });
   };
 
   return (
-    <label className="apply-field">
+    <label className={`apply-field ${error ? 'has-error' : ''}`} data-field-name={name}>
       <span>{label}</span>
       <div className="apply-phone-field">
         <span className="apply-phone-prefix">+252</span>
@@ -213,30 +288,41 @@ function PhoneField({ label, name, value, onChange, placeholder, maxLength }) {
           type="tel"
           value={localNumber}
           onChange={handleChange}
-          placeholder={placeholder || '61 1234567'}
+          placeholder={placeholder || '611234567'}
+          minLength={8}
           maxLength={maxLength}
-          inputMode="tel"
+          inputMode="numeric"
+          pattern="[1-9][0-9]{7,11}"
+          title="Enter 8 to 12 digits and do not start with zero"
+          aria-describedby={error ? `${name}-error` : undefined}
+          aria-invalid={Boolean(error)}
         />
       </div>
+      <FieldErrorMessage name={name} />
     </label>
   );
 }
 
-function SelectField({ label, name, value, onChange, options, placeholder = 'Select grade' }) {
+function SelectField({ label, name, value, onChange, options, placeholder = 'Select grade', disabled = false }) {
+  const errors = useContext(FieldErrorContext);
+  const error = errors[name];
   return (
-    <label className="apply-field">
+    <label className={`apply-field ${error ? 'has-error' : ''}`} data-field-name={name}>
       <span>{label}</span>
-      <select name={name} value={value ?? ''} onChange={onChange}>
+      <select name={name} value={value ?? ''} onChange={onChange} disabled={disabled} aria-describedby={error ? `${name}-error` : undefined} aria-invalid={Boolean(error)}>
         <option value="" disabled>{placeholder}</option>
         {options.map((option) => (
           <option key={option} value={option}>{option}</option>
         ))}
       </select>
+      <FieldErrorMessage name={name} />
     </label>
   );
 }
 
 function SearchableSelectField({ label, name, value, onChange, options, placeholder }) {
+  const errors = useContext(FieldErrorContext);
+  const error = errors[name];
   const [query, setQuery] = useState(value ?? '');
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
@@ -274,7 +360,7 @@ function SearchableSelectField({ label, name, value, onChange, options, placehol
   };
 
   return (
-    <label className="apply-field apply-combobox" ref={containerRef}>
+    <label className={`apply-field apply-combobox ${error ? 'has-error' : ''}`} data-field-name={name} ref={containerRef}>
       <span>{label}</span>
       <input
         name={name}
@@ -285,6 +371,8 @@ function SearchableSelectField({ label, name, value, onChange, options, placehol
         onKeyDown={(event) => { if (event.key === 'Escape') setOpen(false); }}
         placeholder={placeholder || label}
         autoComplete="off"
+        aria-describedby={error ? `${name}-error` : undefined}
+        aria-invalid={Boolean(error)}
       />
       {open && (
         <ul className="apply-combobox-menu">
@@ -301,13 +389,16 @@ function SearchableSelectField({ label, name, value, onChange, options, placehol
           )}
         </ul>
       )}
+      <FieldErrorMessage name={name} />
     </label>
   );
 }
 
 function OptionGroup({ label, name, value, options, onChange, className = '' }) {
+  const errors = useContext(FieldErrorContext);
+  const error = errors[name];
   return (
-    <fieldset className={`apply-options ${className}`}>
+    <fieldset className={`apply-options ${className} ${error ? 'has-error' : ''}`} data-field-name={name} aria-describedby={error ? `${name}-error` : undefined} aria-invalid={Boolean(error)}>
       <legend>{label}</legend>
       <div>
         {options.map((option) => (
@@ -317,11 +408,13 @@ function OptionGroup({ label, name, value, options, onChange, className = '' }) 
           </label>
         ))}
       </div>
+      <FieldErrorMessage name={name} />
     </fieldset>
   );
 }
 
 function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange }) {
+  const errors = useContext(FieldErrorContext);
   if (!method) return null;
   const isCard = method === 'Card';
 
@@ -347,7 +440,7 @@ function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange
           </>
         )}
         {mobileMoneyMethods.includes(method) && (
-          <PhoneField label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={16} />
+          <PhoneField label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={12} />
         )}
         <Field label="Payment Amount" name="paymentAmount" value={form.paymentAmount} onChange={onChange} type="number" min="0.01" step="0.01" inputMode="decimal" />
         {mobileMoneyMethods.includes(method) && method !== 'EVC Plus' && (
@@ -357,10 +450,11 @@ function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange
 
       {isCard && <p className="payment-note">We support Visa and Mastercard.</p>}
 
-      {method !== 'EVC Plus' && <label className="apply-field payment-receipt-field">
+      {method !== 'EVC Plus' && <label className={`apply-field payment-receipt-field ${errors.paymentReceipt ? 'has-error' : ''}`} data-field-name="paymentReceipt">
         <span>Upload Payment Screenshot / Receipt</span>
-        <input accept="image/png,image/jpeg,image/webp,.pdf" onChange={onReceiptChange} type="file" />
+        <input accept="image/png,image/jpeg,image/webp,.pdf" onChange={onReceiptChange} type="file" aria-describedby={errors.paymentReceipt ? 'paymentReceipt-error' : undefined} aria-invalid={Boolean(errors.paymentReceipt)} />
         {receipt && <span className="payment-receipt-name">{receipt.name}</span>}
+        <FieldErrorMessage name="paymentReceipt" />
       </label>}
       {method === 'EVC Plus' && <p className="payment-note">Please check your phone and complete the secure EVC payment confirmation. Never enter your EVC PIN on this website.</p>}
     </div>
@@ -420,10 +514,9 @@ const requiredFieldsByStep = {
     ['rollNumber', 'Roll Number'],
     ['dateOfBirth', 'Date Of Birth'],
     ['placeOfBirth', 'Place Of Birth'],
-    ['district', 'District'],
+    ['district', 'District / Address'],
     ['email', 'Email'],
     ['mobile', 'Phone Number'],
-    ['area', 'Area'],
     ['sex', 'Sex'],
     ['maritalStatus', 'Marital Status'],
     ['hasCertificate', 'Certificate status'],
@@ -452,11 +545,7 @@ const requiredFieldsByStep = {
 const isEmpty = (value) => value === null || value === undefined || String(value).trim() === '';
 const normalizeValue = (value) => String(value ?? '').trim();
 const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeValue(value)) && normalizeValue(value).length <= 254;
-const isValidPhone = (value) => {
-  const text = normalizeValue(value);
-  const digits = text.replace(/\D/g, '');
-  return /^\+?[\d\s-]{7,20}$/.test(text) && digits.length >= 7 && digits.length <= 15;
-};
+const isValidPhone = (value) => /^\+252[1-9]\d{7,11}$/.test(normalizeValue(value));
 const isValidDateValue = (value) => {
   const text = normalizeValue(value);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
@@ -474,9 +563,10 @@ const ageFromDate = (dateText) => {
 };
 const personNamePattern = /^[A-Za-z][A-Za-z\s'.-]{1,79}$/;
 const simpleTextPattern = /^[A-Za-z][A-Za-z\s'.&,/-]{1,99}$/;
+const addressPattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,()#/-]{1,149}$/;
 const schoolNamePattern = /^[A-Za-z0-9][A-Za-z0-9\s'.&,()/-]{1,149}$/;
-const idPattern = /^\d{3,30}$/;
-const rollNumberPattern = /^\d[\d/-]{2,29}$/;
+const idPattern = /^[1-9]\d{9,14}$/;
+const rollNumberPattern = /^[1-9]\d{9,14}$/;
 const optionValues = {
   sex: ['Male', 'Female'],
   maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
@@ -485,7 +575,7 @@ const optionValues = {
   familyStudied: ['Yes', 'No'],
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
-  paymentPlan: ['Admission fee only', 'Semester payment', 'Full year payment'],
+  paymentPlan: paymentPlanOptions,
   paymentMethod: ['EVC Plus', 'eDahab'],
 };
 
@@ -505,6 +595,8 @@ function ApplyPage() {
   const [generatedReceipt, setGeneratedReceipt] = useState(null);
   const [showGeneratedReceipt, setShowGeneratedReceipt] = useState(false);
   const [toast, setToast] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [pendingFocusField, setPendingFocusField] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [registration, setRegistration] = useState({ loading: true, isOpen: false, status: 'Closed', period: null });
   const [programs, setPrograms] = useState(fallbackPrograms);
@@ -539,6 +631,24 @@ function ApplyPage() {
     });
   }, []);
 
+  useEffect(() => {
+    if (!pendingFocusField) return undefined;
+
+    const animationFrame = window.requestAnimationFrame(() => {
+      const fieldContainer = document.querySelector(`[data-field-name="${pendingFocusField}"]`);
+      if (fieldContainer) {
+        fieldContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const focusTarget = fieldContainer.matches('input, select, button')
+          ? fieldContainer
+          : fieldContainer.querySelector('input:not([type="hidden"]):not(:disabled), select:not(:disabled), button:not(:disabled)');
+        focusTarget?.focus({ preventScroll: true });
+      }
+      setPendingFocusField(null);
+    });
+
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [pendingFocusField, step]);
+
   const showToast = ({ type = 'info', title, message, duration }) => {
     setToast({
       type,
@@ -552,9 +662,35 @@ function ApplyPage() {
     showToast({ type: 'error', title, message });
   };
 
+  const focusFieldError = (field, stepIndex) => {
+    if (typeof stepIndex === 'number' && step !== stepIndex) setStep(stepIndex);
+    setPendingFocusField(field);
+  };
+
+  const showFieldError = (field, message, stepIndex, title = 'Validation error') => {
+    setFieldErrors({ [field]: message });
+    showError(message, title);
+    focusFieldError(field, stepIndex);
+    return false;
+  };
+
   const updateForm = (event) => {
     const { checked, name, type, value } = event.target;
     const nextValue = type === 'checkbox' ? (checked ? value : null) : (value || null);
+
+    setFieldErrors((current) => {
+      if (!current[name] && !(name === 'program' && current.department)) return current;
+      const nextErrors = { ...current };
+      delete nextErrors[name];
+      if (name === 'program') delete nextErrors.department;
+      if (name === 'hasCertificate') {
+        delete nextErrors.certificate;
+        delete nextErrors.appointmentDate;
+        delete nextErrors.appointmentTime;
+      }
+      if (name === 'relationship') delete nextErrors.relationshipOther;
+      return nextErrors;
+    });
 
     if (name === 'hasCertificate') {
       if (nextValue === 'No') {
@@ -571,6 +707,7 @@ function ApplyPage() {
       ...current,
       [name]: nextValue,
       ...(name === 'program' ? { department: null } : {}),
+      ...(name === 'relationship' && nextValue !== 'Other specify' ? { relationshipOther: null } : {}),
       ...(name === 'hasCertificate' && nextValue === 'Yes' ? { appointmentDate: null, appointmentTime: null } : {}),
       ...(name === 'paymentMethod' ? {
         paymentPhone: '+252',
@@ -590,16 +727,21 @@ function ApplyPage() {
     if (!file) return;
     const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.type)) {
-      showError('Payment receipt must be a PDF, JPG, PNG, or WEBP file.');
+      showFieldError('paymentReceipt', 'Payment receipt must be a PDF, JPG, PNG, or WEBP file.', 3);
       event.target.value = '';
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      showError('Payment receipt file must be 10MB or smaller.');
+      showFieldError('paymentReceipt', 'Payment receipt file must be 10MB or smaller.', 3);
       event.target.value = '';
       return;
     }
     setPaymentReceipt(file);
+    setFieldErrors((current) => {
+      const nextErrors = { ...current };
+      delete nextErrors.paymentReceipt;
+      return nextErrors;
+    });
   };
 
   const handlePhoto = async (event) => {
@@ -607,28 +749,33 @@ function ApplyPage() {
     setToast(null);
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      showError('Passport photo must be an image file only.');
+      showFieldError('photo', 'Passport photo must be an image file only.', 1);
       event.target.value = '';
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      showError('Passport photo must be 5MB or smaller.');
+      showFieldError('photo', 'Passport photo must be 5MB or smaller.', 1);
       event.target.value = '';
       return;
     }
     try {
       const isPassportPhoto = await hasWhitePassportBackground(file);
       if (!isPassportPhoto) {
-        showError('Upload a passport photo only: portrait or square photo with a plain white background.');
+        showFieldError('photo', 'Upload a passport photo only: portrait or square photo with a plain white background.', 1);
         event.target.value = '';
         return;
       }
     } catch {
-      showError('Passport photo could not be read. Upload a valid JPG, PNG, or WEBP image.');
+      showFieldError('photo', 'Passport photo could not be read. Upload a valid JPG, PNG, or WEBP image.', 1);
       event.target.value = '';
       return;
     }
     setPhoto(file);
+    setFieldErrors((current) => {
+      const nextErrors = { ...current };
+      delete nextErrors.photo;
+      return nextErrors;
+    });
     if (photoPreview) URL.revokeObjectURL(photoPreview);
     setPhotoPreview(URL.createObjectURL(file));
   };
@@ -639,16 +786,21 @@ function ApplyPage() {
     if (!file) return;
     const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.type) || !fileNameLooksLikeCertificate(file.name)) {
-      showError('Certificate upload accepts certificate files only. Use PDF/JPG/PNG/WEBP and include certificate, transcript, or result in the file name.');
+      showFieldError('certificate', 'Certificate upload accepts certificate files only. Use PDF/JPG/PNG/WEBP and include certificate, transcript, or result in the file name.', 1);
       event.target.value = '';
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      showError('Certificate file must be 10MB or smaller.');
+      showFieldError('certificate', 'Certificate file must be 10MB or smaller.', 1);
       event.target.value = '';
       return;
     }
     setCertificate(file);
+    setFieldErrors((current) => {
+      const nextErrors = { ...current };
+      delete nextErrors.certificate;
+      return nextErrors;
+    });
     if (certificatePreview) URL.revokeObjectURL(certificatePreview);
     setCertificatePreview(file.type.startsWith('image/') ? URL.createObjectURL(file) : '');
   };
@@ -656,17 +808,21 @@ function ApplyPage() {
   const validateStep = (stepIndex) => {
     const missing = (requiredFieldsByStep[stepIndex] || [])
       .filter(([field]) => isEmpty(form[field]))
-      .map(([, label]) => label);
+      .map(([field, label]) => [field, label]);
 
-    if (stepIndex === 1 && !photo) missing.push('Passport Photo');
-    if (stepIndex === 1 && form.hasCertificate === 'Yes' && !certificate) missing.push('Certificate File');
+    if (stepIndex === 1 && !photo) missing.push(['photo', 'Passport Photo']);
+    if (stepIndex === 1 && form.hasCertificate === 'Yes' && !certificate) missing.push(['certificate', 'Certificate File']);
     if (stepIndex === 1 && form.hasCertificate === 'No') {
-      if (isEmpty(form.appointmentDate)) missing.push('Appointment Date');
-      if (isEmpty(form.appointmentTime)) missing.push('Appointment Time');
+      if (isEmpty(form.appointmentDate)) missing.push(['appointmentDate', 'Appointment Date']);
+      if (isEmpty(form.appointmentTime)) missing.push(['appointmentTime', 'Appointment Time']);
     }
 
     if (missing.length) {
-      showError(`Please complete: ${missing.join(', ')}`);
+      const [firstMissingField, firstMissingLabel] = missing[0];
+      const message = `${firstMissingLabel} is required.`;
+      setFieldErrors({ [firstMissingField]: message });
+      showError(message);
+      focusFieldError(firstMissingField, stepIndex);
       return false;
     }
 
@@ -674,183 +830,148 @@ function ApplyPage() {
       const graduationYear = Number(form.graduationYear);
       const currentYear = new Date().getFullYear();
       if (!Number.isInteger(graduationYear) || graduationYear < 1970 || graduationYear > currentYear) {
-        showError(`Graduation year must be between 1970 and ${currentYear}.`);
-        return false;
+        return showFieldError('graduationYear', `Graduation year must be between 1970 and ${currentYear}.`, stepIndex);
       }
       if (!gradeOptions.includes(form.percentage)) {
-        showError('Please select a valid passing grade.');
-        return false;
+        return showFieldError('percentage', 'Please select a valid passing grade.', stepIndex);
       }
     }
 
     if (stepIndex === 1) {
       if (!personNamePattern.test(normalizeValue(form.fullName))) {
-        showError('Full Name must contain only letters, spaces, apostrophes, hyphens, or periods.');
-        return false;
+        return showFieldError('fullName', 'Full Name must contain only letters, spaces, apostrophes, hyphens, or periods.', stepIndex);
       }
       if (!personNamePattern.test(normalizeValue(form.motherName))) {
-        showError("Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods.");
-        return false;
+        return showFieldError('motherName', "Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods.", stepIndex);
       }
       if (!simpleTextPattern.test(normalizeValue(form.nationality))) {
-        showError('Nationality must contain text only.');
-        return false;
+        return showFieldError('nationality', 'Nationality must contain text only.', stepIndex);
       }
       if (!idPattern.test(normalizeValue(form.nationalId))) {
-        showError('National ID must be 3-30 digits.');
-        return false;
+        return showFieldError('nationalId', 'National ID must contain 10 to 15 digits and cannot start with zero.', stepIndex);
       }
       if (!rollNumberPattern.test(normalizeValue(form.rollNumber))) {
-        showError('Roll Number must contain numbers only. Hyphens and slashes are allowed.');
-        return false;
+        return showFieldError('rollNumber', 'Roll Number must contain 10 to 15 digits and cannot start with zero.', stepIndex);
       }
       if (!isValidDateValue(form.dateOfBirth)) {
-        showError('Please enter a valid date of birth.');
-        return false;
+        return showFieldError('dateOfBirth', 'Please enter a valid date of birth.', stepIndex);
       }
       if (form.dateOfBirth > today) {
-        showError('Date of birth cannot be in the future.');
-        return false;
+        return showFieldError('dateOfBirth', 'Date of birth cannot be in the future.', stepIndex);
       }
       const age = ageFromDate(form.dateOfBirth);
       if (age < 14 || age > 100) {
-        showError('Applicant age must be between 14 and 100 years.');
-        return false;
+        return showFieldError('dateOfBirth', 'Applicant age must be between 14 and 100 years.', stepIndex);
       }
       if (!simpleTextPattern.test(normalizeValue(form.placeOfBirth))) {
-        showError('Place Of Birth must contain text only.');
-        return false;
+        return showFieldError('placeOfBirth', 'Place Of Birth must contain text only.', stepIndex);
       }
-      if (!simpleTextPattern.test(normalizeValue(form.district))) {
-        showError('District must contain text only.');
-        return false;
-      }
-      if (!simpleTextPattern.test(normalizeValue(form.area))) {
-        showError('Area must contain text only.');
-        return false;
+      if (!addressPattern.test(normalizeValue(form.district))) {
+        return showFieldError('district', 'Enter a valid district or residential address.', stepIndex);
       }
       if (!isValidEmail(form.email)) {
-        showError('Please enter a valid email address.');
-        return false;
+        return showFieldError('email', 'Please enter a valid email address, for example name@example.com.', stepIndex);
       }
       if (!isValidPhone(form.mobile)) {
-        showError('Please enter a valid phone number with 7 to 15 digits.');
-        return false;
+        return showFieldError('mobile', 'Phone Number must contain 8 to 12 digits after +252 and cannot start with zero.', stepIndex);
       }
       if (!isAllowedOption('sex', form.sex)) {
-        showError('Please select a valid sex option.');
-        return false;
+        return showFieldError('sex', 'Please select a valid sex option.', stepIndex);
       }
       if (!isAllowedOption('maritalStatus', form.maritalStatus)) {
-        showError('Please select a valid marital status.');
-        return false;
+        return showFieldError('maritalStatus', 'Please select a valid marital status.', stepIndex);
       }
       if (!isAllowedOption('hasCertificate', form.hasCertificate)) {
-        showError('Please select a valid certificate status.');
-        return false;
+        return showFieldError('hasCertificate', 'Please select a valid certificate status.', stepIndex);
       }
       if (form.hasCertificate === 'No') {
         if (!isValidDateValue(form.appointmentDate)) {
-          showError('Please enter a valid appointment date.');
-          return false;
+          return showFieldError('appointmentDate', 'Please enter a valid appointment date.', stepIndex);
         }
         if (form.appointmentDate < today) {
-          showError('Appointment date cannot be in the past.');
-          return false;
+          return showFieldError('appointmentDate', 'Appointment date cannot be in the past.', stepIndex);
         }
         if (form.appointmentDate > maximumAppointmentDate) {
-          showError('Certificate appointment date must be within one year from today.');
-          return false;
+          return showFieldError('appointmentDate', 'Certificate appointment date must be within one year from today.', stepIndex);
         }
         if (!/^\d{2}:\d{2}$/.test(normalizeValue(form.appointmentTime))) {
-          showError('Please enter a valid appointment time.');
-          return false;
+          return showFieldError('appointmentTime', 'Please enter a valid appointment time.', stepIndex);
+        }
+        if (appointmentIsNotInFuture(form.appointmentDate, form.appointmentTime)) {
+          return showFieldError('appointmentTime', 'Appointment date and time must be in the future. Please select a later time.', stepIndex);
         }
         if (form.appointmentTime < appointmentStartTime || form.appointmentTime > appointmentEndTime) {
-          showError('Appointment time must be between 8:00 AM and 5:00 PM.');
-          return false;
+          return showFieldError('appointmentTime', 'Appointment time must be between 8:00 AM and 5:00 PM.', stepIndex);
         }
       }
     }
 
     if (stepIndex === 2) {
       if (!personNamePattern.test(normalizeValue(form.emergencyName))) {
-        showError('Emergency Contact Name must contain only letters, spaces, apostrophes, hyphens, or periods.');
-        return false;
+        return showFieldError('emergencyName', 'Emergency Contact Name must contain only letters, spaces, apostrophes, hyphens, or periods.', stepIndex);
       }
       if (!isValidPhone(form.emergencyTell)) {
-        showError('Emergency phone must contain 7 to 15 digits.');
-        return false;
+        return showFieldError('emergencyTell', 'Emergency phone must contain 8 to 12 digits after +252 and cannot start with zero.', stepIndex);
       }
       if (!isAllowedOption('relationship', form.relationship)) {
-        showError('Please select a valid relationship.');
-        return false;
+        return showFieldError('relationship', 'Please select a valid relationship.', stepIndex);
+      }
+      if (form.relationship === 'Other specify' && !simpleTextPattern.test(normalizeValue(form.relationshipOther))) {
+        return showFieldError('relationshipOther', 'Please specify the relationship to the applicant.', stepIndex);
       }
       if (!isAllowedOption('familyStudied', form.familyStudied)) {
-        showError('Please select whether a family member studied here.');
-        return false;
+        return showFieldError('familyStudied', 'Please select whether a family member studied here.', stepIndex);
       }
       if (!schools.includes(normalizeValue(form.schoolName))) {
-        showError('Please select a valid Secondary School Name from the list.');
-        return false;
+        return showFieldError('schoolName', 'Please select a valid Secondary School Name from the list.', stepIndex);
       }
       if (!schoolNamePattern.test(normalizeValue(form.schoolName))) {
-        showError('Secondary School Name may contain letters and numbers.');
-        return false;
+        return showFieldError('schoolName', 'Secondary School Name may contain letters and numbers.', stepIndex);
       }
       if (!simpleTextPattern.test(normalizeValue(form.schoolDistrict))) {
-        showError('School District must contain text only.');
-        return false;
+        return showFieldError('schoolDistrict', 'School District must contain text only.', stepIndex);
       }
       if (!isAllowedOption('heardFrom', form.heardFrom)) {
-        showError('Please select a valid source for how you heard about the university.');
-        return false;
+        return showFieldError('heardFrom', 'Please select a valid source for how you heard about the university.', stepIndex);
       }
     }
 
     if (stepIndex === 3) {
       const selectedProgram = programs.find(([program]) => program === form.program);
       if (!selectedProgram) {
-        showError('Please select a valid faculty.');
-        return false;
+        return showFieldError('program', 'Please select a valid faculty.', stepIndex);
       }
       if (!selectedProgram[1].includes(form.department)) {
-        showError('Please select a department that belongs to the chosen faculty.');
-        return false;
+        return showFieldError('department', 'Please select a department that belongs to the chosen faculty.', stepIndex);
       }
       if (!isAllowedOption('modeOfStudy', form.modeOfStudy)) {
-        showError('Please select a valid mode of study.');
-        return false;
+        return showFieldError('modeOfStudy', 'Please select a valid mode of study.', stepIndex);
       }
       if (!isAllowedOption('paymentPlan', form.paymentPlan)) {
-        showError('Please select a valid payment plan.');
-        return false;
+        return showFieldError('paymentPlan', 'Please select a valid payment plan.', stepIndex);
       }
       if (!isAllowedOption('paymentMethod', form.paymentMethod)) {
-        showError('Please select a valid payment method.');
-        return false;
+        return showFieldError('paymentMethod', 'Please select a valid payment method.', stepIndex);
+      }
+      if (mobileMoneyMethods.includes(form.paymentMethod) && !isValidPhone(form.paymentPhone)) {
+        return showFieldError('paymentPhone', 'Payment Phone Number must contain 8 to 12 digits after +252 and cannot start with zero.', stepIndex);
       }
       const paymentAmount = Number(form.paymentAmount);
       if (!Number.isFinite(paymentAmount) || paymentAmount < 0.01) {
-        showError('Minimum payment amount is 0.01 USD.');
-        return false;
+        return showFieldError('paymentAmount', 'Minimum payment amount is 0.01 USD.', stepIndex);
       }
       if (form.paymentMethod === 'Card') {
         if (isEmpty(form.cardHolderName)) {
-          showError('Please enter the cardholder name.');
-          return false;
+          return showFieldError('cardHolderName', 'Please enter the cardholder name.', stepIndex);
         }
         if (isEmpty(form.cardNumber)) {
-          showError('Please enter the card number.');
-          return false;
+          return showFieldError('cardNumber', 'Please enter the card number.', stepIndex);
         }
         if (isEmpty(form.cardExpiry)) {
-          showError('Please enter the card expiry date.');
-          return false;
+          return showFieldError('cardExpiry', 'Please enter the card expiry date.', stepIndex);
         }
         if (isEmpty(form.cardCVV)) {
-          showError('Please enter the card CVV.');
-          return false;
+          return showFieldError('cardCVV', 'Please enter the card CVV.', stepIndex);
         }
       }
     }
@@ -999,8 +1120,7 @@ function ApplyPage() {
         ['Roll Number', displayValue(form.rollNumber)],
         ['Date Of Birth', displayValue(form.dateOfBirth)],
         ['Place Of Birth', displayValue(form.placeOfBirth)],
-        ['District', displayValue(form.district)],
-        ['Area', displayValue(form.area)],
+        ['District / Address', displayValue(form.district)],
         ['Email', displayValue(form.email)],
         ['Phone Number', displayValue(form.mobile)],
         ['Sex', displayValue(form.sex, 'Not selected')],
@@ -1013,7 +1133,9 @@ function ApplyPage() {
       items: [
         ['Emergency Contact', displayValue(form.emergencyName)],
         ['Emergency Phone', displayValue(form.emergencyTell)],
-        ['Relationship', displayValue(form.relationship, 'Not selected')],
+        ['Relationship', form.relationship === 'Other specify'
+          ? `Other — ${displayValue(form.relationshipOther)}`
+          : displayValue(form.relationship, 'Not selected')],
         ['Family Member Studied Here', displayValue(form.familyStudied, 'Not selected')],
         ['Secondary School', displayValue(form.schoolName)],
         ['School District', displayValue(form.schoolDistrict)],
@@ -1042,6 +1164,7 @@ function ApplyPage() {
       ],
     },
   ];
+  const selectedDepartments = programs.find(([program]) => program === form.program)?.[1] || [];
 
   return (
     <>
@@ -1076,6 +1199,7 @@ function ApplyPage() {
 
       <Stepper currentStep={step} />
 
+      <FieldErrorContext.Provider value={fieldErrors}>
       <main className="apply-card" id="application">
         <div className="apply-number">{steps[step][0]}</div>
 
@@ -1102,8 +1226,8 @@ function ApplyPage() {
             <h1>Personal Details Application</h1>
             <p className="apply-note"><Check size={14} /> Provide your basic information below to help us personalize your application experience.</p>
             <div className="personal-grid">
-              <label className="photo-upload">
-                <input accept="image/png,image/jpeg,image/webp" onChange={handlePhoto} type="file" />
+              <label className={`photo-upload ${fieldErrors.photo ? 'has-error' : ''}`} data-field-name="photo">
+                <input accept="image/png,image/jpeg,image/webp" onChange={handlePhoto} type="file" aria-describedby={fieldErrors.photo ? 'photo-error' : undefined} aria-invalid={Boolean(fieldErrors.photo)} />
                 {photoPreview ? (
                   <div className="upload-preview">
                     <img src={photoPreview} alt="Passport photo preview" />
@@ -1119,28 +1243,28 @@ function ApplyPage() {
                     <small>Passport photo only. White background required. JPG, PNG, WEBP max 5MB.</small>
                   </>
                 )}
+                <FieldErrorMessage name="photo" />
               </label>
               <div className="apply-form-grid">
                 <Field label="Full Name" name="fullName" value={form.fullName} onChange={updateForm} placeholder="Your full name" maxLength={80} />
                 <Field label="Mother's Name" name="motherName" value={form.motherName} onChange={updateForm} placeholder="Mother's name" maxLength={80} />
                 <Field label="Nationality" name="nationality" value={form.nationality} onChange={updateForm} placeholder="Your nationality" maxLength={100} />
-                <Field label="National ID" name="nationalId" value={form.nationalId} onChange={updateForm} placeholder="Enter your national id" maxLength={30} />
+                <Field label="National ID" name="nationalId" value={form.nationalId} onChange={updateForm} placeholder="10 to 15 digits" minLength={10} maxLength={15} inputMode="numeric" pattern="[1-9][0-9]{9,14}" title="Enter 10 to 15 digits and do not start with zero" digitsOnly />
               </div>
               <div className="apply-form-grid full">
-                <Field label="Roll Number" name="rollNumber" value={form.rollNumber} onChange={updateForm} placeholder="Enter your roll number" maxLength={30} />
+                <Field label="Roll Number" name="rollNumber" value={form.rollNumber} onChange={updateForm} placeholder="10 to 15 digits" minLength={10} maxLength={15} inputMode="numeric" pattern="[1-9][0-9]{9,14}" title="Enter 10 to 15 digits and do not start with zero" digitsOnly />
                 <Field label="Date Of Birth" name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={updateForm} max={today} />
                 <Field label="Place Of Birth" name="placeOfBirth" value={form.placeOfBirth} onChange={updateForm} placeholder="Enter your place of birth" maxLength={100} />
-                <SearchableSelectField label="District" name="district" value={form.district} onChange={updateForm} options={districts} placeholder="Search district" />
+                <Field label="District / Address" name="district" value={form.district} onChange={updateForm} placeholder="Enter your district or current residential address" maxLength={150} />
                 <Field label="Your Email" name="email" type="email" value={form.email} onChange={updateForm} placeholder="yourmail@gmail.com" maxLength={254} inputMode="email" />
-                <PhoneField label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} maxLength={16} />
-                <Field label="Area" name="area" value={form.area} onChange={updateForm} placeholder="Enter your area" maxLength={100} />
+                <PhoneField label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} maxLength={12} />
                 <OptionGroup label="Sex" name="sex" value={form.sex} options={['Male', 'Female']} onChange={updateForm} />
                 <OptionGroup className="wide" label="Marital Status" name="maritalStatus" value={form.maritalStatus} options={['Single', 'Marriage', 'Divorced', 'Widowed']} onChange={updateForm} />
                 <OptionGroup label="Do you have certificate?" name="hasCertificate" value={form.hasCertificate} options={['Yes', 'No']} onChange={updateForm} />
                 {form.hasCertificate === 'Yes' && (
-                  <label className="certificate-upload">
+                  <label className={`certificate-upload ${fieldErrors.certificate ? 'has-error' : ''}`} data-field-name="certificate">
                     <span>Certificate Upload</span>
-                    <input accept=".pdf,image/png,image/jpeg,image/webp" onChange={handleCertificate} type="file" />
+                    <input accept=".pdf,image/png,image/jpeg,image/webp" onChange={handleCertificate} type="file" aria-describedby={fieldErrors.certificate ? 'certificate-error' : undefined} aria-invalid={Boolean(fieldErrors.certificate)} />
                     {certificate ? (
                       <div className="upload-preview certificate-preview">
                         {certificatePreview ? (
@@ -1160,13 +1284,14 @@ function ApplyPage() {
                         <small>PDF or certificate image only. File name must identify it as a certificate.</small>
                       </>
                     )}
+                    <FieldErrorMessage name="certificate" />
                   </label>
                 )}
                 {form.hasCertificate === 'No' && (
                   <div className="certificate-appointment">
                     <p className="appointment-helper">Qabso xilliga aad keeneyso certificate ka</p>
                     <Field label="Appointment Date" name="appointmentDate" type="date" value={form.appointmentDate} onChange={updateForm} min={today} max={maximumAppointmentDate} />
-                    <Field label="Appointment Time" name="appointmentTime" type="time" value={form.appointmentTime} onChange={updateForm} min={appointmentStartTime} max={appointmentEndTime} step={60} />
+                    <Field label="Appointment Time" name="appointmentTime" type="time" value={form.appointmentTime} onChange={updateForm} min={minimumAppointmentTime(form.appointmentDate)} max={appointmentEndTime} step={60} />
                   </div>
                 )}
               </div>
@@ -1180,8 +1305,11 @@ function ApplyPage() {
             <p className="apply-note"><Check size={14} /> Add a trusted contact and secondary school details.</p>
             <div className="apply-form-grid">
               <Field label="Emergency Contact Name" name="emergencyName" value={form.emergencyName} onChange={updateForm} placeholder="Name" maxLength={80} />
-              <PhoneField label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} maxLength={16} />
+              <PhoneField label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} maxLength={12} />
               <OptionGroup className="wide" label="Relationship to applicant" name="relationship" value={form.relationship} options={['Mother', 'Father', 'Brother', 'Sister', 'Other specify']} onChange={updateForm} />
+              {form.relationship === 'Other specify' && (
+                <Field label="Specify relationship" name="relationshipOther" value={form.relationshipOther} onChange={updateForm} placeholder="For example: Uncle, Aunt, or Guardian" maxLength={100} />
+              )}
               <OptionGroup className="wide" label="Does a family member study at the university?" name="familyStudied" value={form.familyStudied} options={['Yes', 'No']} onChange={updateForm} />
               <SearchableSelectField label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} options={schools} placeholder="Search for your school" />
               <SearchableSelectField label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} options={districts} placeholder="Search school district" />
@@ -1196,31 +1324,39 @@ function ApplyPage() {
           <section>
             <h1>Program of Study & Payment Plan</h1>
             <p className="apply-note"><Check size={14} /> Select your faculty, department, mode of study, and admission payment plan.</p>
-            <div className="program-select-grid">
-              {programs.map(([program, departments]) => (
-                <article className={`program-box ${form.program === program ? 'selected' : ''}`} key={program}>
-                  <label>
-                    <input checked={form.program === program} name="program" onChange={updateForm} type="checkbox" value={program} />
-                    {program}
-                  </label>
-                  <div>
-                    {departments.map((department) => (
-                      <label key={department}>
-                        <input checked={form.department === department} disabled={form.program !== program} name="department" onChange={updateForm} type="checkbox" value={department} />
-                        {department}
-                      </label>
-                    ))}
-                  </div>
-                </article>
-              ))}
+            <div className={`program-dropdown-panel ${(fieldErrors.program || fieldErrors.department) ? 'has-error' : ''}`} data-field-name="program">
+              <div className="program-dropdown-heading">
+                <strong>Academic program</strong>
+                <span>Choose a faculty first, then select one of its available departments.</span>
+              </div>
+              <div className="program-dropdown-grid">
+                <SelectField
+                  label="Faculty"
+                  name="program"
+                  value={form.program}
+                  onChange={updateForm}
+                  options={programs.map(([program]) => program)}
+                  placeholder="Select faculty"
+                />
+                <SelectField
+                  label="Department"
+                  name="department"
+                  value={form.department}
+                  onChange={updateForm}
+                  options={selectedDepartments}
+                  placeholder={form.program ? 'Select department' : 'Select a faculty first'}
+                  disabled={!form.program}
+                />
+              </div>
             </div>
             <div className="apply-form-grid mt-form">
               <OptionGroup label="Mode Of Study" name="modeOfStudy" value={form.modeOfStudy} options={['Full Time', 'Part Time']} onChange={updateForm} />
-              <OptionGroup label="Payment Plan" name="paymentPlan" value={form.paymentPlan} options={['Admission fee only', 'Semester payment', 'Full year payment']} onChange={updateForm} />
-              <label className="integrity-declaration">
+              <OptionGroup label="Payment Plan" name="paymentPlan" value={form.paymentPlan} options={paymentPlanOptions} onChange={updateForm} />
+              <label className={`integrity-declaration ${fieldErrors.integrityDeclaration ? 'has-error' : ''}`} data-field-name="integrityDeclaration">
                 <AlertTriangle size={20} />
-                <input checked={form.integrityDeclaration === 'Yes'} name="integrityDeclaration" onChange={updateForm} type="checkbox" value="Yes" />
+                <input checked={form.integrityDeclaration === 'Yes'} name="integrityDeclaration" onChange={updateForm} type="checkbox" value="Yes" aria-describedby={fieldErrors.integrityDeclaration ? 'integrityDeclaration-error' : undefined} aria-invalid={Boolean(fieldErrors.integrityDeclaration)} />
                 <span><strong>Statement of Integrity:</strong> I declare that the information provided in this application is true and complete, and I understand that any incomplete or false information may result in delay or cancellation of my enrollment.</span>
+                <FieldErrorMessage name="integrityDeclaration" />
               </label>
               <OptionGroup className="wide" label="Payment Method" name="paymentMethod" value={form.paymentMethod} options={['EVC Plus', 'eDahab']} onChange={updateForm} />
               <PaymentMethodDetails method={form.paymentMethod} form={form} onChange={updateForm} receipt={paymentReceipt} onReceiptChange={handlePaymentReceipt} />
@@ -1271,6 +1407,7 @@ function ApplyPage() {
           </button>
         </div>
       </main>
+      </FieldErrorContext.Provider>
 
       <section className="apply-requirements-showcase" aria-labelledby="apply-requirements-title">
         <h2 id="apply-requirements-title">

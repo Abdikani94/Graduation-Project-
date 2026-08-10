@@ -50,8 +50,8 @@ const validApplication = (overrides = {}) => ({
   fullName: 'Test Applicant',
   motherName: 'Test Mother',
   nationality: 'Somali',
-  nationalId: '1001001',
-  rollNumber: '1001',
+  nationalId: '1001001001',
+  rollNumber: '1001001002',
   dateOfBirth: '2002-01-15',
   placeOfBirth: 'Mogadishu',
   district: 'Hodan',
@@ -304,7 +304,7 @@ test('applicants cannot bypass a paused registration period through the API', as
     period.status = 'Paused'; period.automaticOpen = false;
   });
   const response = await request({ method: 'POST', path: '/api/applications', body: validApplication({
-    fullName: 'Blocked Period Applicant', nationalId: '1001099', rollNumber: '1001099', email: 'blocked.period@example.com', mobile: '610000099'
+    fullName: 'Blocked Period Applicant', nationalId: '1001001099', rollNumber: '1001002099', email: 'blocked.period@example.com', mobile: '610000099'
   }) });
   assert.equal(response.status, 409);
   assert.equal(response.body.error.code, 'ADMISSION_REGISTRATION_CLOSED');
@@ -385,6 +385,46 @@ test('public applicant can submit an application', async () => {
   applicantRegistration = response.body.application;
 });
 
+test('application identifiers and phone numbers enforce numeric length and positive-value rules', async () => {
+  const accepted = await request({
+    method: 'POST',
+    path: '/api/applications',
+    body: validApplication({
+      fullName: 'Maximum Identifier Applicant',
+      nationalId: '123456789012345',
+      rollNumber: '223456789012345',
+      email: 'maximum.identifiers@example.com',
+      mobile: '+25261234567'
+    })
+  });
+  assert.equal(accepted.status, 201, accepted.body?.error?.message);
+
+  const invalidCases = [
+    ['nationalId', '123456789', 'National ID'],
+    ['nationalId', '1234567890123456', 'National ID'],
+    ['nationalId', '12345ABC90', 'National ID'],
+    ['nationalId', '0000000000', 'National ID'],
+    ['rollNumber', '123456789', 'Roll Number'],
+    ['rollNumber', '1234567890123456', 'Roll Number'],
+    ['rollNumber', '12345/7890', 'Roll Number'],
+    ['rollNumber', '0000000000', 'Roll Number'],
+    ['mobile', '6123456', 'Phone Number'],
+    ['mobile', '00000000', 'Phone Number'],
+    ['mobile', '61A345678', 'Phone Number'],
+    ['mobile', '61 234567', 'Phone Number']
+  ];
+
+  for (const [field, value, label] of invalidCases) {
+    const response = await request({
+      method: 'POST',
+      path: '/api/applications',
+      body: validApplication({ [field]: value })
+    });
+    assert.equal(response.status, 422, `${label} value ${value} should be rejected`);
+    assert.match(response.body.error.message, new RegExp(label));
+  }
+});
+
 test('university accepts C and C- passing grades', async () => {
   for (const [index, grade] of ['C', 'C-'].entries()) {
     const response = await request({
@@ -392,8 +432,8 @@ test('university accepts C and C- passing grades', async () => {
       path: '/api/applications',
       body: validApplication({
         fullName: index === 0 ? 'Accepted Grade Applicant One' : 'Accepted Grade Applicant Two',
-        nationalId: `100101${index + 1}`,
-        rollNumber: `100101${index + 1}`,
+        nationalId: `100101000${index + 1}`,
+        rollNumber: `200101000${index + 1}`,
         email: `accepted.grade.${index + 1}@example.com`,
         mobile: `61000001${index}`,
         percentage: grade
@@ -488,8 +528,8 @@ test('certificate appointment must be within one year', async () => {
     path: '/api/applications',
     body: validApplication({
       fullName: 'Maximum Appointment Applicant',
-      nationalId: '1001020',
-      rollNumber: '1001020',
+      nationalId: '1001001020',
+      rollNumber: '2001001020',
       email: 'maximum.appointment@example.com',
       mobile: '610000020',
       appointmentDate: maximumAppointmentDate
@@ -502,8 +542,8 @@ test('certificate appointment must be within one year', async () => {
     path: '/api/applications',
     body: validApplication({
       fullName: 'Late Appointment Applicant',
-      nationalId: '1001021',
-      rollNumber: '1001021',
+      nationalId: '1001001021',
+      rollNumber: '2001001021',
       email: 'late.appointment@example.com',
       mobile: '610000021',
       appointmentDate: dateBeyondOneYear
@@ -568,7 +608,7 @@ const paymentBody = (overrides = {}) => ({
 });
 
 const createPaymentDraft = async () => {
-  const suffix = Date.now().toString().slice(-8);
+  const suffix = `1${Date.now().toString().slice(-9)}`;
   const response = await request({
     method: 'POST',
     path: '/api/applications',

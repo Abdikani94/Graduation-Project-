@@ -143,7 +143,7 @@ const applications = [
     faculty: 'Medicine & Health Science',
     department: 'Nursing',
     modeOfStudy: 'Full Time',
-    paymentPlan: 'Semester payment',
+    paymentPlan: 'Admission fee + Semester fee',
     paymentMethod: 'Zaad',
     admissionFee: 25,
     paymentStatus: 'Pending',

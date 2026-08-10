@@ -96,7 +96,7 @@ const StudentSearch = () => {
             <Search size={20} className="shrink-0 text-slate-400" />
             <input value={query} onChange={(event) => setQuery(event.target.value)} className="w-full bg-transparent text-sm text-[#14294b] outline-none" placeholder="Search name, student ID, roll number, phone, email or reference" autoComplete="off" />
           </label>
-          <button type="submit" disabled={loading} className="flex min-h-14 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#303b97] to-[#176783] px-7 text-sm font-bold text-white shadow-lg shadow-blue-950/10 transition hover:-translate-y-0.5 disabled:opacity-60"><UserRoundSearch size={19} />{loading ? 'Searching...' : 'Search Students'}</button>
+          <button type="submit" disabled={loading} className="admin-button admin-button--primary min-h-14"><UserRoundSearch size={19} />{loading ? 'Searching...' : 'Search Students'}</button>
         </form>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
           <span>Search results are scoped to your role, campus, department, and assigned permissions.</span>

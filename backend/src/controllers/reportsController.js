@@ -119,7 +119,7 @@ export const exportReportCsv = async (req, res) => {
     { key: 'fullName', header: 'Full Name' },
     { key: 'faculty', header: 'Faculty' },
     { key: 'department', header: 'Department' },
-    { key: 'district', header: 'District' },
+    { key: 'district', header: 'District / Address' },
     { key: 'schoolName', header: 'School' },
     { key: 'heardFrom', header: 'Source' },
     { key: 'status', header: 'Status' },
