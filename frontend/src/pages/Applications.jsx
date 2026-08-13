@@ -18,7 +18,7 @@ const avatarFor = (name) =>
 const statusClass = (status) => {
   if (status === 'Approved') return 'text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20';
   if (status === 'Rejected') return 'text-red-500 bg-red-500/10 border-red-500/20';
-  return 'text-[#d97706] bg-[#d97706]/10 border-[#d97706]/20';
+  return 'text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20';
 };
 
 // Every field a student submits during application. Values map 1:1 to the
@@ -64,7 +64,7 @@ const EDIT_SECTIONS = [
       { key: 'department', label: 'Program' },
       { key: 'modeOfStudy', label: 'Mode of Study', options: ['Full Time', 'Part Time'] },
       { key: 'paymentPlan', label: 'Payment Plan', options: ['Admission fee only', 'Admission fee + Semester fee', 'Admission fee + Full payment'] },
-      { key: 'paymentMethod', label: 'Payment Method', options: ['EVC Plus', 'eDahab'] },
+      { key: 'paymentMethod', label: 'Payment Method', options: ['EVC Plus'] },
       { key: 'paymentPhone', label: 'Payment Phone' },
       { key: 'paymentAmount', label: 'Payment Amount' },
       { key: 'paymentTransactionId', label: 'Transaction ID' },
@@ -266,8 +266,8 @@ const Applications = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
         <StatCard icon={User} title="Total Applications" value={summary.total.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Approved Applications" value={summary.approved.toLocaleString()} color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Pending Application" value={summary.pending.toLocaleString()} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Approved Applications" value={summary.approved.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={User} title="Pending Application" value={summary.pending.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={User} title="Rejected Applications" value={summary.rejected.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
@@ -463,7 +463,7 @@ const Applications = () => {
                     ))}
                   </select>
                   {!isLoadingEditClasses && editClasses.length === 0 && (
-                    <span className="text-[#d97706] text-[12px] font-normal">No classes exist yet for this department. Create one on the Classes page.</span>
+                    <span className="text-[#2D368D] text-[12px] font-normal">No classes exist yet for this department. Create one on the Classes page.</span>
                   )}
                 </label>
                 <label className="flex flex-col gap-2 text-text-dark text-[13px] font-semibold">

@@ -123,8 +123,7 @@ const requiredCreateFields = [
   'heardFrom',
   'modeOfStudy',
   'paymentPlan',
-  'paymentMethod',
-  'paymentPhone'
+  'paymentMethod'
 ];
 
 const optionValues = {
@@ -136,7 +135,7 @@ const optionValues = {
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: ['Admission fee only', 'Admission fee + Semester fee', 'Admission fee + Full payment'],
-  paymentMethod: ['EVC Plus', 'eDahab'],
+  paymentMethod: ['EVC Plus'],
   applicantPhotoUploaded: ['Yes', 'No'],
   certificateUploaded: ['Yes', 'No']
 };
@@ -306,7 +305,7 @@ export const createApplication = async (req, res) => {
   requireOption(fields, 'modeOfStudy', 'Mode Of Study');
   requireOption(fields, 'paymentPlan', 'Payment Plan');
   requireOption(fields, 'paymentMethod', 'Payment Method');
-  if (!isValidPhone(fields.paymentPhone)) {
+  if (!isEmptyField(fields.paymentPhone) && !isValidPhone(fields.paymentPhone)) {
     fail(422, 'Payment Phone Number must contain 8 to 12 digits after +252 and cannot start with zero');
   }
 
@@ -320,8 +319,8 @@ export const createApplication = async (req, res) => {
     if (fields.modeOfStudy === 'Part Time' && !partTimeDepartments.has(department)) {
       fail(422, 'Part Time is available only for Computer Application, Computer Network & Security, and Business Administration');
     }
-    if (!['EVC Plus', 'eDahab'].includes(fields.paymentMethod)) {
-      fail(422, 'Payment method must be EVC Plus or eDahab');
+    if (fields.paymentMethod !== 'EVC Plus') {
+      fail(422, 'Payment method must be EVC Plus');
     }
     if (passportFile) {
       const photoHash = fingerprintApplicationFile(passportFile);

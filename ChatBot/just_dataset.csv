@@ -1,4 +1,4 @@
-﻿id,question,answer,category
+id,question,answer,category
 1,Waa imisa khidmadda diiwaangelinta? (Tixraac 1),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
 2,Goormaa la qaataa imtixaanka gelitaanka? (Tixraac 2),Imtixaanka waxaa la qaadaa xilliyada gelitaanka ka hor furitaanka simistarka.,Admission
 3,Kulliyadaha ugu waaweyn JUST waa kuwee? (Tixraac 3),"Caafimaad, Injineeriya, Kombuyuutar, Dhaqaale, iyo Maamul.",Faculty
@@ -6,7 +6,7 @@
 5,Jaamacaddu ma leedahay gaadiid? (Tixraac 5),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 6,Ma jirtaa maktabad? (Tixraac 6),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 7,Sidee loo galaa Student Portal? (Tixraac 7),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-8,Sidee loo bixiyaa lacagta bilaha? (Tixraac 8),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+8,Sidee loo bixiyaa lacagta bilaha? (Tixraac 8),"EVC Plus oo keliya.",Fees
 9,Jaamacaddu ma leedahay joornaalo? (Tixraac 9),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 10,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 10),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 11,Waa imisa khidmadda diiwaangelinta? (Tixraac 11),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -16,7 +16,7 @@
 15,Jaamacaddu ma leedahay gaadiid? (Tixraac 15),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 16,Ma jirtaa maktabad? (Tixraac 16),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 17,Sidee loo galaa Student Portal? (Tixraac 17),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-18,Sidee loo bixiyaa lacagta bilaha? (Tixraac 18),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+18,Sidee loo bixiyaa lacagta bilaha? (Tixraac 18),"EVC Plus oo keliya.",Fees
 19,Jaamacaddu ma leedahay joornaalo? (Tixraac 19),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 20,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 20),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 21,Waa imisa khidmadda diiwaangelinta? (Tixraac 21),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -26,7 +26,7 @@
 25,Jaamacaddu ma leedahay gaadiid? (Tixraac 25),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 26,Ma jirtaa maktabad? (Tixraac 26),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 27,Sidee loo galaa Student Portal? (Tixraac 27),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-28,Sidee loo bixiyaa lacagta bilaha? (Tixraac 28),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+28,Sidee loo bixiyaa lacagta bilaha? (Tixraac 28),"EVC Plus oo keliya.",Fees
 29,Jaamacaddu ma leedahay joornaalo? (Tixraac 29),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 30,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 30),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 31,Waa imisa khidmadda diiwaangelinta? (Tixraac 31),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -36,7 +36,7 @@
 35,Jaamacaddu ma leedahay gaadiid? (Tixraac 35),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 36,Ma jirtaa maktabad? (Tixraac 36),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 37,Sidee loo galaa Student Portal? (Tixraac 37),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-38,Sidee loo bixiyaa lacagta bilaha? (Tixraac 38),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+38,Sidee loo bixiyaa lacagta bilaha? (Tixraac 38),"EVC Plus oo keliya.",Fees
 39,Jaamacaddu ma leedahay joornaalo? (Tixraac 39),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 40,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 40),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 41,Waa imisa khidmadda diiwaangelinta? (Tixraac 41),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -46,7 +46,7 @@
 45,Jaamacaddu ma leedahay gaadiid? (Tixraac 45),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 46,Ma jirtaa maktabad? (Tixraac 46),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 47,Sidee loo galaa Student Portal? (Tixraac 47),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-48,Sidee loo bixiyaa lacagta bilaha? (Tixraac 48),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+48,Sidee loo bixiyaa lacagta bilaha? (Tixraac 48),"EVC Plus oo keliya.",Fees
 49,Jaamacaddu ma leedahay joornaalo? (Tixraac 49),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 50,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 50),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 51,Waa imisa khidmadda diiwaangelinta? (Tixraac 51),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -56,7 +56,7 @@
 55,Jaamacaddu ma leedahay gaadiid? (Tixraac 55),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 56,Ma jirtaa maktabad? (Tixraac 56),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 57,Sidee loo galaa Student Portal? (Tixraac 57),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-58,Sidee loo bixiyaa lacagta bilaha? (Tixraac 58),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+58,Sidee loo bixiyaa lacagta bilaha? (Tixraac 58),"EVC Plus oo keliya.",Fees
 59,Jaamacaddu ma leedahay joornaalo? (Tixraac 59),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 60,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 60),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 61,Waa imisa khidmadda diiwaangelinta? (Tixraac 61),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -66,7 +66,7 @@
 65,Jaamacaddu ma leedahay gaadiid? (Tixraac 65),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 66,Ma jirtaa maktabad? (Tixraac 66),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 67,Sidee loo galaa Student Portal? (Tixraac 67),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-68,Sidee loo bixiyaa lacagta bilaha? (Tixraac 68),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+68,Sidee loo bixiyaa lacagta bilaha? (Tixraac 68),"EVC Plus oo keliya.",Fees
 69,Jaamacaddu ma leedahay joornaalo? (Tixraac 69),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 70,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 70),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 71,Waa imisa khidmadda diiwaangelinta? (Tixraac 71),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -76,7 +76,7 @@
 75,Jaamacaddu ma leedahay gaadiid? (Tixraac 75),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 76,Ma jirtaa maktabad? (Tixraac 76),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 77,Sidee loo galaa Student Portal? (Tixraac 77),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-78,Sidee loo bixiyaa lacagta bilaha? (Tixraac 78),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+78,Sidee loo bixiyaa lacagta bilaha? (Tixraac 78),"EVC Plus oo keliya.",Fees
 79,Jaamacaddu ma leedahay joornaalo? (Tixraac 79),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 80,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 80),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 81,Waa imisa khidmadda diiwaangelinta? (Tixraac 81),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -86,7 +86,7 @@
 85,Jaamacaddu ma leedahay gaadiid? (Tixraac 85),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 86,Ma jirtaa maktabad? (Tixraac 86),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 87,Sidee loo galaa Student Portal? (Tixraac 87),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-88,Sidee loo bixiyaa lacagta bilaha? (Tixraac 88),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+88,Sidee loo bixiyaa lacagta bilaha? (Tixraac 88),"EVC Plus oo keliya.",Fees
 89,Jaamacaddu ma leedahay joornaalo? (Tixraac 89),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 90,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 90),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 91,Waa imisa khidmadda diiwaangelinta? (Tixraac 91),Khidmadda diiwaangelinta dhammaan kulliyadaha waa $25.,Fees
@@ -96,7 +96,7 @@
 95,Jaamacaddu ma leedahay gaadiid? (Tixraac 95),"Haa, waxaa jira basas qaada ardayda gobolka Banaadir.",Student Services
 96,Ma jirtaa maktabad? (Tixraac 96),"Haa, maktabad casri ah ayaa ku taal xarunta jaamacadda.",Student Services
 97,Sidee loo galaa Student Portal? (Tixraac 97),Adigoo isticmaalaya ID-gaaga iyo lambarka sirta ah ee laguu bixiyay.,Student Services
-98,Sidee loo bixiyaa lacagta bilaha? (Tixraac 98),"EVC, eDahab, Sahal, ZAAD, ama Bankiyada.",Fees
+98,Sidee loo bixiyaa lacagta bilaha? (Tixraac 98),"EVC Plus oo keliya.",Fees
 99,Jaamacaddu ma leedahay joornaalo? (Tixraac 99),"Haa, waxay daabacdaa joornaalo cilmi-baaris oo caalami ah.",General
 100,Waa maxay shuruudaha gelitaanka jaamacadda? (Tixraac 100),"Shahaadada dugsiga sare, sawiro, aqoonsi, iyo buuxinta foomka.",Admission
 101,Immisa sano ayay qaadataa Kuliyadda Injineeriya? (Qaybta 2 - Su'aasha 101),Kuliyadda Injineeriyadu waxay qaadataa 5 sano oo waxbarasho ah.,Academics

@@ -6,15 +6,15 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
 
-const methods = ['Method', 'EVC Plus', 'eDahab'];
+const methods = ['Method', 'EVC Plus'];
 const statuses = ['All Status', 'SUCCESS', 'PENDING', 'PROCESSING', 'UNKNOWN', 'FAILED', 'Paid', 'Pending', 'Failed', 'Refunded'];
 const money = (value, currency = 'USD') => new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD', minimumFractionDigits: 2 }).format(Number(value || 0));
 const formatDateTime = (value) => value ? new Date(value).toLocaleString() : 'Not available';
 
 const statusMeta = (status) => {
-  if (['SUCCESS', 'Paid'].includes(status)) return { label: 'Successful', className: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: CheckCircle2 };
-  if (['PENDING', 'PROCESSING', 'Pending'].includes(status)) return { label: status === 'PROCESSING' ? 'Processing' : 'Pending', className: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock3 };
-  if (status === 'UNKNOWN') return { label: 'Needs verification', className: 'bg-blue-50 text-blue-700 border-blue-200', icon: ShieldCheck };
+  if (['SUCCESS', 'Paid'].includes(status)) return { label: 'Successful', className: 'bg-[#00A451]/10 text-[#00A451] border-[#00A451]/20', icon: CheckCircle2 };
+  if (['PENDING', 'PROCESSING', 'Pending'].includes(status)) return { label: status === 'PROCESSING' ? 'Processing' : 'Pending', className: 'bg-[#2D368D]/10 text-[#2D368D] border-[#2D368D]/20', icon: Clock3 };
+  if (status === 'UNKNOWN') return { label: 'Needs verification', className: 'bg-[#2D368D]/10 text-[#2D368D] border-[#2D368D]/20', icon: ShieldCheck };
   if (['FAILED', 'Failed'].includes(status)) return { label: 'Failed', className: 'bg-red-50 text-red-700 border-red-200', icon: XCircle };
   return { label: status || 'Unknown', className: 'bg-slate-50 text-slate-600 border-slate-200', icon: Clock3 };
 };
@@ -65,18 +65,18 @@ const Payments = () => {
 
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[.18em] text-emerald-600">Finance & reconciliation</p>
+          <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#00A451]">Finance & reconciliation</p>
           <h1 className="mt-1 text-3xl font-extrabold text-[#14294b]">Payment Transactions</h1>
           <p className="mt-1 text-sm text-slate-500">Secure WaafiPay payment records linked to each applicant and student.</p>
         </div>
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-700"><ShieldCheck size={17}/> Sensitive credentials and full payer numbers are never displayed.</div>
+        <div className="flex items-center gap-2 rounded-xl border border-[#00A451]/20 bg-[#00A451]/10 px-4 py-2.5 text-xs font-semibold text-[#00A451]"><ShieldCheck size={17}/> Sensitive credentials and full payer numbers are never displayed.</div>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={WalletCards} title="Total Collected" value={money(summary.totalCollected)} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={WalletCards} title="Collected Today" value={money(summary.todayCollected)} color="#2563eb" iconColor="#2563eb" />
+        <StatCard icon={WalletCards} title="Collected Today" value={money(summary.todayCollected)} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={CheckCircle2} title="Successful Payments" value={Number(summary.successful || 0).toLocaleString()} color="#303b97" iconColor="#303b97" />
-        <StatCard icon={ReceiptText} title="All Attempts" value={Number(summary.transactions || 0).toLocaleString()} color="#fb923c" iconColor="#fb923c" />
+        <StatCard icon={ReceiptText} title="All Attempts" value={Number(summary.transactions || 0).toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </section>
 
       <Card className="grid gap-3 p-4 md:grid-cols-[minmax(240px,1fr)_180px_190px_auto]">
@@ -114,14 +114,14 @@ const Payments = () => {
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-slate-50/70 px-5 py-4"><p className="text-xs font-medium text-slate-500">Page {pagination.page || 1} of {pagination.pages || 1} · {pagination.total || 0} payment attempts</p><div className="flex gap-2"><button disabled={page <= 1 || isLoading} onClick={() => setPage((value) => Math.max(value - 1, 1))} className="admin-button admin-button--secondary admin-button--compact">Previous</button><button disabled={page >= pagination.pages || isLoading} onClick={() => setPage((value) => Math.min(value + 1, pagination.pages))} className="admin-button admin-button--primary admin-button--compact">Next</button></div></footer>
       </Card>
 
-      {selectedPayment && <div className="fixed inset-0 z-[80] grid place-items-center bg-[#0b1730]/65 p-4 backdrop-blur-sm" onMouseDown={() => setSelectedPayment(null)}><section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-[0_30px_90px_rgba(6,20,45,.4)]" onMouseDown={(event) => event.stopPropagation()}><header className="relative bg-gradient-to-br from-[#253b76] to-[#176783] px-7 py-6 text-white"><button onClick={() => setSelectedPayment(null)} className="absolute right-5 top-5 grid h-9 w-9 place-items-center border border-white/20 bg-white/10"><X size={18}/></button><span className="grid h-12 w-12 place-items-center rounded-xl bg-white/15"><ReceiptText size={25}/></span><h2 className="mt-4 text-2xl font-extrabold">Transaction Details</h2><p className="mt-1 text-sm text-white/75">Official stored provider and student payment information.</p></header><div className="p-7"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-5"><div><span className="text-xs text-slate-400">Amount paid/requested</span><strong className="block text-3xl text-[#14294b]">{money(selectedPayment.amount, selectedPayment.currency)}</strong></div><StatusBadge status={selectedPayment.status}/></div><dl className="mt-5 grid gap-x-6 gap-y-4 sm:grid-cols-2">{[
+      {selectedPayment && <div className="fixed inset-0 z-[80] grid place-items-center bg-[#0b1730]/65 p-4 backdrop-blur-sm" onMouseDown={() => setSelectedPayment(null)}><section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-[0_30px_90px_rgba(6,20,45,.4)]" onMouseDown={(event) => event.stopPropagation()}><header className="relative bg-gradient-to-br from-[#253b76] to-[var(--just-blue)] px-7 py-6 text-white"><button onClick={() => setSelectedPayment(null)} className="absolute right-5 top-5 grid h-9 w-9 place-items-center border border-white/20 bg-white/10"><X size={18}/></button><span className="grid h-12 w-12 place-items-center rounded-xl bg-white/15"><ReceiptText size={25}/></span><h2 className="mt-4 text-2xl font-extrabold">Transaction Details</h2><p className="mt-1 text-sm text-white/75">Official stored provider and student payment information.</p></header><div className="p-7"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-5"><div><span className="text-xs text-slate-400">Amount paid/requested</span><strong className="block text-3xl text-[#14294b]">{money(selectedPayment.amount, selectedPayment.currency)}</strong></div><StatusBadge status={selectedPayment.status}/></div><dl className="mt-5 grid gap-x-6 gap-y-4 sm:grid-cols-2">{[
         ['Student name', selectedPayment.applicantName || 'Not linked'], ['Student number', selectedPayment.studentNumber || 'Pending until enrollment'],
         ['Application reference', selectedPayment.reference || 'Not available'], ['Payment reference', selectedPayment.paymentReference || selectedPayment.id],
         ['Invoice ID', selectedPayment.invoiceId || 'Not available'], ['Masked payer phone', selectedPayment.payerPhone || 'Not stored'],
         ['Payment method', selectedPayment.method || 'Not available'], ['Provider', selectedPayment.provider || 'WaafiPay'],
         ['Provider transaction ID', selectedPayment.transactionCode || 'Not issued'], ['Provider state', selectedPayment.providerState || selectedPayment.status],
         ['Created', formatDateTime(selectedPayment.createdAt)], ['Paid/updated', formatDateTime(selectedPayment.paidAt || selectedPayment.updatedAt)]
-      ].map(([label,value]) => <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-3"><dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</dt><dd className="mt-1 break-words text-sm font-semibold text-[#14294b]">{value}</dd></div>)}</dl>{selectedPayment.failureMessage && <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"><strong className="block">Provider error</strong>{selectedPayment.failureMessage}</div>}<p className="mt-5 flex items-start gap-2 rounded-lg border border-blue-100 bg-blue-50 p-4 text-xs leading-5 text-blue-700"><ShieldCheck className="mt-0.5 shrink-0" size={16}/>Only masked payer information is shown. API credentials, encryption keys, and full wallet numbers remain protected on the backend.</p></div></section></div>}
+      ].map(([label,value]) => <div key={label} className="rounded-lg border border-slate-200 bg-slate-50 p-3"><dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</dt><dd className="mt-1 break-words text-sm font-semibold text-[#14294b]">{value}</dd></div>)}</dl>{selectedPayment.failureMessage && <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"><strong className="block">Provider error</strong>{selectedPayment.failureMessage}</div>}<p className="mt-5 flex items-start gap-2 rounded-lg border border-[#2D368D]/20 bg-[#2D368D]/10 p-4 text-xs leading-5 text-[#2D368D]"><ShieldCheck className="mt-0.5 shrink-0" size={16}/>Only masked payer information is shown. API credentials, encryption keys, and full wallet numbers remain protected on the backend.</p></div></section></div>}
     </PageLayout>
   );
 };

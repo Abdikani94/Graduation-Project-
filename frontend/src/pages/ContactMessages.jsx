@@ -47,7 +47,7 @@ const ContactMessages = () => {
   const statusClass = (value) => {
     if (value === 'Resolved') return 'text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20';
     if (value === 'Cancelled') return 'text-red-500 bg-red-500/10 border-red-500/20';
-    return 'text-[#d97706] bg-[#d97706]/10 border-[#d97706]/20';
+    return 'text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20';
   };
 
   const updateStatus = async (message, nextStatus) => {
@@ -94,8 +94,8 @@ const ContactMessages = () => {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
         <StatCard icon={User} title="Replied contact" value={summary.replied.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Pending contact" value={summary.pending.toLocaleString()} color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Cancelled contacts" value={summary.cancelled.toLocaleString()} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Pending contact" value={summary.pending.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
+        <StatCard icon={User} title="Cancelled contacts" value={summary.cancelled.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">

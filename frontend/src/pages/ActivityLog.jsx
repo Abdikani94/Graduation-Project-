@@ -60,7 +60,7 @@ const ActivityLog = () => {
     if (action.includes('Rejected') || action.includes('Deleted')) {
       return <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-red-500 bg-red-500/10 border-red-500/20 inline-flex items-center justify-center">{action}</span>;
     }
-    return <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#fb923c] bg-[#fb923c]/10 border-[#fb923c]/20 inline-flex items-center justify-center">{action}</span>;
+    return <span className="px-4 py-1.5 rounded-full text-[11px] font-semibold border text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20 inline-flex items-center justify-center">{action}</span>;
   };
 
   return (

@@ -137,8 +137,8 @@ const AdminUsers = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
         <StatCard icon={User} title="Total Admins" value={summary.totalAdmins.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Active Admins" value={summary.activeAdmins.toLocaleString()} color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Officers" value={summary.officers.toLocaleString()} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Active Admins" value={summary.activeAdmins.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={User} title="Officers" value={summary.officers.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">
@@ -187,7 +187,7 @@ const AdminUsers = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center ${user.role === 'Admin' ? 'text-primary bg-primary/10 border-primary/20' : 'text-[#d97706] bg-[#d97706]/10 border-[#d97706]/20'}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center ${user.role === 'Admin' ? 'text-primary bg-primary/10 border-primary/20' : 'text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20'}`}>
                       {user.role}
                     </span>
                   </td>
@@ -199,7 +199,7 @@ const AdminUsers = () => {
                   <td className="px-6 py-4 text-[13px] text-gray-400">{formatDate(user.createdAt)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button onClick={() => openEdit(user)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="Edit"><Edit2 size={17} /></button>
-                    <button onClick={() => toggleUserStatus(user)} className="text-gray-500 hover:text-[#d97706] transition-colors p-1" type="button" title="Enable or disable"><User size={17} /></button>
+                    <button onClick={() => toggleUserStatus(user)} className="text-gray-500 hover:text-[#2D368D] transition-colors p-1" type="button" title="Enable or disable"><User size={17} /></button>
                     <button onClick={() => deleteUser(user)} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Delete"><Trash2 size={17} /></button>
                   </td>
                 </tr>

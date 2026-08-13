@@ -54,8 +54,8 @@ const AdminReport = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-[15px]">
         <StatCard icon={Users} title="Total Admins/Officers" value={stats.totalAdmins.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={CheckCircle} title="Total Approved" value={stats.approved.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={XCircle} title="Total Rejected" value={stats.rejected.toLocaleString()} color="#fb923c" iconColor="#fb923c" />
-        <StatCard icon={FileText} title="Avg Processing Time" value={stats.avgProcessingTime} color="#fb923c" iconColor="#fb923c" />
+        <StatCard icon={XCircle} title="Total Rejected" value={stats.rejected.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
+        <StatCard icon={FileText} title="Avg Processing Time" value={stats.avgProcessingTime} color="#00A451" iconColor="#00A451" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
@@ -70,7 +70,7 @@ const AdminReport = () => {
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#6c6a7e' }} />
                 <Tooltip cursor={{ fill: 'rgba(255,255,255,0.02)' }} contentStyle={{ backgroundColor: '#130f1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
                 <Bar dataKey="approved" fill="#00A451" radius={[4, 4, 0, 0]} barSize={20} name="Approved" />
-                <Bar dataKey="rejected" fill="#fb923c" radius={[4, 4, 0, 0]} barSize={20} name="Rejected" />
+                <Bar dataKey="rejected" fill="#2D368D" radius={[4, 4, 0, 0]} barSize={20} name="Rejected" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -123,7 +123,7 @@ const AdminReport = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-4 py-1.5 rounded-full text-[11px] font-semibold border inline-flex items-center justify-center ${item.role === 'Admin' ? 'text-primary bg-primary/10 border-primary/20' : 'text-[#fb923c] bg-[#fb923c]/10 border-[#fb923c]/20'}`}>
+                    <span className={`px-4 py-1.5 rounded-full text-[11px] font-semibold border inline-flex items-center justify-center ${item.role === 'Admin' ? 'text-primary bg-primary/10 border-primary/20' : 'text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20'}`}>
                       {item.role}
                     </span>
                   </td>

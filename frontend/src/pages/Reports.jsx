@@ -143,9 +143,9 @@ const Reports = () => {
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
         <StatCard icon={User} title="Total Applications" value={totalApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Acceptance Rate" value={`${report.stats?.acceptanceRate || 0}%`} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Acceptance Rate" value={`${report.stats?.acceptanceRate || 0}%`} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={User} title="Rejection Rate" value={`${report.stats?.rejectionRate || 0}%`} color="#2D368D" iconColor="#2D368D" />
-        <StatCard icon={DollarSign} title="Total Revenue" value={money(report.stats?.totalRevenue)} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={DollarSign} title="Total Revenue" value={money(report.stats?.totalRevenue)} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       {/* Admission Demographics */}
@@ -173,7 +173,7 @@ const Reports = () => {
               <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#130f1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
               <Area type="monotone" dataKey="submitted" stroke="#00A451" strokeWidth={2} fillOpacity={1} fill="url(#colorSubmitted)" />
               <Area type="monotone" dataKey="paid" stroke="#2D368D" strokeWidth={2} fillOpacity={1} fill="url(#colorPaid)" />
-              <Area type="step" dataKey="target" stroke="#f97316" strokeWidth={1} strokeDasharray="4 4" fill="none" />
+              <Area type="step" dataKey="target" stroke="#2D368D" strokeWidth={1} strokeDasharray="4 4" fill="none" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -203,11 +203,11 @@ const Reports = () => {
               <p className="text-white text-[22px] font-bold">{totalApplications.toLocaleString()}</p>
               <p className="text-gray-500 text-[11px] mt-1">Applicants</p>
             </div>
-            <div className="absolute left-[10px] top-1/2 -translate-y-1/2 text-[#f97316] text-[12px] font-bold">{sexData.find((item) => item.name === 'Male')?.value || 0}%</div>
+            <div className="absolute left-[10px] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">{sexData.find((item) => item.name === 'Male')?.value || 0}%</div>
             <div className="absolute right-[10px] top-1/2 -translate-y-1/2 text-[#2D368D] text-[12px] font-bold">{sexData.find((item) => item.name === 'Female')?.value || 0}%</div>
           </div>
           <div className="flex justify-center gap-8 mt-6">
-            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#f97316]"></div><span className="text-gray-400 text-[13px] font-medium">Male</span></div>
+            <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#2D368D]"></div><span className="text-gray-400 text-[13px] font-medium">Male</span></div>
             <div className="flex items-center gap-2"><div className="w-2.5 h-2.5 rounded-full bg-[#2D368D]"></div><span className="text-gray-400 text-[13px] font-medium">Female</span></div>
           </div>
         </Card>

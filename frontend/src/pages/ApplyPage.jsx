@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import {
-  AlertTriangle,
   ArrowLeft,
   ArrowRight,
   Check,
   ChevronDown,
-  ImagePlus,
+  Camera,
   UploadCloud,
+  UserRound,
+  ShieldCheck,
 } from 'lucide-react';
 import Toast from '../components/Toast';
 import EvcPaymentFlow from '../components/EvcPaymentFlow';
@@ -14,6 +15,7 @@ import PublicNav from '../components/PublicNav';
 import PublicFooter from '../components/PublicFooter';
 import logo from '../images/logo.jpg';
 import secondarySchoolNames from '../data/secondarySchools';
+import countries from '../data/countries';
 import api from '../api/axios';
 import { readResponsePayload, responseMessage } from '../api/response';
 
@@ -120,41 +122,7 @@ const paymentPlanOptions = [
   'Admission fee + Semester fee',
   'Admission fee + Full payment',
 ];
-const mobileMoneyMethods = ['EVC Plus', 'eDahab'];
-const paymentSteps = {
-  'EVC Plus': [
-    'Dial *712#',
-    'Choose Send Money / Payment',
-    'Enter the university merchant number',
-    'Enter the admission fee amount',
-    'Confirm the payment',
-    'Enter the transaction ID in the form',
-  ],
-  'eDahab': [
-    'Open your eDahab account',
-    'Choose payment or send money',
-    'Enter the university payment number',
-    'Enter the admission fee amount',
-    'Confirm payment',
-    'Enter the transaction ID',
-  ],
-  'Zaad': [
-    'Dial *880#',
-    'Select payment or send money',
-    'Enter the university merchant number',
-    'Enter the amount',
-    'Confirm payment',
-    'Enter the transaction ID',
-  ],
-  'Sahal': [
-    'Open Sahal service',
-    'Choose payment/send money',
-    'Enter the university payment number',
-    'Enter the admission fee amount',
-    'Confirm payment',
-    'Enter the transaction ID',
-  ],
-};
+const mobileMoneyMethods = ['EVC Plus'];
 
 const initialForm = {
   fullName: null,
@@ -188,11 +156,6 @@ const initialForm = {
   paymentMethod: null,
   paymentPhone: '+252',
   paymentAmount: '0.01',
-  paymentTransactionId: null,
-  cardHolderName: null,
-  cardNumber: null,
-  cardExpiry: null,
-  cardCVV: null,
   hasCertificate: null,
   appointmentDate: null,
   appointmentTime: null,
@@ -311,16 +274,18 @@ function SelectField({ label, name, value, onChange, options, placeholder = 'Sel
       <span>{label}</span>
       <select name={name} value={value ?? ''} onChange={onChange} disabled={disabled} aria-describedby={error ? `${name}-error` : undefined} aria-invalid={Boolean(error)}>
         <option value="" disabled>{placeholder}</option>
-        {options.map((option) => (
-          <option key={option} value={option}>{option}</option>
-        ))}
+        {options.map((option) => {
+          const optionValue = typeof option === 'string' ? option : option.value;
+          const optionLabel = typeof option === 'string' ? option : option.label;
+          return <option key={optionValue} value={optionValue}>{optionLabel}</option>;
+        })}
       </select>
       <FieldErrorMessage name={name} />
     </label>
   );
 }
 
-function SearchableSelectField({ label, name, value, onChange, options, placeholder }) {
+function SearchableSelectField({ label, name, value, onChange, options, placeholder, emptyMessage = 'No matching option found' }) {
   const errors = useContext(FieldErrorContext);
   const error = errors[name];
   const [query, setQuery] = useState(value ?? '');
@@ -385,7 +350,7 @@ function SearchableSelectField({ label, name, value, onChange, options, placehol
               </li>
             ))
           ) : (
-            <li className="apply-combobox-empty">No matching school found</li>
+            <li className="apply-combobox-empty">{emptyMessage}</li>
           )}
         </ul>
       )}
@@ -413,50 +378,17 @@ function OptionGroup({ label, name, value, options, onChange, className = '' }) 
   );
 }
 
-function PaymentMethodDetails({ method, form, onChange, receipt, onReceiptChange }) {
-  const errors = useContext(FieldErrorContext);
+function PaymentMethodDetails({ method, form, onChange }) {
   if (!method) return null;
-  const isCard = method === 'Card';
 
   return (
-    <div className="payment-details-card">
-      <h3>{method} Payment</h3>
-
-      {!isCard && method !== 'EVC Plus' && (
-        <ol className="payment-steps">
-          {paymentSteps[method].map((stepText) => (
-            <li key={stepText}>{stepText}</li>
-          ))}
-        </ol>
-      )}
-
+    <div className="payment-details-card evc-only-payment">
+      <div className="evc-payment-heading"><strong>EVC Plus</strong><span>Secure mobile payment</span></div>
       <div className="apply-form-grid">
-        {isCard && (
-          <>
-            <Field label="Cardholder Name" name="cardHolderName" value={form.cardHolderName} onChange={onChange} placeholder="Name on card" maxLength={80} />
-            <Field label="Card Number" name="cardNumber" value={form.cardNumber} onChange={onChange} placeholder="1234 5678 9012 3456" maxLength={19} inputMode="numeric" />
-            <Field label="Expiry Date" name="cardExpiry" value={form.cardExpiry} onChange={onChange} placeholder="MM/YY" maxLength={5} />
-            <Field label="CVV" name="cardCVV" value={form.cardCVV} onChange={onChange} placeholder="123" maxLength={4} inputMode="numeric" />
-          </>
-        )}
-        {mobileMoneyMethods.includes(method) && (
-          <PhoneField label="Payment Phone Number" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={12} />
-        )}
-        <Field label="Payment Amount" name="paymentAmount" value={form.paymentAmount} onChange={onChange} type="number" min="0.01" step="0.01" inputMode="decimal" />
-        {mobileMoneyMethods.includes(method) && method !== 'EVC Plus' && (
-          <Field label="Transaction ID / Reference Number" name="paymentTransactionId" value={form.paymentTransactionId} onChange={onChange} maxLength={50} />
-        )}
+        <PhoneField label="EVC Phone" name="paymentPhone" value={form.paymentPhone} onChange={onChange} maxLength={12} />
+        <Field label="Amount (USD)" name="paymentAmount" value={form.paymentAmount} onChange={onChange} type="number" min="0.01" step="0.01" inputMode="decimal" />
       </div>
-
-      {isCard && <p className="payment-note">We support Visa and Mastercard.</p>}
-
-      {method !== 'EVC Plus' && <label className={`apply-field payment-receipt-field ${errors.paymentReceipt ? 'has-error' : ''}`} data-field-name="paymentReceipt">
-        <span>Upload Payment Screenshot / Receipt</span>
-        <input accept="image/png,image/jpeg,image/webp,.pdf" onChange={onReceiptChange} type="file" aria-describedby={errors.paymentReceipt ? 'paymentReceipt-error' : undefined} aria-invalid={Boolean(errors.paymentReceipt)} />
-        {receipt && <span className="payment-receipt-name">{receipt.name}</span>}
-        <FieldErrorMessage name="paymentReceipt" />
-      </label>}
-      {method === 'EVC Plus' && <p className="payment-note">Please check your phone and complete the secure EVC payment confirmation. Never enter your EVC PIN on this website.</p>}
+      <p className="payment-note">Confirm on your phone. Never enter your EVC PIN here.</p>
     </div>
   );
 }
@@ -576,7 +508,7 @@ const optionValues = {
   heardFrom: ['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify'],
   modeOfStudy: ['Full Time', 'Part Time'],
   paymentPlan: paymentPlanOptions,
-  paymentMethod: ['EVC Plus', 'eDahab'],
+  paymentMethod: ['EVC Plus'],
 };
 
 const isAllowedOption = (name, value) => optionValues[name]?.includes(value);
@@ -588,7 +520,6 @@ function ApplyPage() {
   const [photoPreview, setPhotoPreview] = useState('');
   const [certificate, setCertificate] = useState(null);
   const [certificatePreview, setCertificatePreview] = useState('');
-  const [paymentReceipt, setPaymentReceipt] = useState(null);
   const [evcPaymentSession, setEvcPaymentSession] = useState(null);
   const [draftApplication, setDraftApplication] = useState(null);
   const [confirmedEvcPayment, setConfirmedEvcPayment] = useState(null);
@@ -699,49 +630,18 @@ function ApplyPage() {
       }
     }
 
-    if (name === 'paymentMethod') {
-      setPaymentReceipt(null);
-    }
-
     setForm((current) => ({
       ...current,
       [name]: nextValue,
       ...(name === 'program' ? { department: null } : {}),
+      ...(name === 'paymentPlan' ? {
+        paymentMethod: 'EVC Plus',
+        paymentPhone: current.paymentPhone || '+252',
+        paymentAmount: current.paymentAmount || '0.01',
+      } : {}),
       ...(name === 'relationship' && nextValue !== 'Other specify' ? { relationshipOther: null } : {}),
       ...(name === 'hasCertificate' && nextValue === 'Yes' ? { appointmentDate: null, appointmentTime: null } : {}),
-      ...(name === 'paymentMethod' ? {
-        paymentPhone: '+252',
-        paymentAmount: '0.01',
-        paymentTransactionId: null,
-        cardHolderName: null,
-        cardNumber: null,
-        cardExpiry: null,
-        cardCVV: null,
-      } : {}),
     }));
-  };
-
-  const handlePaymentReceipt = (event) => {
-    const file = event.target.files?.[0];
-    setToast(null);
-    if (!file) return;
-    const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
-    if (!allowed.includes(file.type)) {
-      showFieldError('paymentReceipt', 'Payment receipt must be a PDF, JPG, PNG, or WEBP file.', 3);
-      event.target.value = '';
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      showFieldError('paymentReceipt', 'Payment receipt file must be 10MB or smaller.', 3);
-      event.target.value = '';
-      return;
-    }
-    setPaymentReceipt(file);
-    setFieldErrors((current) => {
-      const nextErrors = { ...current };
-      delete nextErrors.paymentReceipt;
-      return nextErrors;
-    });
   };
 
   const handlePhoto = async (event) => {
@@ -844,8 +744,8 @@ function ApplyPage() {
       if (!personNamePattern.test(normalizeValue(form.motherName))) {
         return showFieldError('motherName', "Mother's Name must contain only letters, spaces, apostrophes, hyphens, or periods.", stepIndex);
       }
-      if (!simpleTextPattern.test(normalizeValue(form.nationality))) {
-        return showFieldError('nationality', 'Nationality must contain text only.', stepIndex);
+      if (!countries.includes(normalizeValue(form.nationality))) {
+        return showFieldError('nationality', 'Search for and select a country from the list.', stepIndex);
       }
       if (!idPattern.test(normalizeValue(form.nationalId))) {
         return showFieldError('nationalId', 'National ID must contain 10 to 15 digits and cannot start with zero.', stepIndex);
@@ -960,20 +860,6 @@ function ApplyPage() {
       if (!Number.isFinite(paymentAmount) || paymentAmount < 0.01) {
         return showFieldError('paymentAmount', 'Minimum payment amount is 0.01 USD.', stepIndex);
       }
-      if (form.paymentMethod === 'Card') {
-        if (isEmpty(form.cardHolderName)) {
-          return showFieldError('cardHolderName', 'Please enter the cardholder name.', stepIndex);
-        }
-        if (isEmpty(form.cardNumber)) {
-          return showFieldError('cardNumber', 'Please enter the card number.', stepIndex);
-        }
-        if (isEmpty(form.cardExpiry)) {
-          return showFieldError('cardExpiry', 'Please enter the card expiry date.', stepIndex);
-        }
-        if (isEmpty(form.cardCVV)) {
-          return showFieldError('cardCVV', 'Please enter the card CVV.', stepIndex);
-        }
-      }
     }
 
     return true;
@@ -987,7 +873,6 @@ function ApplyPage() {
     payload.append('faculty', form.program ?? '');
     if (photo) payload.append('passportPhoto', photo);
     if (certificate) payload.append('certificate', certificate);
-    if (paymentReceipt) payload.append('paymentReceipt', paymentReceipt);
     return payload;
   };
 
@@ -1063,7 +948,6 @@ function ApplyPage() {
       setPhotoPreview('');
       setCertificate(null);
       setCertificatePreview('');
-      setPaymentReceipt(null);
       setDraftApplication(null);
       setConfirmedEvcPayment(null);
       setGeneratedReceipt(null);
@@ -1085,28 +969,13 @@ function ApplyPage() {
           ['Appointment Time', displayValue(form.appointmentTime)],
         ]
       : [];
-  const paymentReviewItems = form.paymentMethod === 'Card'
-    ? [
-        ['Cardholder Name', displayValue(form.cardHolderName)],
-        ['Card Number', displayValue(form.cardNumber)],
-        ['Expiry Date', displayValue(form.cardExpiry)],
-        ['Payment Amount', displayValue(form.paymentAmount)],
-        ['Payment Receipt', paymentReceipt?.name || 'Not uploaded'],
-      ]
-    : form.paymentMethod === 'EVC Plus' && confirmedEvcPayment
+  const paymentReviewItems = form.paymentMethod === 'EVC Plus' && confirmedEvcPayment
       ? [
           ['Payment Phone Number', confirmedEvcPayment.payerPhone],
           ['Payment Amount', `$${Number(confirmedEvcPayment.amount).toFixed(2)}`],
           ['Payment Status', confirmedEvcPayment.status === 'SUCCESS' ? 'Successful' : confirmedEvcPayment.status],
           ['Transaction ID', confirmedEvcPayment.providerTransactionId || 'Pending'],
           ['Payment Receipt', generatedReceipt ? 'View Receipt' : 'Generated'],
-        ]
-      : mobileMoneyMethods.includes(form.paymentMethod)
-      ? [
-          ['Payment Phone Number', displayValue(form.paymentPhone)],
-          ['Payment Amount', displayValue(form.paymentAmount)],
-          ['Transaction ID', displayValue(form.paymentTransactionId)],
-          ['Payment Receipt', paymentReceipt?.name || 'Not uploaded'],
         ]
       : [];
   const reviewSections = [
@@ -1176,7 +1045,7 @@ function ApplyPage() {
       <header className="apply-header">
         <section className="apply-hero">
           <div className="inline-flex items-center gap-2 rounded-full bg-[#F5F5F5] px-4 py-2 text-xs text-text-dark">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="h-2 w-2 rounded-full bg-[#00A451]" />
             Online admission form
           </div>
           <h1>
@@ -1191,7 +1060,7 @@ function ApplyPage() {
           </a>
         </section>
       </header>
-      {!registration.loading && <section className={`mx-auto mb-6 max-w-5xl rounded-2xl border p-4 text-center ${registration.isOpen ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-900'}`}>
+      {!registration.loading && <section className={`mx-auto mb-6 max-w-5xl rounded-2xl border p-4 text-center ${registration.isOpen ? 'border-[#00A451]/20 bg-[#00A451]/10 text-[#00A451]' : 'border-[#2D368D]/20 bg-[#2D368D]/10 text-[#2D368D]'}`}>
         <strong>{registration.isOpen ? 'Admission registration is currently open.' : registration.status === 'Paused' ? 'Admission registration is temporarily paused. Please check again later.' : registration.status === 'Expired' ? 'The admission registration deadline has passed.' : 'Admission registration is currently closed.'}</strong>
         {registration.period && <p className="mt-1 text-sm">Opening: {new Date(registration.period.openingDatetime).toLocaleString()} · Closing: {new Date(registration.period.closingDatetime).toLocaleString()}</p>}
         {registration.period?.applicantInstructions && <p className="mt-1 text-sm">{registration.period.applicantInstructions}</p>}
@@ -1237,18 +1106,29 @@ function ApplyPage() {
                     </div>
                   </div>
                 ) : (
-                  <>
-                    <ImagePlus size={30} />
-                    <strong>Click to upload</strong>
-                    <small>Passport photo only. White background required. JPG, PNG, WEBP max 5MB.</small>
-                  </>
+                  <div className="photo-placeholder">
+                    <span className="photo-placeholder-icon">
+                      <UserRound aria-hidden="true" />
+                      <i><Camera aria-hidden="true" /></i>
+                    </span>
+                    <strong>Upload photo</strong>
+                    <small>JPG, PNG or WEBP</small>
+                  </div>
                 )}
                 <FieldErrorMessage name="photo" />
               </label>
               <div className="apply-form-grid">
                 <Field label="Full Name" name="fullName" value={form.fullName} onChange={updateForm} placeholder="Your full name" maxLength={80} />
                 <Field label="Mother's Name" name="motherName" value={form.motherName} onChange={updateForm} placeholder="Mother's name" maxLength={80} />
-                <Field label="Nationality" name="nationality" value={form.nationality} onChange={updateForm} placeholder="Your nationality" maxLength={100} />
+                <SearchableSelectField
+                  label="Nationality"
+                  name="nationality"
+                  value={form.nationality}
+                  onChange={updateForm}
+                  options={countries}
+                  placeholder="Search and select a country"
+                  emptyMessage="No matching country found"
+                />
                 <Field label="National ID" name="nationalId" value={form.nationalId} onChange={updateForm} placeholder="10 to 15 digits" minLength={10} maxLength={15} inputMode="numeric" pattern="[1-9][0-9]{9,14}" title="Enter 10 to 15 digits and do not start with zero" digitsOnly />
               </div>
               <div className="apply-form-grid full">
@@ -1259,7 +1139,14 @@ function ApplyPage() {
                 <Field label="Your Email" name="email" type="email" value={form.email} onChange={updateForm} placeholder="yourmail@gmail.com" maxLength={254} inputMode="email" />
                 <PhoneField label="Phone Number" name="mobile" value={form.mobile} onChange={updateForm} maxLength={12} />
                 <OptionGroup label="Sex" name="sex" value={form.sex} options={['Male', 'Female']} onChange={updateForm} />
-                <OptionGroup className="wide" label="Marital Status" name="maritalStatus" value={form.maritalStatus} options={['Single', 'Marriage', 'Divorced', 'Widowed']} onChange={updateForm} />
+                <SelectField
+                  label="Marital Status"
+                  name="maritalStatus"
+                  value={form.maritalStatus}
+                  options={['Single', { value: 'Marriage', label: 'Married' }, 'Divorced', 'Widowed']}
+                  onChange={updateForm}
+                  placeholder="Select marital status"
+                />
                 <OptionGroup label="Do you have certificate?" name="hasCertificate" value={form.hasCertificate} options={['Yes', 'No']} onChange={updateForm} />
                 {form.hasCertificate === 'Yes' && (
                   <label className={`certificate-upload ${fieldErrors.certificate ? 'has-error' : ''}`} data-field-name="certificate">
@@ -1300,28 +1187,28 @@ function ApplyPage() {
         )}
 
         {step === 2 && (
-          <section>
-            <h1>Emergency Contact & School Information</h1>
-            <p className="apply-note"><Check size={14} /> Add a trusted contact and secondary school details.</p>
+          <section className="emergency-school-step">
+            <h1>Emergency Contact & School</h1>
+            <p className="apply-note"><Check size={14} /> Enter one trusted contact and your secondary-school details.</p>
             <div className="apply-form-grid">
-              <Field label="Emergency Contact Name" name="emergencyName" value={form.emergencyName} onChange={updateForm} placeholder="Name" maxLength={80} />
-              <PhoneField label="Tell" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} maxLength={12} />
-              <OptionGroup className="wide" label="Relationship to applicant" name="relationship" value={form.relationship} options={['Mother', 'Father', 'Brother', 'Sister', 'Other specify']} onChange={updateForm} />
+              <Field label="Contact Name" name="emergencyName" value={form.emergencyName} onChange={updateForm} placeholder="Full name" maxLength={80} />
+              <PhoneField label="Contact Phone" name="emergencyTell" value={form.emergencyTell} onChange={updateForm} maxLength={12} />
+              <SelectField label="Relationship" name="relationship" value={form.relationship} options={['Mother', 'Father', 'Brother', 'Sister', 'Other specify']} onChange={updateForm} placeholder="Select relationship" />
               {form.relationship === 'Other specify' && (
                 <Field label="Specify relationship" name="relationshipOther" value={form.relationshipOther} onChange={updateForm} placeholder="For example: Uncle, Aunt, or Guardian" maxLength={100} />
               )}
-              <OptionGroup className="wide" label="Does a family member study at the university?" name="familyStudied" value={form.familyStudied} options={['Yes', 'No']} onChange={updateForm} />
-              <SearchableSelectField label="Secondary School Name" name="schoolName" value={form.schoolName} onChange={updateForm} options={schools} placeholder="Search for your school" />
+              <OptionGroup label="Family member at JUST?" name="familyStudied" value={form.familyStudied} options={['Yes', 'No']} onChange={updateForm} />
+              <SearchableSelectField label="Secondary School" name="schoolName" value={form.schoolName} onChange={updateForm} options={schools} placeholder="Search school" />
               <SearchableSelectField label="School District" name="schoolDistrict" value={form.schoolDistrict} onChange={updateForm} options={districts} placeholder="Search school district" />
               <Field label="Graduation Year" name="graduationYear" type="number" value={form.graduationYear} onChange={updateForm} min="1970" max={String(new Date().getFullYear())} inputMode="numeric" />
               <SelectField label="Passing Grade" name="percentage" value={form.percentage} onChange={updateForm} options={gradeOptions} />
-              <OptionGroup className="wide" label="How did you know about university?" name="heardFrom" value={form.heardFrom} options={['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify']} onChange={updateForm} />
+              <SelectField label="How did you hear about JUST?" name="heardFrom" value={form.heardFrom} options={['Social Media', 'Friends', 'University came to our School', 'Parents', 'Seminars of the University', 'Other specify']} onChange={updateForm} placeholder="Select source" />
             </div>
           </section>
         )}
 
         {step === 3 && (
-          <section>
+          <section className="program-payment-step">
             <h1>Program of Study & Payment Plan</h1>
             <p className="apply-note"><Check size={14} /> Select your faculty, department, mode of study, and admission payment plan.</p>
             <div className={`program-dropdown-panel ${(fieldErrors.program || fieldErrors.department) ? 'has-error' : ''}`} data-field-name="program">
@@ -1349,17 +1236,16 @@ function ApplyPage() {
                 />
               </div>
             </div>
-            <div className="apply-form-grid mt-form">
-              <OptionGroup label="Mode Of Study" name="modeOfStudy" value={form.modeOfStudy} options={['Full Time', 'Part Time']} onChange={updateForm} />
-              <OptionGroup label="Payment Plan" name="paymentPlan" value={form.paymentPlan} options={paymentPlanOptions} onChange={updateForm} />
+            <div className="apply-form-grid mt-form program-payment-layout">
+              <OptionGroup className="study-mode-options" label="Study Mode" name="modeOfStudy" value={form.modeOfStudy} options={['Full Time', 'Part Time']} onChange={updateForm} />
+              <SelectField label="Payment Plan" name="paymentPlan" value={form.paymentPlan} options={paymentPlanOptions} onChange={updateForm} placeholder="Select payment plan" />
               <label className={`integrity-declaration ${fieldErrors.integrityDeclaration ? 'has-error' : ''}`} data-field-name="integrityDeclaration">
-                <AlertTriangle size={20} />
+                <span className="integrity-icon" aria-hidden="true"><ShieldCheck size={18} /></span>
                 <input checked={form.integrityDeclaration === 'Yes'} name="integrityDeclaration" onChange={updateForm} type="checkbox" value="Yes" aria-describedby={fieldErrors.integrityDeclaration ? 'integrityDeclaration-error' : undefined} aria-invalid={Boolean(fieldErrors.integrityDeclaration)} />
-                <span><strong>Statement of Integrity:</strong> I declare that the information provided in this application is true and complete, and I understand that any incomplete or false information may result in delay or cancellation of my enrollment.</span>
+                <span className="integrity-copy"><strong>Confirm information accuracy</strong><small>I declare that the information in this application is true and complete.</small></span>
                 <FieldErrorMessage name="integrityDeclaration" />
               </label>
-              <OptionGroup className="wide" label="Payment Method" name="paymentMethod" value={form.paymentMethod} options={['EVC Plus', 'eDahab']} onChange={updateForm} />
-              <PaymentMethodDetails method={form.paymentMethod} form={form} onChange={updateForm} receipt={paymentReceipt} onReceiptChange={handlePaymentReceipt} />
+              {form.paymentPlan && <PaymentMethodDetails method="EVC Plus" form={form} onChange={updateForm} />}
             </div>
           </section>
         )}

@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_theme.dart';
 import '../../../core/network/api_client.dart';
@@ -17,16 +16,11 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  late String method = const {'EVC Plus', 'eDahab'}
-          .contains(widget.draft.paymentMethod)
-      ? widget.draft.paymentMethod
-      : 'EVC Plus';
+  final String method = 'EVC Plus';
   late final TextEditingController phoneController =
       TextEditingController(text: widget.draft.phone);
   late final TextEditingController confirmController =
       TextEditingController(text: widget.draft.phone);
-  late final TextEditingController transactionController =
-      TextEditingController(text: widget.draft.paymentTransactionId);
   bool authorized = true;
   String paymentStatus = 'Not started';
   bool isPaying = false;
@@ -36,7 +30,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void dispose() {
     phoneController.dispose();
     confirmController.dispose();
-    transactionController.dispose();
     super.dispose();
   }
 
@@ -73,34 +66,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       selected: method == 'EVC Plus',
                       onTap: () => setState(() => method = 'EVC Plus'),
                     ),
-                    const SizedBox(height: 10),
-                    _PaymentMethodCard(
-                      badge: 'eD',
-                      title: 'eDahab',
-                      subtitle: 'Pay with your Somtel eDahab wallet',
-                      selected: method == 'eDahab',
-                      onTap: () => setState(() => method = 'eDahab'),
-                    ),
                     const SizedBox(height: 12),
                     _PhoneInput(
                       label: 'Mobile Number',
                       controller: phoneController,
                     ),
-                    if (method != 'EVC Plus') ...[
-                      const SizedBox(height: 12),
-                      _PhoneInput(
-                        label: 'Transaction ID / Reference',
-                        controller: transactionController,
-                      ),
-                      const SizedBox(height: 12),
-                      OutlinedButton.icon(
-                        onPressed: _pickPaymentReceipt,
-                        icon: const Icon(Icons.upload_file),
-                        label: Text(widget.draft.paymentReceiptName.isEmpty
-                            ? 'Upload payment receipt'
-                            : widget.draft.paymentReceiptName),
-                      ),
-                    ],
                     const SizedBox(height: 12),
                     _PhoneInput(
                       label: 'Confirm Mobile Number',
@@ -170,18 +140,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
       _showMessage('Mobile numbers do not match');
       return;
     }
-    if (method != 'EVC Plus' &&
-        (transactionController.text.trim().isEmpty ||
-            widget.draft.paymentReceiptBytes == null)) {
-      _showMessage('Transaction reference and payment receipt are required.');
-      return;
-    }
 
     widget.draft
       ..paymentMethod = method
       ..payerPhone = phone
       ..paymentAmount = '25.00'
-      ..paymentTransactionId = transactionController.text.trim()
+      ..paymentTransactionId = ''
       ..paymentStatus = 'PROCESSING';
 
     final validationError = widget.draft.validateForSubmission();
@@ -198,12 +162,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
       }
       if (!mounted) return;
 
-      if (method != 'EVC Plus') {
-        setState(() => paymentStatus = widget.draft.paymentStatus);
-        _showMessage('Application submitted: ${widget.draft.reference}');
-        Navigator.of(context).pop(true);
-        return;
-      }
 
       final previewData = await repository.previewPayment(
         draft: widget.draft,
@@ -286,32 +244,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
   String _idempotencyKey() {
     final random = Random.secure();
     return 'mobile-${DateTime.now().microsecondsSinceEpoch}-${random.nextInt(1 << 32)}';
-  }
-
-  Future<void> _pickPaymentReceipt() async {
-    try {
-      final data = await const MethodChannel('just_admission/document_picker')
-          .invokeMapMethod<String, dynamic>('pickPaymentReceipt');
-      final bytes = data?['bytes'];
-      final mime = (data?['mimeType'] ?? '').toString();
-      if (data == null ||
-          bytes is! Uint8List ||
-          bytes.isEmpty ||
-          bytes.length > 10 * 1024 * 1024 ||
-          !const ['application/pdf', 'image/jpeg', 'image/png', 'image/webp']
-              .contains(mime)) {
-        _showMessage('Receipt must be PDF/JPG/PNG/WEBP and 10MB or smaller.');
-        return;
-      }
-      setState(() {
-        widget.draft.paymentReceiptBytes = bytes;
-        widget.draft.paymentReceiptName =
-            (data['name'] ?? 'receipt').toString();
-        widget.draft.paymentReceiptMimeType = mime;
-      });
-    } on PlatformException catch (error) {
-      _showMessage(error.message ?? 'Unable to select receipt.');
-    }
   }
 
   void _showMessage(String message) {

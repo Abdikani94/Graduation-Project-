@@ -144,7 +144,7 @@ const Classes = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
         <StatCard icon={GraduationCap} title="Total Classes" value={summary.total.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={GraduationCap} title="Open Classes" value={summary.open.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={GraduationCap} title="Full Classes" value={summary.full.toLocaleString()} color="#fb923c" iconColor="#fb923c" />
+        <StatCard icon={GraduationCap} title="Full Classes" value={summary.full.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">

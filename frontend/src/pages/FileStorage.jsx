@@ -20,10 +20,10 @@ const emptyUpload = {
   selectedUsers: [], selectedTeam: '', selectedDepartment: '', tags: '', approvalRequired: true, expiryDate: '',
 };
 const statusStyles = {
-  Approved: 'text-emerald-700 bg-emerald-50 border-emerald-200',
-  Pending: 'text-amber-700 bg-amber-50 border-amber-200',
+  Approved: 'text-[#00A451] bg-[#00A451]/10 border-[#00A451]/20',
+  Pending: 'text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20',
   Rejected: 'text-red-700 bg-red-50 border-red-200',
-  'Revision Requested': 'text-orange-700 bg-orange-50 border-orange-200',
+  'Revision Requested': 'text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20',
 };
 const allowedFileExtensions = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'ppt', 'pptx', 'txt', 'jpg', 'jpeg', 'png', 'zip']);
 const maxUploadBytes = 10 * 1024 * 1024;
@@ -223,9 +223,9 @@ function FileStorage() {
 
   const cards = [
     ['Total Files', stats.totalFiles, FolderOpen, '#2D368D'], ['Daily Reports', stats.dailyReports, FileText, '#00A451'],
-    ['Monthly Reports', stats.monthlyReports, FileClock, '#2563eb'], ['Shared With Me', stats.sharedWithMe, Users, '#7c3aed'],
-    ['Pending Approval', stats.pendingApproval, FileCheck2, '#d97706'], ['Storage Used', bytes(stats.storageUsed), HardDrive, '#0f766e'],
-    ...(isAdmin ? [['User Uploads', stats.totalUserUploads, Upload, '#475569'], ['Approved', stats.approvedFiles, CheckCircle2, '#059669'], ['Rejected', stats.rejectedFiles, XCircle, '#dc2626']] : []),
+    ['Monthly Reports', stats.monthlyReports, FileClock, '#2D368D'], ['Shared With Me', stats.sharedWithMe, Users, '#2D368D'],
+    ['Pending Approval', stats.pendingApproval, FileCheck2, '#2D368D'], ['Storage Used', bytes(stats.storageUsed), HardDrive, '#00A451'],
+    ...(isAdmin ? [['User Uploads', stats.totalUserUploads, Upload, '#475569'], ['Approved', stats.approvedFiles, CheckCircle2, '#00A451'], ['Rejected', stats.rejectedFiles, XCircle, '#dc2626']] : []),
   ];
 
   return (

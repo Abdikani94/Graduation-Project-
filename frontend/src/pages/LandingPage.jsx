@@ -24,18 +24,18 @@ import team from '../images/team.jpg';
 import warsame from '../images/warsame.jpeg';
 import { readResponsePayload, responseMessage } from '../api/response';
 const centers = [
-  { abbreviation: 'JTECH', name: 'Jamhuriya Technology Solutions', logo: 'https://www.jtech.so/images/jtech-light-logo.svg', accent: '#1866b2', website: 'https://www.jtech.so/' },
-  { abbreviation: 'JIC', name: 'Jamhuriya Incubation Center', logo: 'https://www.jic.just.edu.so/assets/images/logo.png', accent: '#007c66', website: 'https://www.jic.just.edu.so/' },
-  { abbreviation: 'JCGS', name: 'Jamhuriya Center for Graduate Studies', glyph: 'graduate', accent: '#6d4db8', website: 'https://j.just.edu.so/centers/center-for-graduate-studies' },
-  { abbreviation: 'ULC', name: 'University Language Center', glyph: 'language', accent: '#008f9c', website: 'https://j.just.edu.so/announcements' },
-  { abbreviation: 'JRC', name: 'Jamhuriya Research Center', logo: jrc, accent: '#1a9c63', website: 'https://j.just.edu.so/centers/center-for-research-development' },
-  { abbreviation: 'JPTEC', name: 'Jamhuriya Professional Training & Examination Center', glyph: 'certificate', accent: '#d07513', website: 'https://j.just.edu.so/centers/jptec' },
-  { abbreviation: 'PEARSON', name: 'Pearson VUE Authorized Test Center', logo: 'https://www.pearsonvue.com/content/dam/VUE/vue/global/images/test-centers/resources/Pearson-VUE-Authorized-Test-Center-US.jpg', accent: '#2673a8', website: 'https://j.just.edu.so/centers/jptec' },
-  { abbreviation: 'ACCA', name: 'Association of Chartered Certified Accountants', glyph: 'finance', accent: '#b54242' },
-  { abbreviation: 'SAIL', name: 'Somali-language AI and Innovation Lab', logo: 'https://www.sail.just.edu.so/assets/images/footer_logo.png', accent: '#7946aa', website: 'https://www.sail.just.edu.so/' },
-  { abbreviation: 'CAPR', name: 'Center for Antimicrobial Resistance Research', glyph: 'antimicrobial', accent: '#0b8491' },
-  { abbreviation: 'NSP', name: 'Neuroscience Psychologists', glyph: 'neuroscience', accent: '#cc5b47' },
-  { abbreviation: 'JSC', name: 'Jamhuriya STEM Center', logo: jsc, accent: '#2564c4' },
+  { abbreviation: 'JTECH', name: 'Jamhuriya Technology Solutions', logo: 'https://www.jtech.so/images/jtech-light-logo.svg', accent: '#2D368D', website: 'https://www.jtech.so/' },
+  { abbreviation: 'JIC', name: 'Jamhuriya Incubation Center', logo: 'https://www.jic.just.edu.so/assets/images/logo.png', accent: '#00A451', website: 'https://www.jic.just.edu.so/' },
+  { abbreviation: 'JCGS', name: 'Jamhuriya Center for Graduate Studies', glyph: 'graduate', accent: '#2D368D', website: 'https://j.just.edu.so/centers/center-for-graduate-studies' },
+  { abbreviation: 'ULC', name: 'University Language Center', glyph: 'language', accent: '#2D368D', website: 'https://j.just.edu.so/announcements' },
+  { abbreviation: 'JRC', name: 'Jamhuriya Research Center', logo: jrc, accent: '#00A451', website: 'https://j.just.edu.so/centers/center-for-research-development' },
+  { abbreviation: 'JPTEC', name: 'Jamhuriya Professional Training & Examination Center', glyph: 'certificate', accent: '#2D368D', website: 'https://j.just.edu.so/centers/jptec' },
+  { abbreviation: 'PEARSON', name: 'Pearson VUE Authorized Test Center', logo: 'https://www.pearsonvue.com/content/dam/VUE/vue/global/images/test-centers/resources/Pearson-VUE-Authorized-Test-Center-US.jpg', accent: '#2D368D', website: 'https://j.just.edu.so/centers/jptec' },
+  { abbreviation: 'ACCA', name: 'Association of Chartered Certified Accountants', glyph: 'finance', accent: '#2D368D' },
+  { abbreviation: 'SAIL', name: 'Somali-language AI and Innovation Lab', logo: 'https://www.sail.just.edu.so/assets/images/footer_logo.png', accent: '#2D368D', website: 'https://www.sail.just.edu.so/' },
+  { abbreviation: 'CAPR', name: 'Center for Antimicrobial Resistance Research', glyph: 'antimicrobial', accent: '#00A451' },
+  { abbreviation: 'NSP', name: 'Neuroscience Psychologists', glyph: 'neuroscience', accent: '#2D368D' },
+  { abbreviation: 'JSC', name: 'Jamhuriya STEM Center', logo: jsc, accent: '#2D368D' },
 ];
 
 const faculties = [
@@ -285,7 +285,7 @@ function LandingPage() {
       <header className="home-hero hero-pattern relative px-5 sm:px-8 lg:px-12">
         <section id="home" className="home-hero-content mx-auto flex max-w-5xl flex-col items-center text-center">
           <div className="home-hero-badge inline-flex items-center gap-2 rounded-full bg-[#F5F5F5] px-4 py-2 text-xs text-text-dark">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            <span className="h-2 w-2 rounded-full bg-[#00A451]" />
             Admissions open - class of 2026
           </div>
           <h1 className="home-hero-title max-w-4xl font-extrabold tracking-normal">
@@ -360,7 +360,7 @@ function LandingPage() {
               </div>
             </div>
             <div className="relative min-h-[360px] flex-1 overflow-hidden rounded-[28px] bg-[#eef0ff]">
-              <div className="absolute inset-x-8 bottom-0 top-10 rounded-t-full bg-emerald-100" />
+              <div className="absolute inset-x-8 bottom-0 top-10 rounded-t-full bg-[#00A451]/10" />
               <img src={warsame} alt="Abdirisakh Warsame Abdulle" className="absolute inset-x-0 bottom-0 mx-auto h-full object-cover" />
               <div className="absolute bottom-8 left-8 right-8 rounded-2xl bg-white/75 p-4 text-[#20113b] backdrop-blur">
                 <p className="text-xl font-extrabold">Abdirisakh Warsame Abdulle</p>

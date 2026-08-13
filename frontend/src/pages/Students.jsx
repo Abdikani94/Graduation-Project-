@@ -183,7 +183,7 @@ const Students = () => {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
         <StatCard icon={User} title="Total Students" value={summary.total.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Send students" value={summary.whatsappSent.toLocaleString()} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Send students" value={summary.whatsappSent.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={User} title="Un-sends students" value={summary.whatsappPending.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
@@ -365,7 +365,7 @@ const Students = () => {
                     ))}
                   </select>
                   {!isLoadingEditClasses && editClasses.length === 0 && (
-                    <span className="text-[#d97706] text-[12px] font-normal">No classes exist yet for this faculty/department. Create one on the Classes page.</span>
+                    <span className="text-[#2D368D] text-[12px] font-normal">No classes exist yet for this faculty/department. Create one on the Classes page.</span>
                   )}
                 </label>
               </div>

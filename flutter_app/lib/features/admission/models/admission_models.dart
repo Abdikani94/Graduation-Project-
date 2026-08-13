@@ -147,10 +147,7 @@ class ApplicationDraft {
     'Semester payment',
     'Full year payment'
   ];
-  static final _paymentMethodOptions = [
-    'EVC Plus',
-    'eDahab',
-  ];
+  static final _paymentMethodOptions = ['EVC Plus'];
 
   Map<String, dynamic> toApiPayload() {
     return {

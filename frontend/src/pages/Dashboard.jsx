@@ -113,8 +113,8 @@ const Dashboard = () => {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
         <StatCard icon={Users} title="Total Applications" value={isLoading ? '...' : stats.totalApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={UserCheck} title="Approved Applications" value={isLoading ? '...' : stats.approvedApplications.toLocaleString()} color="#f97316" iconColor="#f97316" />
-        <StatCard icon={Clock} title="Pending Application" value={isLoading ? '...' : stats.pendingApplications.toLocaleString()} color="#f97316" iconColor="#f97316" />
+        <StatCard icon={UserCheck} title="Approved Applications" value={isLoading ? '...' : stats.approvedApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={Clock} title="Pending Application" value={isLoading ? '...' : stats.pendingApplications.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={UserX} title="Rejected Applications" value={isLoading ? '...' : stats.rejectedApplications.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
@@ -208,17 +208,17 @@ const Dashboard = () => {
                     <stop offset="95%" stopColor="#2D368D" stopOpacity={0}/>
                   </linearGradient>
                   <linearGradient id="colorSubmitted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#00A451" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#00A451" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.02)" />
                 <XAxis dataKey="name" stroke="#6c6a7e" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6c6a7e'}} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6c6a7e'}} ticks={[20, 60, 100, 140]} />
                 <RechartsTooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="rejected" stroke="#f97316" fill="none" strokeWidth={2} strokeDasharray="4 4" name="Rejected" />
+                <Area type="monotone" dataKey="rejected" stroke="#2D368D" fill="none" strokeWidth={2} strokeDasharray="4 4" name="Rejected" />
                 <Area type="monotone" dataKey="accepted" stroke="#2D368D" fillOpacity={1} fill="url(#colorAccepted)" strokeWidth={2} name="Accepted" />
-                <Area type="monotone" dataKey="submitted" stroke="#0ea5e9" fillOpacity={1} fill="url(#colorSubmitted)" strokeWidth={2} name="Submitted" />
+                <Area type="monotone" dataKey="submitted" stroke="#00A451" fillOpacity={1} fill="url(#colorSubmitted)" strokeWidth={2} name="Submitted" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

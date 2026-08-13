@@ -253,8 +253,8 @@ const Programs = () => {
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
         <StatCard icon={User} title="Total Programs" value={summary.totalPrograms.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Total Faculties" value={summary.totalFaculties.toLocaleString()} color="#d97706" iconColor="#d97706" />
-        <StatCard icon={User} title="Total Admission fees" value={money(summary.totalAdmissionFees)} color="#d97706" iconColor="#d97706" />
+        <StatCard icon={User} title="Total Faculties" value={summary.totalFaculties.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
+        <StatCard icon={User} title="Total Admission fees" value={money(summary.totalAdmissionFees)} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">
