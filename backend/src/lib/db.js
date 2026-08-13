@@ -31,6 +31,10 @@ let mongoClient;
 let mongoDatabase;
 let mongoConnectionLogged = false;
 let updateQueue = Promise.resolve();
+const mongoWriteLockId = 'jamhuriya-global-write-lock';
+const mongoWriteLockTimeoutMs = 30_000;
+const mongoWriteLockWaitMs = 50;
+const protectedMongoCollections = ['users', 'applications', 'students', 'payments', 'classes'];
 
 const ensureDirectory = async (filePath) => {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -159,7 +163,24 @@ const ensureMongoDb = async () => {
   ]);
   const userCount = await database.collection('users').countDocuments();
   if (userCount === 0) {
-    await writeMongoDb(createSeedData({ hashPassword }));
+    const existingCoreRecords = await Promise.all(
+      protectedMongoCollections.filter((name) => name !== 'users')
+        .map((name) => database.collection(name).countDocuments())
+    );
+    if (existingCoreRecords.some((count) => count > 0)) {
+      throw new Error('MongoDB contains application data but no users. Automatic seeding was blocked to prevent data loss.');
+    }
+    const seed = normalizeData(createSeedData({ hashPassword }));
+    await writeSingleton(database, 'meta', seed.meta || {});
+    await writeSingleton(database, 'settings', seed.settings || {});
+    for (const collection of collections) {
+      const documents = seed[collection] || [];
+      if (documents.length) {
+        await database.collection(collection).bulkWrite(documents.map((document) => ({
+          updateOne: { filter: { id: document.id }, update: { $setOnInsert: document }, upsert: true }
+        })));
+      }
+    }
   }
 };
 
@@ -196,13 +217,28 @@ const readMongoDb = async () => {
 
 const writeMongoDb = async (data) => {
   const database = await getMongoDatabase();
+  for (const collection of protectedMongoCollections) {
+    const currentCount = await database.collection(collection).countDocuments();
+    const nextCount = Array.isArray(data[collection]) ? data[collection].length : 0;
+    const suspiciousFloor = Math.max(3, Math.floor(currentCount * 0.25));
+    if (currentCount >= 4 && nextCount <= suspiciousFloor && nextCount < currentCount - 1) {
+      throw new Error(
+        `MongoDB safety guard blocked a suspicious ${collection} reduction from ${currentCount} to ${nextCount}.`
+      );
+    }
+  }
   await writeSingleton(database, 'meta', data.meta || {});
   await writeSingleton(database, 'settings', data.settings || {});
 
   for (const collection of collections) {
-    await database.collection(collection).deleteMany({});
-    if (Array.isArray(data[collection]) && data[collection].length > 0) {
-      await database.collection(collection).insertMany(data[collection]);
+    const documents = Array.isArray(data[collection]) ? data[collection] : [];
+    if (documents.length > 0) {
+      await database.collection(collection).bulkWrite(documents.map((document) => ({
+        replaceOne: { filter: { id: document.id }, replacement: document, upsert: true }
+      })), { ordered: true });
+      await database.collection(collection).deleteMany({ id: { $nin: documents.map((document) => document.id) } });
+    } else {
+      await database.collection(collection).deleteMany({ id: { $exists: true } });
     }
   }
 
@@ -227,14 +263,38 @@ export const writeDb = async (data) => {
   return writeJsonDb(data);
 };
 
+const acquireMongoWriteLock = async () => {
+  const database = await getMongoDatabase();
+  const locks = database.collection('_systemLocks');
+  const owner = crypto.randomUUID();
+  const deadline = Date.now() + mongoWriteLockTimeoutMs;
+
+  while (Date.now() < deadline) {
+    try {
+      await locks.insertOne({ _id: mongoWriteLockId, owner, acquiredAt: new Date() });
+      return async () => { await locks.deleteOne({ _id: mongoWriteLockId, owner }); };
+    } catch (error) {
+      if (error?.code !== 11000) throw error;
+      await locks.deleteOne({ _id: mongoWriteLockId, acquiredAt: { $lt: new Date(Date.now() - mongoWriteLockTimeoutMs) } });
+      await new Promise((resolve) => setTimeout(resolve, mongoWriteLockWaitMs));
+    }
+  }
+  throw new Error('Timed out waiting for the MongoDB write lock');
+};
+
 export const updateDb = async (mutator) => {
   // Keep read-modify-write operations in one queue. Without this, two requests
   // can read the same snapshot and the last writer can erase the first change.
   const operation = updateQueue.then(async () => {
-    const db = await readDb();
-    const result = await mutator(db);
-    await writeDb(db);
-    return result;
+    const releaseLock = usesMongo() ? await acquireMongoWriteLock() : null;
+    try {
+      const db = await readDb();
+      const result = await mutator(db);
+      await writeDb(db);
+      return result;
+    } finally {
+      if (releaseLock) await releaseLock();
+    }
   });
 
   // A rejected update must not permanently block later database operations.

@@ -15,6 +15,7 @@ const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const databaseName = process.env.MONGODB_DB_NAME || 'jamhuriya_admission';
 const client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 });
 
+export const backupMongoDatabase = async () => {
 try {
   await client.connect();
   const database = client.db(databaseName);
@@ -44,4 +45,9 @@ try {
   for (const [name, documents] of Object.entries(backup)) console.log(`${name}: ${documents.length}`);
 } finally {
   await client.close();
+}
+};
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await backupMongoDatabase();
 }
