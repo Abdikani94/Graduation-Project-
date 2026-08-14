@@ -136,14 +136,14 @@ const AdminUsers = () => {
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
-        <StatCard icon={User} title="Total Admins" value={summary.totalAdmins.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Active Admins" value={summary.activeAdmins.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={User} title="Total Users" value={summary.totalAdmins.toLocaleString()} color="#00A451" iconColor="#00A451" />
+        <StatCard icon={User} title="Active Users" value={summary.activeAdmins.toLocaleString()} color="#00A451" iconColor="#00A451" />
         <StatCard icon={User} title="Officers" value={summary.officers.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
       <Card className="flex items-center gap-[15px] p-4 flex-wrap">
         <div className="flex-1 relative min-w-[200px]">
-          <input value={search} onChange={(event) => setSearch(event.target.value)} type="text" className="w-full bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500" placeholder="Search admin users" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} type="text" className="w-full bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500" placeholder="Search users" />
         </div>
         <select value={role} onChange={(event) => setRole(event.target.value)} className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
           {['Campus Admin', 'Admin', 'Officer'].map((item) => <option key={item}>{item}</option>)}
@@ -152,7 +152,7 @@ const AdminUsers = () => {
           {['Main Campus', 'Campus 2', 'Campus 3'].map((item) => <option key={item}>{item}</option>)}
         </select>
         <button onClick={openCreate} className="bg-primary hover:bg-opacity-90 text-white rounded-xl px-6 py-3.5 text-[13px] font-medium transition-colors ml-auto whitespace-nowrap flex items-center gap-2">
-          <Plus size={16} /> Add Admin
+          <Plus size={16} /> Add User
         </button>
       </Card>
 
@@ -161,7 +161,7 @@ const AdminUsers = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-white/5">
-                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">ADMIN</th>
+                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">USER</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">ROLE</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">TOTAL</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">APPROVED</th>
@@ -173,8 +173,8 @@ const AdminUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={9}>Loading admin users...</td></tr>}
-              {!isLoading && users.length === 0 && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={9}>No admin users found.</td></tr>}
+              {isLoading && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={9}>Loading users...</td></tr>}
+              {!isLoading && users.length === 0 && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={9}>No users found.</td></tr>}
               {!isLoading && users.map((user) => (
                 <tr key={user.id} className="border-b border-white/[0.02] hover:bg-white/[0.01] transition-colors">
                   <td className="px-6 py-4">
@@ -209,7 +209,7 @@ const AdminUsers = () => {
         </div>
 
         <div className="flex items-center justify-between p-6 mt-auto border-t border-white/5">
-          <div className="text-[13px] font-medium text-gray-500">Page {pagination.page} of {pagination.pages} - {pagination.total} admins</div>
+          <div className="text-[13px] font-medium text-gray-500">Page {pagination.page} of {pagination.pages} - {pagination.total} users</div>
           <div className="flex gap-3">
             <button disabled={page <= 1 || isLoading} onClick={() => setPage((value) => Math.max(value - 1, 1))} className="px-5 py-2 rounded-full border border-white/10 text-gray-400 text-[13px] font-medium hover:text-white hover:border-white/20 transition-all bg-transparent cursor-pointer disabled:opacity-40">Previous</button>
             <button disabled={page >= pagination.pages || isLoading} onClick={() => setPage((value) => Math.min(value + 1, pagination.pages))} className="px-5 py-2 rounded-full border border-primary bg-primary text-white text-[13px] font-medium cursor-pointer disabled:opacity-40">Next</button>
@@ -221,7 +221,7 @@ const AdminUsers = () => {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <Card className="w-full max-w-[640px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={closeModal} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
-            <h2 className="text-white text-[20px] font-semibold mb-6">{editingUser ? 'Edit Admin' : 'Add Admin'}</h2>
+            <h2 className="text-white text-[20px] font-semibold mb-6">{editingUser ? 'Edit User' : 'Add User'}</h2>
             <form onSubmit={saveUser} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
                 ['name', 'Name', 'text'],
