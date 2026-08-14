@@ -132,7 +132,7 @@ const AdminUsers = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout className="admin-users-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">

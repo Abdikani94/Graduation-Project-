@@ -101,7 +101,7 @@ const Discount = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout className="discount-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-[15px]">

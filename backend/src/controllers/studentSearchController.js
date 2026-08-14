@@ -40,15 +40,39 @@ const studentSearchView = (db, application, user) => {
     admissionReference: application.reference || '',
     admissionStatus: application.status || student.status || 'Unknown',
     studentStatus: student.status || 'Not enrolled',
+    currentSemester: student.currentSemester || student.semester || application.currentSemester || application.semester || '',
+    hemisId: student.hemisId || student.hemisID || application.hemisId || application.hemisID || '',
     campus: student.campus || application.campus || '',
     enrolledAt: student.enrolledAt || null
   };
-  if (canContact) view.contact = { phone: student.mobile || application.mobile || '', email: student.email || application.email || '' };
-  if (canEmergency) view.emergencyContact = { name: application.emergencyName || '', phone: application.emergencyTell || '', relationship: application.relationship || '' };
+  if (canContact) view.contact = {
+    phone: student.mobile || application.mobile || '',
+    email: student.email || application.email || '',
+    district: application.district || ''
+  };
+  if (canEmergency) view.emergencyContact = {
+    name: application.emergencyName || '',
+    phone: application.emergencyTell || '',
+    relationship: application.relationship === 'Other specify'
+      ? application.relationshipOther || application.relationship
+      : application.relationship || ''
+  };
   if (canAcademic) view.academic = {
     faculty: student.faculty || application.faculty || '', program: student.department || application.department || '',
     className: student.className || '', classId: student.classId || null,
-    secondarySchool: application.schoolName || '', graduationYear: application.graduationYear || '', grade: application.grade || ''
+    modeOfStudy: application.modeOfStudy || '', campus: student.campus || application.campus || '',
+    secondarySchool: application.schoolName || '', schoolDistrict: application.schoolDistrict || '',
+    graduationYear: application.graduationYear || '', grade: application.percentage || application.grade || ''
+  };
+  if (hasPermission(user, 'student_search.view_full_profile')) view.personalProfile = {
+    fullName: student.fullName || application.fullName || '',
+    motherName: application.motherName || '',
+    sex: application.sex || '',
+    maritalStatus: application.maritalStatus || '',
+    dateOfBirth: application.dateOfBirth || '',
+    placeOfBirth: application.placeOfBirth || '',
+    nationality: application.nationality || '',
+    nationalId: application.nationalId || ''
   };
   if (canPayment) view.paymentSummary = paymentSummaryFor(db, application);
   return view;

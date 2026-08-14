@@ -229,7 +229,7 @@ const Applications = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout className="applications-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
@@ -239,7 +239,7 @@ const Applications = () => {
         <StatCard icon={User} title="Rejected Applications" value={summary.rejected.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
-      <Card className="flex items-center gap-[15px] p-4 flex-wrap">
+      <Card className="applications-filter-card flex items-center gap-[15px] p-4 flex-wrap">
         <div className="flex-1 relative min-w-[200px]">
           <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
           <input
@@ -261,7 +261,7 @@ const Applications = () => {
         </select>
       </Card>
 
-      <Card className="flex flex-col flex-1 overflow-hidden">
+      <Card className="applications-table-card flex flex-col flex-1 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -304,7 +304,7 @@ const Applications = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-[13px] text-gray-400">{formatDate(app.createdAt)}</td>
-                  <td className="min-w-[270px] px-6 py-4">
+                  <td className="application-actions-cell min-w-[320px] px-4 py-3">
                     <div className="admin-action-group">
                       <button onClick={() => setSelectedApplication(app)} className="admin-action-button" type="button">
                         <Eye size={14} /> View

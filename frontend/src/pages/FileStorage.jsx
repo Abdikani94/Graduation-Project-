@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Archive, Bell, CheckCircle2, Download, Eye, File, FileArchive, FileCheck2, FileClock,
-  FileText, FolderOpen, HardDrive, Pencil, RefreshCw, Search, Share2, Upload, Users, X, XCircle
+  FileText, FolderOpen, HardDrive, MoreHorizontal, Pencil, RefreshCw, Search, Share2, Upload, Users, X, XCircle
 } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
@@ -255,7 +255,7 @@ function FileStorage() {
         {isAdmin && selected.length > 0 && <div className="storage-bulk"><strong>{selected.length} selected</strong><button onClick={() => runBulk('approve')}>Approve</button><button onClick={() => runBulk('reject')}>Reject</button><button onClick={() => runBulk('download')}>Download</button><button onClick={() => runBulk('share')}>Share</button><button onClick={() => runBulk('archive')}>Archive</button><button className="danger" onClick={() => runBulk('delete')}>Delete</button></div>}
 
         <div className="storage-table-wrap">
-          <table className="storage-table"><thead><tr>{isAdmin && <th><input aria-label="Select all files" type="checkbox" checked={files.length > 0 && selected.length === files.length} onChange={(e) => setSelected(e.target.checked ? files.map((item) => item.id) : [])} /></th>}<th>File</th><th>Report / Period</th><th>Uploaded By</th><th>Access</th><th>Status</th><th>Usage</th><th>Actions</th></tr></thead>
+          <table className="storage-table"><thead><tr>{isAdmin && <th><input aria-label="Select all files" type="checkbox" checked={files.length > 0 && selected.length === files.length} onChange={(e) => setSelected(e.target.checked ? files.map((item) => item.id) : [])} /></th>}<th>File</th><th>Report / Period</th><th>Uploaded By</th><th>Access</th><th>Status</th><th>Usage</th><th className="storage-actions-heading">Actions</th></tr></thead>
             <tbody>
               {loading && <tr><td colSpan={isAdmin ? 8 : 7} className="storage-empty">Loading files...</td></tr>}
               {!loading && !files.length && <tr><td colSpan={isAdmin ? 8 : 7} className="storage-empty"><FileArchive size={34} /><strong>No files found</strong><span>Upload a report or change the current filters.</span></td></tr>}
@@ -267,15 +267,17 @@ function FileStorage() {
                 <td data-label="Access"><strong>{item.visibility}</strong><small>{item.teamId || item.departmentId || '—'}</small></td>
                 <td data-label="Status"><span className={`storage-status ${statusStyles[item.approvalStatus] || ''}`}>{item.approvalStatus}</span>{item.adminComment && <small title={item.adminComment}>Admin comment</small>}</td>
                 <td data-label="Usage"><strong>{item.downloadCount} downloads</strong><small>{item.viewCount} views</small></td>
-                <td data-label="Actions"><div className="storage-actions">
+                <td data-label="Actions" className="storage-actions-cell"><div className="storage-actions">
                   {item.canPreview && <button title="Preview" onClick={() => openBlob(item)}><Eye size={16} /></button>}
                   <button title="Download" onClick={() => openBlob(item, true)}><Download size={16} /></button>
-                  {(isAdmin || item.uploadedBy === currentUser.id) && <button title="Edit details" onClick={() => editDetails(item)}><Pencil size={16} /></button>}
-                  {(isAdmin || item.uploadedBy === currentUser.id) && <button title="Replace file" onClick={() => replace(item)}><RefreshCw size={16} /></button>}
-                  {(isAdmin || item.uploadedBy === currentUser.id) && <button title="Share" onClick={() => share(item)}><Share2 size={16} /></button>}
-                  {(isAdmin || item.uploadedBy === currentUser.id) && <button title={item.isArchived ? 'Restore' : 'Archive'} onClick={() => archive(item)}><Archive size={16} /></button>}
-                  {isAdmin && item.approvalStatus === 'Pending' && <><button title="Approve" onClick={() => review(item, 'Approved')}><CheckCircle2 size={16} /></button><button title="Reject" onClick={() => review(item, 'Rejected')}><XCircle size={16} /></button><button title="Request revision" onClick={() => review(item, 'Revision Requested')}><FileClock size={16} /></button></>}
-                  {(isAdmin || item.uploadedBy === currentUser.id) && <button className="danger" title="Delete" onClick={() => remove(item)}><X size={16} /></button>}
+                  <details className="admin-action-menu"><summary aria-label={`More actions for ${item.title}`}><MoreHorizontal size={16} /></summary><div className="admin-action-menu-popover storage-action-menu-popover">
+                    {(isAdmin || item.uploadedBy === currentUser.id) && <button onClick={() => editDetails(item)}><Pencil size={14} /> Edit details</button>}
+                    {(isAdmin || item.uploadedBy === currentUser.id) && <button onClick={() => replace(item)}><RefreshCw size={14} /> Replace file</button>}
+                    {(isAdmin || item.uploadedBy === currentUser.id) && <button onClick={() => share(item)}><Share2 size={14} /> Share</button>}
+                    {(isAdmin || item.uploadedBy === currentUser.id) && <button onClick={() => archive(item)}><Archive size={14} /> {item.isArchived ? 'Restore' : 'Archive'}</button>}
+                    {isAdmin && item.approvalStatus === 'Pending' && <><button onClick={() => review(item, 'Approved')}><CheckCircle2 size={14} /> Approve</button><button onClick={() => review(item, 'Rejected')}><XCircle size={14} /> Reject</button><button onClick={() => review(item, 'Revision Requested')}><FileClock size={14} /> Request revision</button></>}
+                    {(isAdmin || item.uploadedBy === currentUser.id) && <button className="danger" onClick={() => remove(item)}><X size={14} /> Delete</button>}
+                  </div></details>
                 </div></td>
               </tr>)}
             </tbody></table>

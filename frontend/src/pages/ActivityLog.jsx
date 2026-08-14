@@ -64,7 +64,7 @@ const ActivityLog = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout className="activity-log-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="flex items-center gap-3 bg-transparent">

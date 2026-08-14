@@ -257,7 +257,7 @@ const Programs = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout className="programs-admin-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
         <StatCard icon={User} title="Total Programs" value={summary.totalPrograms.toLocaleString()} color="#00A451" iconColor="#00A451" />

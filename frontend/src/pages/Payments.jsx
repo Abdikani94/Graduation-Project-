@@ -60,7 +60,7 @@ const Payments = () => {
   };
 
   return (
-    <PageLayout className="payments-ledger-page">
+    <PageLayout className="payments-ledger-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -79,7 +79,7 @@ const Payments = () => {
         <StatCard icon={ReceiptText} title="All Attempts" value={Number(summary.transactions || 0).toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </section>
 
-      <Card className="grid gap-3 p-4 md:grid-cols-[minmax(240px,1fr)_180px_190px_auto]">
+      <Card className="payments-filter-card grid gap-3 p-4 md:grid-cols-[minmax(240px,1fr)_180px_190px_auto]">
         <label className="flex min-h-12 items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 focus-within:border-[#303b97] focus-within:bg-white">
           <Search size={18} className="text-slate-400"/>
           <input value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-transparent text-sm outline-none" placeholder="Student, number, reference, phone or transaction ID" />
@@ -89,7 +89,7 @@ const Payments = () => {
         <button onClick={exportCsv} className="admin-button admin-button--primary min-h-12"><Download size={17}/>Export Ledger</button>
       </Card>
 
-      <Card className="overflow-hidden">
+      <Card className="payments-table-card overflow-hidden">
         <div className="hidden lg:block">
           <table className="w-full table-fixed text-left text-sm">
             <thead className="border-b border-slate-200 bg-slate-50 text-[10px] font-bold uppercase tracking-[.06em] text-slate-500"><tr><th className="w-[21%] px-5 py-4">Student</th><th className="w-[18%] px-4 py-4">References</th><th className="w-[13%] px-4 py-4">Payer</th><th className="w-[10%] px-4 py-4">Amount</th><th className="w-[11%] px-4 py-4">Status</th><th className="w-[18%] px-4 py-4">Transaction</th><th className="w-[9%] px-4 py-4 text-center">Details</th></tr></thead>

@@ -39,7 +39,7 @@ const Classes = () => {
   const faculties = useMemo(() => ['All Faculties', ...new Set(classes.map((item) => item.faculty).filter(Boolean))], [classes]);
 
   return (
-    <PageLayout>
+    <PageLayout className="classes-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
         <StatCard icon={GraduationCap} title="Total Classes" value={summary.total.toLocaleString()} color="#2D368D" iconColor="#2D368D" />

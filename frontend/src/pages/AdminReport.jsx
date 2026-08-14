@@ -48,7 +48,7 @@ const AdminReport = () => {
   }));
 
   return (
-    <PageLayout>
+    <PageLayout className="admin-report-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-[15px]">

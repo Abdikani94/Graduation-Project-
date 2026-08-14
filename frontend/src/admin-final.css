@@ -1,0 +1,1143 @@
+/* Final admin layout contract. Loaded after index.css so legacy rules cannot
+   make the sidebar wider than its allocated column or re-expand dense pages. */
+@media (min-width: 1025px) {
+  html body .admin-shell {
+    grid-template-columns: 248px minmax(0, 1fr) !important;
+  }
+
+  html body .admin-shell:has(> .sidebar-card.is-collapsed) {
+    grid-template-columns: 68px minmax(0, 1fr) !important;
+  }
+
+  html body .admin-shell > .sidebar-card {
+    width: 248px !important;
+    min-width: 248px !important;
+    max-width: 248px !important;
+  }
+
+  html body .admin-shell > .sidebar-card.is-collapsed {
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+  }
+
+  html body .admin-shell > .admin-content {
+    grid-column: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 12px !important;
+    overflow-x: clip !important;
+  }
+}
+
+.applications-page,
+.payments-ledger-page {
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.applications-page > .grid:first-of-type,
+.payments-ledger-page > section.grid {
+  gap: 10px !important;
+}
+
+.applications-filter-card,
+.payments-filter-card {
+  gap: 8px !important;
+  padding: 10px !important;
+}
+
+.applications-filter-card input,
+.applications-filter-card select,
+.payments-filter-card input,
+.payments-filter-card select,
+.payments-filter-card label,
+.payments-filter-card button {
+  height: 40px !important;
+  min-height: 40px !important;
+}
+
+.applications-table-card table th,
+.applications-table-card table td,
+.payments-table-card table th,
+.payments-table-card table td {
+  padding: 8px 10px !important;
+}
+
+.applications-table-card tbody tr,
+.payments-table-card tbody tr {
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.applications-table-card .application-actions-cell {
+  min-width: 280px !important;
+}
+
+.applications-table-card .admin-action-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.applications-table-card .admin-action-button {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 4px 7px !important;
+  font-size: 10.5px !important;
+  white-space: nowrap !important;
+}
+
+.applications-table-card > div:last-child,
+.payments-table-card footer {
+  padding: 9px 12px !important;
+}
+
+.payments-ledger-page > header:first-of-type {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 0 6px !important;
+}
+
+.payments-ledger-page > header:first-of-type h1,
+.payments-ledger-page > header:first-of-type p {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 1024px) {
+  html body .admin-shell > .sidebar-card,
+  html body .admin-shell > .sidebar-card.is-collapsed {
+    width: min(86vw, 280px) !important;
+    min-width: 0 !important;
+    max-width: 280px !important;
+  }
+
+  .applications-page,
+  .payments-ledger-page {
+    gap: 8px !important;
+  }
+}
+
+/* Compact system-wide workspace: page content uses the available viewport;
+   only the page itself may scroll when data genuinely cannot fit. */
+.admin-page-layout {
+  gap: 8px !important;
+}
+
+.admin-page-layout > header {
+  min-height: 0 !important;
+  padding-block: 2px !important;
+}
+
+.admin-page-layout .stat-card,
+.admin-page-layout .stat-card > .stat-card-content {
+  height: 78px !important;
+  min-height: 78px !important;
+  max-height: 78px !important;
+}
+
+.admin-page-layout .stat-card > .stat-card-content {
+  padding: 9px 11px !important;
+}
+
+/* File Storage */
+.file-storage-page {
+  gap: 8px !important;
+}
+
+.file-storage-page .storage-header h1 {
+  font-size: clamp(22px, 2vw, 30px) !important;
+}
+
+.file-storage-page .storage-header p {
+  margin-top: 2px !important;
+}
+
+.file-storage-page .storage-summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.file-storage-page .storage-summary-card {
+  min-height: 66px !important;
+  gap: 8px !important;
+  padding: 9px !important;
+}
+
+.file-storage-page .storage-summary-card > span {
+  width: 34px !important;
+  height: 34px !important;
+  flex-basis: 34px !important;
+  border-radius: 9px !important;
+}
+
+.file-storage-page .storage-summary-card strong {
+  margin-top: 1px !important;
+  font-size: 17px !important;
+}
+
+.file-storage-page .storage-workspace {
+  flex: 0 1 auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.file-storage-page .storage-tabs {
+  overflow: visible !important;
+  padding: 4px 8px 0 !important;
+}
+
+.file-storage-page .storage-tabs button {
+  padding: 8px 9px !important;
+  font-size: 10.5px !important;
+}
+
+.file-storage-page .storage-filters {
+  gap: 7px !important;
+  padding: 8px !important;
+}
+
+.file-storage-page .storage-filters input,
+.file-storage-page .storage-filters select {
+  min-height: 36px !important;
+  height: 36px !important;
+}
+
+.file-storage-page .storage-table-wrap {
+  overflow: visible !important;
+}
+
+.file-storage-page .storage-table {
+  min-width: 0 !important;
+  table-layout: fixed !important;
+}
+
+.file-storage-page .storage-table th,
+.file-storage-page .storage-table td {
+  padding: 7px 6px !important;
+  overflow-wrap: anywhere;
+}
+
+.file-storage-page .storage-file-cell {
+  min-width: 0 !important;
+  gap: 6px !important;
+}
+
+.file-storage-page .storage-file-cell > span {
+  width: 30px !important;
+  height: 30px !important;
+  flex-basis: 30px !important;
+}
+
+.file-storage-page .storage-actions {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+  white-space: nowrap !important;
+}
+
+.file-storage-page .storage-actions button {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.file-storage-page .storage-pagination {
+  padding: 7px 9px !important;
+}
+
+/* Admission periods */
+.admission-periods-page {
+  gap: 8px !important;
+}
+
+.admission-periods-page > div:first-of-type,
+.admission-periods-page > .admin-card {
+  margin-bottom: 0 !important;
+}
+
+.admission-periods-summary {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.admission-periods-summary > .admin-card {
+  min-height: 66px !important;
+  padding: 9px 11px !important;
+}
+
+.admission-periods-summary strong {
+  margin-top: 2px !important;
+}
+
+.admission-periods-workspace {
+  padding: 10px !important;
+  overflow: visible !important;
+}
+
+.admission-periods-filters {
+  gap: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.admission-periods-filters label,
+.admission-periods-filters input,
+.admission-periods-filters select {
+  min-height: 38px !important;
+  height: 38px !important;
+}
+
+.admission-periods-table-wrap {
+  overflow: visible !important;
+}
+
+.admission-periods-table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+}
+
+.admission-periods-table th,
+.admission-periods-table td {
+  padding: 7px 6px !important;
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+  overflow-wrap: anywhere;
+}
+
+.admission-periods-table th:nth-child(1) { width: 12%; }
+.admission-periods-table th:nth-child(2) { width: 13%; }
+.admission-periods-table th:nth-child(3) { width: 12%; }
+.admission-periods-table th:nth-child(4),
+.admission-periods-table th:nth-child(5) { width: 16%; }
+.admission-periods-table th:nth-child(6) { width: 8%; }
+.admission-periods-table th:nth-child(7) { width: 7%; }
+.admission-periods-table th:nth-child(8) { width: 16%; }
+
+.admission-period-actions {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.admission-period-actions > button {
+  min-height: 26px !important;
+  height: 26px !important;
+  min-width: 44px !important;
+  padding: 2px 7px !important;
+  font-size: 10px !important;
+  border: 1px solid #d7dfec !important;
+  border-radius: 7px !important;
+  background: #fff !important;
+  color: #2d368d !important;
+}
+
+.admission-periods-count {
+  margin-top: 6px !important;
+}
+
+@media (max-width: 900px) {
+  .file-storage-page .storage-tabs {
+    flex-wrap: wrap;
+  }
+
+  .file-storage-page .storage-table,
+  .file-storage-page .storage-table tbody,
+  .file-storage-page .storage-table tr,
+  .file-storage-page .storage-table td {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .file-storage-page .storage-table thead {
+    display: none !important;
+  }
+
+  .admission-periods-table-wrap {
+    overflow: visible !important;
+  }
+
+  .admission-periods-table {
+    min-width: 0 !important;
+  }
+
+  .admission-periods-table th,
+  .admission-periods-table td {
+    padding-inline: 3px !important;
+    font-size: 9px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Global compact admin contract
+   These rules intentionally load last. They neutralize old page-local Tailwind
+   spacing without changing page behavior, data, permissions, or actions.
+   -------------------------------------------------------------------------- */
+.admin-page-layout {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 8px !important;
+}
+
+.admin-page-layout > *,
+.admin-page-layout .admin-card,
+.admin-page-layout section,
+.admin-page-layout article {
+  min-width: 0;
+}
+
+.admin-page-layout > header:first-child {
+  margin: 0 !important;
+  padding: 0 2px 4px !important;
+  gap: 8px !important;
+}
+
+.admin-page-layout > header:first-child h1 {
+  margin: 0 !important;
+  font-size: clamp(22px, 2vw, 30px) !important;
+  line-height: 1.08 !important;
+}
+
+.admin-page-layout > header:first-child p {
+  margin-top: 3px !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.admin-page-layout .admin-card {
+  border-radius: 14px !important;
+}
+
+.admin-page-layout > .grid,
+.admin-page-layout > section.grid,
+.admin-page-layout > div.grid {
+  gap: 8px !important;
+}
+
+.admin-page-layout input:not([type="checkbox"]):not([type="radio"]),
+.admin-page-layout select,
+.admin-page-layout label:has(> input[type="search"]) {
+  min-height: 36px !important;
+}
+
+.admin-page-layout button:not(.sidebar-toggle):not(.modal-close) {
+  min-height: 32px;
+}
+
+/* Legacy data pages share the same compact filter/table rhythm. */
+.admin-data-page > .admin-card:not(:has(table)):has(input),
+.admin-data-page > .admin-card:not(:has(table)):has(select) {
+  gap: 8px !important;
+  padding: 8px 10px !important;
+}
+
+.admin-data-page > .admin-card:not(:has(table)):has(input) input,
+.admin-data-page > .admin-card:not(:has(table)):has(select) select,
+.admin-data-page > .admin-card:not(:has(table)):has(input) button,
+.admin-data-page > .admin-card:not(:has(table)):has(select) button {
+  height: 36px !important;
+  min-height: 36px !important;
+  padding-block: 5px !important;
+}
+
+.admin-data-page > .admin-card:has(table) {
+  overflow: hidden !important;
+}
+
+.admin-data-page > .admin-card:has(table) > .overflow-x-auto {
+  overflow-x: visible !important;
+}
+
+.admin-data-page table {
+  width: 100% !important;
+  table-layout: auto;
+  font-size: 11.5px !important;
+}
+
+.admin-data-page table th,
+.admin-data-page table td {
+  padding: 7px 8px !important;
+  line-height: 1.28 !important;
+  vertical-align: middle !important;
+}
+
+.admin-data-page table th {
+  font-size: 9.5px !important;
+  white-space: nowrap;
+}
+
+.admin-data-page table tbody tr {
+  height: auto !important;
+  min-height: 48px !important;
+}
+
+.admin-data-page table td p,
+.admin-data-page table td small,
+.admin-data-page table td span {
+  line-height: 1.25 !important;
+}
+
+.admin-data-page table td:last-child > div {
+  gap: 3px !important;
+}
+
+.admin-data-page table td:last-child button {
+  min-width: 28px !important;
+  min-height: 28px !important;
+  padding: 4px 6px !important;
+  font-size: 10.5px !important;
+  white-space: nowrap;
+}
+
+.admin-data-page > .admin-card:has(table) > div:last-child,
+.admin-data-page > .admin-card:has(table) > footer:last-child {
+  min-height: 44px !important;
+  margin-top: 0 !important;
+  padding: 7px 10px !important;
+}
+
+.admin-data-page > .admin-card:has(table) > div:last-child button,
+.admin-data-page > .admin-card:has(table) > footer:last-child button {
+  min-height: 30px !important;
+  padding: 4px 10px !important;
+}
+
+/* Remove fixed desktop widths that manufactured horizontal scrollbars. */
+@media (min-width: 1025px) {
+  .admin-data-page table[class*="min-w-"],
+  .scheduled-messages-page table[class*="min-w-"] {
+    min-width: 0 !important;
+  }
+
+  .admin-data-page .overflow-x-auto,
+  .scheduled-messages-page > .admin-card .overflow-x-auto {
+    overflow-x: visible !important;
+  }
+}
+
+/* Forms, settings, message campaigns and program cards. */
+.admin-form-page > .grid,
+.settings-page > .grid,
+.scheduled-messages-page > .grid {
+  gap: 10px !important;
+}
+
+.settings-page .admin-card,
+.scheduled-messages-page > .admin-card,
+.scheduled-messages-page > .grid > .admin-card {
+  padding: 12px !important;
+}
+
+.settings-page .gap-6,
+.scheduled-messages-page .gap-5,
+.scheduled-messages-page .space-y-5 {
+  gap: 10px !important;
+}
+
+.scheduled-messages-page input,
+.scheduled-messages-page select,
+.scheduled-messages-page textarea {
+  padding: 7px 9px !important;
+}
+
+.scheduled-messages-page table th,
+.scheduled-messages-page table td {
+  padding: 7px 8px !important;
+  line-height: 1.25 !important;
+}
+
+.scheduled-messages-page > nav {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  overflow: visible !important;
+  padding: 5px !important;
+}
+
+.scheduled-messages-page > nav button {
+  flex: 1 1 130px;
+  min-height: 34px !important;
+  padding: 6px 9px !important;
+  font-size: 11px !important;
+}
+
+.programs-admin-page > .admin-card:has(input),
+.programs-admin-page > .admin-card:has(select) {
+  padding: 9px !important;
+  gap: 8px !important;
+}
+
+.programs-admin-page .grid {
+  gap: 10px !important;
+}
+
+.programs-admin-page .admin-card img {
+  height: 126px !important;
+}
+
+.programs-admin-page .admin-card > div:last-child {
+  padding: 12px !important;
+}
+
+/* Charts and reports must use content-sized cards, never tall empty canvases. */
+.dashboard-page {
+  gap: 8px !important;
+}
+
+.dashboard-page .dashboard-chart-card,
+.dashboard-page .dashboard-trend-card,
+.dashboard-page .dashboard-recent-card {
+  min-height: 0 !important;
+  padding: 11px !important;
+}
+
+.dashboard-page .dashboard-chart-card {
+  height: 220px !important;
+}
+
+.dashboard-page .dashboard-trend-card,
+.dashboard-page .dashboard-recent-card {
+  height: 180px !important;
+}
+
+.reports-page .admin-card {
+  min-height: 0 !important;
+  padding: 10px !important;
+}
+
+.reports-page {
+  gap: 8px !important;
+}
+
+.reports-page > .grid,
+.reports-page section.grid {
+  gap: 8px !important;
+}
+
+.reports-page table th,
+.reports-page table td {
+  padding: 7px 9px !important;
+}
+
+.student-search-page {
+  gap: 8px !important;
+}
+
+.student-search-page .admin-card {
+  padding: 11px !important;
+}
+
+.student-search-page .min-h-\[240px\],
+.student-search-page .min-h-\[280px\] {
+  min-height: 150px !important;
+}
+
+.student-search-page .space-y-5 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 10px !important;
+}
+
+/* Responsive table policy: genuine wide datasets scroll only inside their card
+   on small screens; the page itself never becomes wider than the viewport. */
+@media (max-width: 1024px) {
+  html body .admin-shell > .admin-content {
+    overflow-x: clip !important;
+  }
+  .admin-page-layout > header:first-child {
+    align-items: flex-start !important;
+    flex-wrap: wrap !important;
+  }
+
+  .admin-data-page > .admin-card:has(table) > .overflow-x-auto,
+  .scheduled-messages-page > .admin-card .overflow-x-auto {
+    overflow-x: auto !important;
+    overscroll-behavior-inline: contain;
+  }
+
+  .admin-data-page table[class*="min-w-"],
+  .scheduled-messages-page table[class*="min-w-"] {
+    min-width: 760px !important;
+  }
+
+  .admin-data-page > .admin-card:not(:has(table)):has(input),
+  .admin-data-page > .admin-card:not(:has(table)):has(select) {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-data-page > .admin-card:not(:has(table)):has(input) > *,
+  .admin-data-page > .admin-card:not(:has(table)):has(select) > * {
+    min-width: 0 !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  html body .admin-shell > .admin-content {
+    padding: 8px !important;
+  }
+
+  .admin-page-layout {
+    gap: 7px !important;
+  }
+
+  .admin-page-layout > header:first-child h1 {
+    font-size: 22px !important;
+  }
+
+  .admin-data-page > .admin-card:not(:has(table)):has(input),
+  .admin-data-page > .admin-card:not(:has(table)):has(select) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-page-layout .stat-card,
+  .admin-page-layout .stat-card > .stat-card-content {
+    height: 68px !important;
+    min-height: 68px !important;
+    max-height: 68px !important;
+  }
+
+  .admin-page-layout .stat-card > .stat-card-content {
+    padding: 7px 9px !important;
+  }
+}
+
+/* Compact Admin v2: structural density and action menus. */
+.admin-page-layout :is(table, tbody, tr, th, td) {
+  min-height: 0 !important;
+}
+
+.admin-page-layout table tbody tr {
+  height: auto !important;
+}
+
+.admin-page-layout table th {
+  padding-block: 7px !important;
+  line-height: 1.15 !important;
+}
+
+.admin-page-layout table td {
+  padding-block: 7px !important;
+  line-height: 1.25 !important;
+  vertical-align: middle !important;
+}
+
+.admin-page-layout table td :is(p, small) {
+  margin-block: 1px !important;
+  line-height: 1.25 !important;
+}
+
+.admin-action-menu {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.admin-action-menu > summary {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  list-style: none;
+  place-items: center;
+  border: 1px solid #d7dfec;
+  border-radius: 7px;
+  background: #fff;
+  color: #2d368d;
+}
+
+.admin-action-menu > summary::-webkit-details-marker { display: none; }
+.admin-action-menu[open] > summary,
+.admin-action-menu > summary:hover { background: #f1f4fa; }
+
+.admin-action-menu-popover {
+  position: absolute;
+  z-index: 60;
+  top: calc(100% + 4px);
+  right: 0;
+  display: grid;
+  min-width: 132px;
+  padding: 4px;
+  border: 1px solid #d7dfec;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgb(20 41 75 / 16%);
+}
+
+.admin-action-menu-popover button {
+  display: flex !important;
+  width: 100% !important;
+  height: 29px !important;
+  min-height: 29px !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 7px !important;
+  padding: 4px 8px !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  color: #14294b !important;
+  font-size: 11px !important;
+  white-space: nowrap !important;
+}
+
+.admin-action-menu-popover button:hover { background: #f1f4fa !important; }
+.admin-action-menu-popover button.danger { color: #b42318 !important; }
+
+.file-storage-page .storage-actions-heading,
+.file-storage-page .storage-actions-cell {
+  width: 116px !important;
+  min-width: 116px !important;
+}
+
+.file-storage-page .storage-table tbody tr {
+  height: auto !important;
+}
+
+.file-storage-page .storage-table td {
+  vertical-align: middle !important;
+}
+
+.file-storage-page .storage-action-menu-popover {
+  min-width: 154px;
+}
+
+.admission-periods-summary > .admin-card {
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+}
+
+.admission-periods-table thead th {
+  white-space: normal !important;
+}
+
+.admission-periods-table tbody tr {
+  height: auto !important;
+}
+
+.admission-periods-table tbody td {
+  padding: 8px 7px !important;
+  vertical-align: middle !important;
+}
+
+.admission-period-actions-cell {
+  overflow: visible !important;
+}
+
+@media (max-width: 1280px) {
+  .admission-periods-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .admission-periods-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admission-periods-table-wrap {
+    overflow-x: auto !important;
+  }
+
+  .admission-periods-table {
+    min-width: 880px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .admission-periods-summary {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* Student Search: persistent compact profile structure. */
+.student-search-profile-page {
+  gap: 8px !important;
+}
+
+.student-search-header {
+  display: flex;
+  min-height: 0 !important;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.student-search-header p {
+  color: #00a451;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.student-search-header h1 {
+  margin-top: 1px;
+  color: #14294b;
+  font-size: clamp(22px, 2vw, 28px);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.student-search-header > div > span {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.student-search-security {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 1px solid rgb(0 164 81 / 18%);
+  border-radius: 9px;
+  background: rgb(0 164 81 / 7%);
+  color: #008f47 !important;
+  font-size: 11px !important;
+  font-weight: 700;
+}
+
+.student-search-toolbar {
+  padding: 9px !important;
+}
+
+.student-search-toolbar form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.student-search-toolbar form label {
+  display: flex;
+  height: 38px;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 11px;
+  border: 1px solid #d7dfec;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+.student-search-toolbar input {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  color: #14294b;
+  font-size: 12px;
+  outline: 0;
+}
+
+.student-search-toolbar button {
+  display: flex;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding-inline: 16px;
+  border-radius: 9px;
+  background: #2d368d;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.student-search-toolbar-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  color: #718096;
+  font-size: 10px;
+}
+
+.student-search-toolbar-note span:last-child { color: #2d368d; font-weight: 700; }
+
+.student-search-message,
+.student-search-result-picker {
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid #d7dfec;
+  border-radius: 9px;
+  background: #fff;
+  color: #475569;
+  font-size: 11px;
+}
+
+.student-search-message { border-color: rgb(45 54 141 / 18%); background: rgb(45 54 141 / 5%); }
+.student-search-result-picker { justify-content: space-between; }
+.student-search-result-picker select { min-width: min(420px, 75%); height: 30px; border: 1px solid #d7dfec; border-radius: 7px; padding-inline: 8px; }
+
+.student-profile-card {
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.student-profile-overview {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #e4eaf2;
+  background: #f8fafc;
+}
+
+.student-profile-photo {
+  position: relative;
+  display: grid;
+  width: 88px;
+  height: 96px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #d7dfec;
+  border-radius: 11px;
+  background: #eef2f7;
+  color: #8290a6;
+}
+
+.student-profile-photo img {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.student-profile-title {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.student-profile-title small,
+.student-profile-field dt {
+  color: #8290a6;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.student-profile-title h2 {
+  margin-top: 1px;
+  color: #14294b;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.student-profile-title > span {
+  padding: 4px 8px;
+  border: 1px solid rgb(0 164 81 / 20%);
+  border-radius: 999px;
+  background: rgb(0 164 81 / 8%);
+  color: #008f47;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.student-profile-quick-fields,
+.student-profile-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 14px;
+}
+
+.student-profile-quick-fields { margin-top: 9px; }
+
+.student-profile-field {
+  min-width: 0;
+  padding: 5px 0;
+  border-bottom: 1px dashed #dce3ed;
+}
+
+.student-profile-field dd {
+  margin-top: 1px;
+  overflow: hidden;
+  color: #14294b;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-profile-card.is-placeholder .student-profile-field dd,
+.student-profile-card.is-placeholder .student-profile-title h2,
+.student-profile-card.is-placeholder .student-profile-title > span { color: #94a3b8; }
+
+.student-profile-sections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.student-profile-section {
+  min-width: 0;
+  padding: 9px 10px;
+  border-right: 1px solid #e4eaf2;
+  border-bottom: 1px solid #e4eaf2;
+}
+
+.student-profile-section:nth-child(3n) { border-right: 0; }
+.student-profile-section:nth-last-child(-n+3) { border-bottom: 0; }
+
+.student-profile-section h2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  color: #008f47;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.student-profile-section .student-profile-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.student-contact-section .student-profile-field:first-child {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1200px) {
+  .student-profile-sections { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .student-profile-section:nth-child(3n) { border-right: 1px solid #e4eaf2; }
+  .student-profile-section:nth-child(even) { border-right: 0; }
+  .student-profile-section:nth-last-child(-n+3) { border-bottom: 1px solid #e4eaf2; }
+  .student-profile-section:nth-last-child(-n+2) { border-bottom: 0; }
+}
+
+@media (max-width: 800px) {
+  .student-profile-quick-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .student-profile-sections { grid-template-columns: 1fr; }
+  .student-profile-section { border-right: 0; }
+  .student-profile-section:nth-child(3n) { border-right: 0; }
+  .student-profile-section:nth-last-child(-n+2) { border-bottom: 1px solid #e4eaf2; }
+  .student-profile-section:last-child { border-bottom: 0; }
+}
+
+@media (max-width: 640px) {
+  .student-search-header { align-items: start; flex-direction: column; }
+  .student-search-toolbar form { grid-template-columns: 1fr; }
+  .student-search-toolbar-note { flex-direction: column; }
+  .student-profile-overview { grid-template-columns: 64px minmax(0, 1fr); gap: 9px; padding: 9px; }
+  .student-profile-photo { width: 64px; height: 74px; }
+  .student-profile-title h2 { font-size: 15px; }
+  .student-profile-quick-fields,
+  .student-profile-section .student-profile-fields { grid-template-columns: 1fr 1fr; gap: 0 9px; }
+  .student-profile-section { padding: 9px; }
+  .student-search-result-picker { align-items: stretch; flex-direction: column; }
+  .student-search-result-picker select { width: 100%; min-width: 0; }
+}

@@ -51,7 +51,7 @@ const SmsNotifications = () => {
     ['Sent', summary.sent, CheckCircle2, 'text-[#00A451]'], ['Failed', summary.failed, XCircle, 'text-red-600']
   ];
 
-  return <PageLayout>
+  return <PageLayout className="sms-notifications-page admin-data-page">
     <header className="flex flex-wrap items-end justify-between gap-4">
       <div><p className="text-xs font-bold uppercase tracking-[.18em] text-[#00A451]">Communications</p><h1 className="mt-1 text-3xl font-extrabold text-[#14294b]">SMS Notifications</h1><p className="mt-1 text-sm text-slate-500">Monitor application confirmations sent through Xaliye6.</p></div>
       <button onClick={load} className="flex items-center gap-2 border bg-white px-4 py-2.5 text-sm font-semibold text-[#14294b]"><RefreshCw size={16}/>Refresh</button>

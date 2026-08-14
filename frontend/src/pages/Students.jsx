@@ -165,7 +165,7 @@ const Students = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout className="students-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
         <StatCard icon={User} title="Total Students" value={summary.total.toLocaleString()} color="#00A451" iconColor="#00A451" />

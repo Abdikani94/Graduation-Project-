@@ -57,7 +57,7 @@ const Settings = () => {
   };
 
   return (
-    <PageLayout>
+    <PageLayout className="settings-page admin-form-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
       {/* Header */}
       <div className="flex items-center gap-3 bg-transparent">

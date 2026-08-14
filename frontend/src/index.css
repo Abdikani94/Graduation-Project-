@@ -7856,6 +7856,122 @@ body:has(.admin-shell) {
   .admission-chatbot-panel { height: calc(100vh - 90px); }
 }
 
+/* FINAL PAGE BOUNDARY + DENSITY FIX
+   Keep the real sidebar width identical to the grid column so it cannot cover
+   the page. These selectors intentionally target the actual Sidebar markup. */
+@media (min-width: 1025px) {
+  html body .admin-shell {
+    grid-template-columns: 248px minmax(0, 1fr) !important;
+  }
+
+  html body .admin-shell:has(> .sidebar-card.is-collapsed) {
+    grid-template-columns: 68px minmax(0, 1fr) !important;
+  }
+
+  html body .admin-shell > .sidebar-card {
+    width: 248px !important;
+    min-width: 248px !important;
+    max-width: 248px !important;
+  }
+
+  html body .admin-shell > .sidebar-card.is-collapsed {
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+  }
+
+  html body .admin-shell > .admin-content {
+    grid-column: 2 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px !important;
+  }
+}
+
+.applications-page,
+.payments-ledger-page {
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+.applications-page > .grid:first-of-type,
+.payments-ledger-page > section.grid {
+  gap: 10px !important;
+}
+
+.applications-filter-card,
+.payments-filter-card {
+  gap: 8px !important;
+  padding: 10px !important;
+}
+
+.applications-filter-card input,
+.applications-filter-card select,
+.payments-filter-card input,
+.payments-filter-card select,
+.payments-filter-card label,
+.payments-filter-card button {
+  min-height: 40px !important;
+  height: 40px !important;
+}
+
+.applications-table-card table th,
+.applications-table-card table td,
+.payments-table-card table th,
+.payments-table-card table td {
+  padding: 8px 10px !important;
+}
+
+.applications-table-card tbody tr,
+.payments-table-card tbody tr {
+  height: 62px !important;
+}
+
+.applications-table-card .application-actions-cell {
+  min-width: 320px !important;
+}
+
+.applications-table-card .admin-action-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.applications-table-card .admin-action-button {
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 4px 7px !important;
+  font-size: 10.5px !important;
+  white-space: nowrap !important;
+}
+
+.applications-table-card > div:last-child,
+.payments-table-card footer {
+  padding: 9px 12px !important;
+}
+
+.payments-ledger-page > header:first-of-type {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 0 6px !important;
+}
+
+.payments-ledger-page > header:first-of-type h1,
+.payments-ledger-page > header:first-of-type p {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 1024px) {
+  html body .admin-shell > .sidebar-card,
+  html body .admin-shell > .sidebar-card.is-collapsed {
+    width: min(86vw, 280px) !important;
+    min-width: 0 !important;
+    max-width: 280px !important;
+  }
+}
+
 
 /* Program/payment step: EVC-only, compact and clearly grouped. */
 .apply-page .program-dropdown-panel {
@@ -8515,6 +8631,210 @@ body {
   .admin-page-layout table { min-width: 600px !important; }
   .admin-page-layout th,
   .admin-page-layout td { padding: 8px 9px !important; }
+}
+
+/* FINAL APPLICATIONS/PAYMENTS LAYOUT OVERRIDES — physical EOF. */
+@media (min-width: 1025px) {
+  html body .admin-shell {
+    grid-template-columns: 248px minmax(0, 1fr) !important;
+  }
+  html body .admin-shell:has(> .sidebar-card.is-collapsed) {
+    grid-template-columns: 68px minmax(0, 1fr) !important;
+  }
+  html body .admin-shell > .sidebar-card {
+    width: 248px !important;
+    min-width: 248px !important;
+    max-width: 248px !important;
+  }
+  html body .admin-shell > .sidebar-card.is-collapsed {
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+  }
+  html body .admin-shell > .admin-content {
+    grid-column: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 12px !important;
+  }
+}
+
+.applications-page,
+.payments-ledger-page {
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+.applications-page > .grid:first-of-type,
+.payments-ledger-page > section.grid { gap: 10px !important; }
+.applications-filter-card,
+.payments-filter-card { gap: 8px !important; padding: 10px !important; }
+.applications-filter-card input,
+.applications-filter-card select,
+.payments-filter-card input,
+.payments-filter-card select,
+.payments-filter-card label,
+.payments-filter-card button { height: 40px !important; min-height: 40px !important; }
+.applications-table-card table th,
+.applications-table-card table td,
+.payments-table-card table th,
+.payments-table-card table td { padding: 8px 10px !important; }
+.applications-table-card tbody tr,
+.payments-table-card tbody tr { height: 62px !important; }
+.applications-table-card .application-actions-cell { min-width: 320px !important; }
+.applications-table-card .admin-action-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+.applications-table-card .admin-action-button {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 4px 7px !important;
+  font-size: 10.5px !important;
+  white-space: nowrap !important;
+}
+.applications-table-card > div:last-child,
+.payments-table-card footer { padding: 9px 12px !important; }
+.payments-ledger-page > header:first-of-type {
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 0 6px !important;
+}
+.payments-ledger-page > header:first-of-type h1,
+.payments-ledger-page > header:first-of-type p { margin-top: 0 !important; }
+
+@media (max-width: 1024px) {
+  html body .admin-shell > .sidebar-card,
+  html body .admin-shell > .sidebar-card.is-collapsed {
+    width: min(86vw, 280px) !important;
+    min-width: 0 !important;
+    max-width: 280px !important;
+  }
+}
+
+/* Admin shell boundary: the allocated column and the real sidebar must always
+   have exactly the same width, otherwise the sidebar overlaps page content. */
+@media (min-width: 1025px) {
+  .admin-shell {
+    grid-template-columns: 248px minmax(0, 1fr) !important;
+  }
+
+  .admin-shell:has(> .sidebar-card.is-collapsed) {
+    grid-template-columns: 68px minmax(0, 1fr) !important;
+  }
+
+  .admin-shell > .sidebar-card {
+    width: 248px !important;
+    min-width: 248px !important;
+    max-width: 248px !important;
+    overflow: hidden !important;
+  }
+
+  .admin-shell > .sidebar-card.is-collapsed {
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+  }
+
+  .admin-shell > .admin-content {
+    grid-column: 2 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* Applications: dense filters and single-line actions prevent unnecessarily
+   tall records while preserving every action. */
+.applications-page {
+  gap: 10px !important;
+}
+
+.applications-page > .grid:first-of-type {
+  gap: 10px !important;
+}
+
+.applications-page > .admin-card:nth-of-type(1) {
+  gap: 10px !important;
+  padding: 10px !important;
+}
+
+.applications-page > .admin-card:nth-of-type(1) input,
+.applications-page > .admin-card:nth-of-type(1) select {
+  min-height: 40px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.applications-page table th,
+.applications-page table td {
+  padding: 8px 10px !important;
+}
+
+.applications-page tbody tr {
+  height: 64px !important;
+}
+
+.applications-page .application-actions-cell {
+  min-width: 320px !important;
+}
+
+.applications-page .admin-action-group {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  gap: 4px !important;
+}
+
+.applications-page .admin-action-button {
+  min-height: 32px !important;
+  padding: 5px 7px !important;
+  font-size: 10.5px !important;
+  white-space: nowrap !important;
+}
+
+.applications-page > .admin-card:last-of-type > div:last-child {
+  padding: 10px 12px !important;
+}
+
+/* Payments: keep the title inside the content boundary and remove oversized
+   header/filter/table spacing inherited from the older page design. */
+.payments-ledger-page {
+  gap: 10px !important;
+}
+
+.payments-ledger-page > header:first-of-type {
+  min-height: 0 !important;
+  align-items: center !important;
+  padding: 0 0 8px !important;
+}
+
+.payments-ledger-page > header:first-of-type h1 {
+  margin-top: 2px !important;
+}
+
+.payments-ledger-page > section.grid {
+  gap: 10px !important;
+}
+
+.payments-ledger-page > .admin-card.grid {
+  gap: 8px !important;
+  padding: 10px !important;
+}
+
+.payments-ledger-page table th,
+.payments-ledger-page table td {
+  padding: 8px 10px !important;
+}
+
+.payments-ledger-page tbody tr {
+  height: 62px !important;
+}
+
+.payments-ledger-page footer {
+  padding: 9px 12px !important;
 }
 
 /* Canonical compact admin workspace.
