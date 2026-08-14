@@ -104,7 +104,7 @@ const StudentSearch = () => {
         </div>
       </Card>
 
-      {!submittedQuery && <Card className="grid min-h-[340px] place-items-center p-8 text-center"><div><span className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-[#303b97]/10 text-[#303b97]"><UserRoundSearch size={31} /></span><h2 className="mt-5 text-xl font-extrabold text-[#14294b]">Search the student directory</h2><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">Use a student name, ID, roll number, application reference, phone number, or email. No complete admission forms are shown here.</p></div></Card>}
+      {!submittedQuery && <Card className="grid min-h-[240px] place-items-center p-5 text-center"><div><span className="mx-auto grid h-14 w-14 place-items-center rounded-xl bg-[#303b97]/10 text-[#303b97]"><UserRoundSearch size={28} /></span><h2 className="mt-4 text-xl font-extrabold text-[#14294b]">Search the student directory</h2><p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">Use a student name, ID, roll number, application reference, phone number, or email. No complete admission forms are shown here.</p></div></Card>}
 
       {submittedQuery && <>
         <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold text-[#14294b]">{loading ? 'Searching secure records...' : `${pagination.total || 0} result${pagination.total === 1 ? '' : 's'} for “${submittedQuery}”`}</p></div>

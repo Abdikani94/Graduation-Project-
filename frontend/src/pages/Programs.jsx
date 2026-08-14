@@ -6,12 +6,15 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
 import { confirmDialog } from '../services/dialogService';
+import { isSuperAdmin } from '../utils/accessControl';
 
 const fallbackImage = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
 const fixedAdmissionFee = 0.1;
 const minimumProgramDurationYears = 5;
 
 const Programs = () => {
+  const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const canManageFaculties = isSuperAdmin(currentUser);
   const [programs, setPrograms] = useState([]);
   const [summary, setSummary] = useState({ totalPrograms: 0, totalFaculties: 0, totalAdmissionFees: 0 });
   const [search, setSearch] = useState('');
@@ -273,12 +276,12 @@ const Programs = () => {
         <select className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
           <option>All Faculties</option>
         </select>
-        <button
+        {canManageFaculties && <button
           onClick={() => setIsModalOpen(true)}
           className="bg-primary hover:bg-opacity-90 text-white rounded-xl px-6 py-3.5 text-[13px] font-medium transition-colors ml-auto whitespace-nowrap cursor-pointer"
         >
           Add Faculty
-        </button>
+        </button>}
       </Card>
 
       {/* Faculty Cards Grid */}
@@ -312,18 +315,18 @@ const Programs = () => {
                 >
                   <Plus size={16} /> Add program
                 </button>
-                <button
+                {canManageFaculties && <button
                   onClick={(e) => handleOpenFacultyEdit(e, program)}
                   className="flex items-center justify-center gap-2 bg-transparent text-gray-400 border border-dashed border-white/10 rounded-lg p-3 text-[14px] font-medium hover:border-white/30 hover:text-white transition-all cursor-pointer w-full"
                 >
                   <Edit2 size={16} /> Edit
-                </button>
-                <button
+                </button>}
+                {canManageFaculties && <button
                   onClick={(e) => handleDeleteFaculty(e, program)}
                   className="flex items-center justify-center gap-2 bg-transparent text-red-400 border border-dashed border-red-500/20 rounded-lg p-3 text-[14px] font-medium hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer w-full"
                 >
                   <Trash2 size={16} /> Delete
-                </button>
+                </button>}
               </div>
             </div>
           </Card>
@@ -642,13 +645,13 @@ const Programs = () => {
                                 >
                                   <Edit size={12} />
                                 </button>
-                                <button
+                                {canManageFaculties && <button
                                   onClick={() => deleteDept(i)}
                                   className="w-7 h-7 rounded-lg bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-all flex items-center justify-center cursor-pointer"
                                   title="Delete Department"
                                 >
                                   <Trash2 size={12} />
-                                </button>
+                                </button>}
                               </div>
                             </div>
                           </>

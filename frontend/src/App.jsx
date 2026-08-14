@@ -27,6 +27,11 @@ import SmsNotifications from './pages/SmsNotifications';
 import ScheduledMessages from './pages/ScheduledMessages';
 import StudentSearch from './pages/StudentSearch';
 import AdmissionChatbot from './components/AdmissionChatbot';
+import { canAccessModule } from './utils/accessControl';
+
+const ProtectedModule = ({ user, module, children }) => (
+  canAccessModule(user, module) ? children : <Navigate to="/dashboard" replace />
+);
 
 const AdminLayout = () => {
   const token = localStorage.getItem('authToken');
@@ -48,7 +53,7 @@ const AdminLayout = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/students" element={<Students />} />
-          <Route path="/student-search" element={['Admin', 'Officer'].includes(currentUser.role) ? <StudentSearch /> : <Navigate to="/dashboard" replace />} />
+          <Route path="/student-search" element={<ProtectedModule user={currentUser} module="studentSearch"><StudentSearch /></ProtectedModule>} />
           <Route path="/classes" element={<Classes />} />
           <Route path="/payments" element={<Payments />} />
           <Route path="/discount" element={<Discount />} />
@@ -56,13 +61,13 @@ const AdminLayout = () => {
           <Route path="/programs" element={<Programs />} />
           <Route path="/contact-messages" element={<ContactMessages />} />
           <Route path="/file-storage" element={<FileStorage />} />
-          <Route path="/admission-periods" element={currentUser.role === 'Admin' ? <AdmissionPeriods /> : <Navigate to="/dashboard" replace />} />
-          <Route path="/sms-notifications" element={currentUser.role === 'Admin' ? <SmsNotifications /> : <Navigate to="/dashboard" replace />} />
-          <Route path="/scheduled-messages" element={currentUser.role === 'Admin' ? <ScheduledMessages /> : <Navigate to="/dashboard" replace />} />
-          <Route path="/activity-log" element={<ActivityLog />} />
-          <Route path="/admin-users" element={<AdminUsers />} />
-          <Route path="/admin-report" element={<AdminReport />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/admission-periods" element={<ProtectedModule user={currentUser} module="admissionPeriods"><AdmissionPeriods /></ProtectedModule>} />
+          <Route path="/sms-notifications" element={<ProtectedModule user={currentUser} module="smsNotifications"><SmsNotifications /></ProtectedModule>} />
+          <Route path="/scheduled-messages" element={<ProtectedModule user={currentUser} module="scheduledMessages"><ScheduledMessages /></ProtectedModule>} />
+          <Route path="/activity-log" element={<ProtectedModule user={currentUser} module="activityLog"><ActivityLog /></ProtectedModule>} />
+          <Route path="/admin-users" element={<ProtectedModule user={currentUser} module="adminUsers"><AdminUsers /></ProtectedModule>} />
+          <Route path="/admin-report" element={<ProtectedModule user={currentUser} module="adminReport"><AdminReport /></ProtectedModule>} />
+          <Route path="/settings" element={<ProtectedModule user={currentUser} module="settings"><Settings /></ProtectedModule>} />
         </Routes>
       </main>
     </div>

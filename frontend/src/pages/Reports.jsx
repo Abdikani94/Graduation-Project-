@@ -70,7 +70,7 @@ const Reports = () => {
   const totalApplications = report.stats?.totalApplications || 0;
 
   return (
-    <PageLayout>
+    <PageLayout className="reports-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
       {/* Filter Reports Container */}
       <Card className="p-6 flex flex-col gap-5 mb-[15px]">
@@ -446,8 +446,8 @@ const Reports = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[600px]">
+          <div className="reports-revenue-table w-full">
+            <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-white/5">
                   <th className="pb-4 text-[11px] font-medium text-gray-500 uppercase tracking-wider">Faculty</th>

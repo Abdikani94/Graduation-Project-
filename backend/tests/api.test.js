@@ -244,6 +244,18 @@ test('file storage users authenticate and receive team assignments', async () =>
   assert.ok(fileAdminToken); assert.ok(fileUserToken);
 });
 
+test('Officer cannot access Super Admin-only APIs while Admin retains access', async () => {
+  for (const endpoint of ['/api/activity-log', '/api/activity-log/export/csv', '/api/admin-users', '/api/settings']) {
+    const officerResponse = await request({ path: endpoint, token: fileUserToken });
+    assert.equal(officerResponse.status, 403, `Officer unexpectedly accessed ${endpoint}`);
+  }
+
+  for (const endpoint of ['/api/activity-log', '/api/admin-users', '/api/settings']) {
+    const adminResponse = await request({ path: endpoint, token: fileAdminToken });
+    assert.equal(adminResponse.status, 200, `Admin could not access ${endpoint}`);
+  }
+});
+
 test('unauthorized and invalid file uploads are rejected', async () => {
   const fields = { title: 'Invalid', reportType: 'General File', visibility: 'Private' };
   const unauthorized = await multipartRequest({ path: '/api/files', fields });

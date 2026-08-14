@@ -109,7 +109,7 @@ const Dashboard = () => {
   const totalApplicants = stats.totalApplications || 0;
 
   return (
-    <PageLayout>
+    <PageLayout className="dashboard-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
         <StatCard icon={Users} title="Total Applications" value={isLoading ? '...' : stats.totalApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
@@ -119,7 +119,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
-        <Card className="flex flex-col p-6 h-[400px]">
+        <Card className="dashboard-chart-card flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Weekly Admissions</h3>
           <p className="text-gray-500 text-[12px] mb-6">New vs approved (last 7 days)</p>
           <div className="w-full flex-1 min-h-0">
@@ -146,7 +146,7 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        <Card className="flex flex-col p-6 h-[400px]">
+        <Card className="dashboard-chart-card flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Faculty Demand</h3>
           <p className="text-gray-500 text-[12px] mb-6">Application volume per faculty</p>
           <div className="flex items-center h-full pb-5">
@@ -196,7 +196,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
-        <Card className="col-span-2 flex flex-col p-6 h-[350px]">
+        <Card className="dashboard-trend-card lg:col-span-2 flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Admissions -- 30 Day Trend</h3>
           <p className="text-gray-500 text-[12px] mb-6">Applications submitted vs paid</p>
           <div className="w-full flex-1 min-h-0">
@@ -238,10 +238,10 @@ const Dashboard = () => {
           </div>
         </Card>
 
-        <Card className="flex flex-col p-6 h-[350px]">
+        <Card className="dashboard-recent-card flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Last Admissions</h3>
           <p className="text-gray-500 text-[12px] mb-4">Applications submitted vs paid</p>
-          <div className="flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2 flex-1">
+          <div className="flex flex-col gap-3 pr-1 flex-1">
             {recentAdmissions.length === 0 && (
               <p className="text-[#6c6a7e] text-[13px] py-6 text-center">No admissions yet.</p>
             )}

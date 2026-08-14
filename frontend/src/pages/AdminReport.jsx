@@ -59,7 +59,7 @@ const AdminReport = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
-        <Card className="p-6 col-span-2 flex flex-col h-[350px]">
+        <Card className="admin-report-chart p-4 col-span-2 flex flex-col">
           <h3 className="text-white text-[16px] font-semibold mb-1">Decisions by Admin User</h3>
           <p className="text-gray-500 text-[12px] mb-6">Number of approvals vs rejections per admin</p>
           <div className="w-full flex-1 min-h-0">
@@ -76,7 +76,7 @@ const AdminReport = () => {
           </div>
         </Card>
 
-        <Card className="p-6 flex flex-col h-[350px]">
+        <Card className="admin-report-chart p-4 flex flex-col">
           <h3 className="text-white text-[16px] font-semibold mb-1">Administrative Overview</h3>
           <p className="text-gray-500 text-[12px] mb-6">Key efficiency pointers</p>
           <div className="flex flex-col gap-5 flex-1 justify-center">

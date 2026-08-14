@@ -6,10 +6,13 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
 import { confirmDialog } from '../services/dialogService';
+import { isSuperAdmin } from '../utils/accessControl';
 
 const contactTypes = ['Type of contact', 'Admission', 'Get discount', 'Problem enrollment', 'Payment', 'Technical Support', 'General'];
 
 const ContactMessages = () => {
+  const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const canDeleteMessages = isSuperAdmin(currentUser);
   const [messages, setMessages] = useState([]);
   const [summary, setSummary] = useState({ replied: 0, pending: 0, cancelled: 0 });
   const [search, setSearch] = useState('');
@@ -159,9 +162,9 @@ const ContactMessages = () => {
                     <button onClick={() => updateStatus(contact, 'Cancelled')} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Cancel">
                       <X size={17} />
                     </button>
-                    <button onClick={() => deleteMessage(contact)} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Delete">
+                    {canDeleteMessages && <button onClick={() => deleteMessage(contact)} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Delete">
                       <Trash2 size={17} />
-                    </button>
+                    </button>}
                   </td>
                 </tr>
               ))}

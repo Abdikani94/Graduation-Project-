@@ -156,8 +156,8 @@ export const registerRoutes = (router) => {
   router.get('/api/settings', requireAuth(getSettings, ['Admin']));
   router.patch('/api/settings', requireAuth(updateSettings, ['Admin']));
 
-  router.get('/api/activity-log', requireAuth(listActivity, ['Admin', 'Officer']));
-  router.get('/api/activity-log/export/csv', requireAuth(exportActivityCsv, ['Admin', 'Officer']));
+  router.get('/api/activity-log', requireAuth(listActivity, ['Admin']));
+  router.get('/api/activity-log/export/csv', requireAuth(exportActivityCsv, ['Admin']));
 
   router.get('/api/files/stats', requireAuth(getFileStats, ['Admin', 'Officer']));
   router.get('/api/files/options', requireAuth(listFileOptions, ['Admin', 'Officer']));

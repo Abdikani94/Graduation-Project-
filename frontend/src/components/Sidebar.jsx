@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Card from './Card';
 import logo from '../images/logo.jpg';
+import { canAccessModule } from '../utils/accessControl';
 
 const storedGroups = () => {
   try {
@@ -33,7 +34,7 @@ const Sidebar = ({ open = false, onClose = () => {} }) => {
         ['/dashboard', LayoutDashboard, 'Dashboard'],
         ['/applications', UserPlus, 'Applications'],
         ['/students', Users, 'Students'],
-        ...(['Admin', 'Officer'].includes(currentUser.role) ? [['/student-search', UserRoundSearch, 'Student Search']] : []),
+        ...(canAccessModule(currentUser, 'studentSearch') ? [['/student-search', UserRoundSearch, 'Student Search']] : []),
         ['/classes', GraduationCap, 'Classes'],
         ['/payments', Briefcase, 'Payments'],
         ['/discount', Percent, 'Discount'],
@@ -48,15 +49,19 @@ const Sidebar = ({ open = false, onClose = () => {} }) => {
       items: [
         ['/contact-messages', MessageCircle, 'Contact Messages'],
         ['/file-storage', FolderArchive, 'File Storage'],
-        ...(currentUser.role === 'Admin' ? [
+        ...(canAccessModule(currentUser, 'admissionPeriods') ? [
           ['/admission-periods', CalendarCheck, 'Admission Periods'],
+        ] : []),
+        ...(canAccessModule(currentUser, 'smsNotifications') ? [
           ['/sms-notifications', MessageSquareText, 'SMS Notifications'],
+        ] : []),
+        ...(canAccessModule(currentUser, 'scheduledMessages') ? [
           ['/scheduled-messages', MessagesSquare, 'Scheduled Messages'],
         ] : []),
-        ['/activity-log', History, 'Activity Log'],
-        ['/admin-users', Users2, 'Admin Users'],
-        ['/admin-report', BarChart3, 'Admin Report'],
-        ['/settings', Settings, 'Settings'],
+        ...(canAccessModule(currentUser, 'activityLog') ? [['/activity-log', History, 'Activity Log']] : []),
+        ...(canAccessModule(currentUser, 'adminUsers') ? [['/admin-users', Users2, 'Admin Users']] : []),
+        ...(canAccessModule(currentUser, 'adminReport') ? [['/admin-report', BarChart3, 'Admin Report']] : []),
+        ...(canAccessModule(currentUser, 'settings') ? [['/settings', Settings, 'Settings']] : []),
       ],
     },
   ], [currentUser.role]);

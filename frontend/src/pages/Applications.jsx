@@ -6,6 +6,7 @@ import Card from '../components/Card';
 import Toast from '../components/Toast';
 import api from '../api/axios';
 import { confirmDialog } from '../services/dialogService';
+import { isSuperAdmin } from '../utils/accessControl';
 
 const formatDate = (value) => {
   if (!value) return 'Not provided';
@@ -78,6 +79,8 @@ const EDIT_FIELD_KEYS = EDIT_SECTIONS.flatMap((section) => section.fields.map((f
 const editInputClass = 'bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3 text-[13px] outline-none focus:border-primary w-full';
 
 const Applications = () => {
+  const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const canDeleteApplications = isSuperAdmin(currentUser);
   const [applications, setApplications] = useState([]);
   const [summary, setSummary] = useState({ total: 0, approved: 0, pending: 0, rejected: 0 });
   const [search, setSearch] = useState('');
@@ -315,9 +318,9 @@ const Applications = () => {
                       <button disabled={isSaving} onClick={() => handleStatus(app, 'Rejected')} className="admin-action-button" type="button">
                         <X size={14} /> Reject
                       </button>
-                      <button disabled={isSaving} onClick={() => handleDelete(app)} className="admin-action-button admin-action-button--danger" type="button">
+                      {canDeleteApplications && <button disabled={isSaving} onClick={() => handleDelete(app)} className="admin-action-button admin-action-button--danger" type="button">
                         <Trash2 size={14} /> Delete
-                      </button>
+                      </button>}
                     </div>
                   </td>
                 </tr>
