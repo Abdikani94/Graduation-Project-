@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UserCheck, UserX, Clock, Users, Bell } from 'lucide-react';
+import { UserCheck, UserX, Clock, Users } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
@@ -111,20 +111,20 @@ const Dashboard = () => {
   return (
     <PageLayout className="dashboard-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[15px]">
+      <div className="dashboard-stats-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <StatCard icon={Users} title="Total Applications" value={isLoading ? '...' : stats.totalApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
         <StatCard icon={UserCheck} title="Approved Applications" value={isLoading ? '...' : stats.approvedApplications.toLocaleString()} color="#00A451" iconColor="#00A451" />
         <StatCard icon={Clock} title="Pending Application" value={isLoading ? '...' : stats.pendingApplications.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
         <StatCard icon={UserX} title="Rejected Applications" value={isLoading ? '...' : stats.rejectedApplications.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
+      <div className="dashboard-primary-grid grid grid-cols-1 lg:grid-cols-2 gap-3">
         <Card className="dashboard-chart-card flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Weekly Admissions</h3>
-          <p className="text-gray-500 text-[12px] mb-6">New vs approved (last 7 days)</p>
+          <p className="text-gray-500 text-[12px] mb-2">New vs approved (last 7 days)</p>
           <div className="w-full flex-1 min-h-0">
             <ResponsiveContainer>
-              <BarChart data={barData} margin={{ top: 20, right: 0, left: -20, bottom: 0 }} barGap={12}>
+              <BarChart data={barData} margin={{ top: 6, right: 0, left: -24, bottom: 0 }} barGap={10}>
                 <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.02)" />
                 <XAxis dataKey="name" stroke="#6c6a7e" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6c6a7e'}} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#6c6a7e'}} ticks={[15, 30, 45, 60]} />
@@ -134,7 +134,7 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-8 mt-4">
+          <div className="flex justify-center gap-6 mt-1">
              <div className="flex items-center gap-2">
                 <div className="w-3 h-1.5 rounded bg-[#4b4b5a]"></div>
                 <span className="text-[#6c6a7e] text-[13px] font-medium">Applications</span>
@@ -148,15 +148,15 @@ const Dashboard = () => {
 
         <Card className="dashboard-chart-card flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Faculty Demand</h3>
-          <p className="text-gray-500 text-[12px] mb-6">Application volume per faculty</p>
-          <div className="flex items-center h-full pb-5">
-            <div className="w-[140px] h-[140px] relative">
+          <p className="text-gray-500 text-[12px] mb-2">Application volume per faculty</p>
+          <div className="flex items-center flex-1 min-h-0">
+            <div className="w-[126px] h-[126px] relative shrink-0">
               <ResponsiveContainer>
                 <PieChart>
                   <Pie
                     data={pieData}
-                    innerRadius={55}
-                    outerRadius={70}
+                    innerRadius={49}
+                    outerRadius={63}
                     paddingAngle={3}
                     dataKey="value"
                     stroke="none"
@@ -174,9 +174,9 @@ const Dashboard = () => {
               </div>
             </div>
             
-            <div className="flex-1 pl-6">
+            <div className="flex-1 pl-4">
               {pieData.map((item, index) => (
-                <div key={index} className="flex items-center justify-between mb-2.5">
+                <div key={index} className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }}></div>
                     <span className="text-[#6c6a7e] text-[12px]">{item.name}</span>
@@ -186,22 +186,16 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-          <div className="bg-white/5 p-4 rounded-xl mt-auto flex gap-3 items-start">
-            <Bell size={16} className="text-[#6c6a7e] shrink-0 mt-0.5" />
-            <p className="text-[#8c8a9e] text-[11px] leading-relaxed m-0">
-              Faculty demand is calculated from submitted admission applications. Use this overview to plan classes, staffing, and available capacity for the next intake.
-            </p>
-          </div>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px]">
-        <Card className="dashboard-trend-card lg:col-span-2 flex flex-col p-4">
+      <div className="dashboard-secondary-grid grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <Card className="dashboard-trend-card flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Admissions -- 30 Day Trend</h3>
-          <p className="text-gray-500 text-[12px] mb-6">Applications submitted vs paid</p>
+          <p className="text-gray-500 text-[12px] mb-2">Applications submitted vs paid</p>
           <div className="w-full flex-1 min-h-0">
             <ResponsiveContainer>
-              <AreaChart data={areaData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+              <AreaChart data={areaData} margin={{ top: 4, right: 0, left: -24, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorAccepted" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#2D368D" stopOpacity={0.4}/>
@@ -222,7 +216,7 @@ const Dashboard = () => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-center gap-8 mt-4">
+          <div className="flex justify-center gap-5 mt-1">
              <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-[#00A451]"></div>
                 <span className="text-[#6c6a7e] text-[13px] font-medium">Submitted</span>
@@ -240,21 +234,21 @@ const Dashboard = () => {
 
         <Card className="dashboard-recent-card flex flex-col p-4">
           <h3 className="text-white text-[16px] font-semibold mb-1">Last Admissions</h3>
-          <p className="text-gray-500 text-[12px] mb-4">Applications submitted vs paid</p>
-          <div className="flex flex-col gap-3 pr-1 flex-1">
+          <p className="text-gray-500 text-[12px] mb-2">Latest submitted applications</p>
+          <div className="dashboard-recent-list flex flex-col flex-1 min-h-0">
             {recentAdmissions.length === 0 && (
               <p className="text-[#6c6a7e] text-[13px] py-6 text-center">No admissions yet.</p>
             )}
-            {recentAdmissions.map((item, index) => (
-              <div key={index} className={`flex items-center justify-between pb-4 ${index < recentAdmissions.length - 1 ? 'border-b border-white/5' : ''}`}>
-                <div className="flex items-center gap-4">
-                  <img src={avatarFor(item.name)} alt={item.name} className="w-11 h-11 rounded-full object-cover grayscale" />
+            {recentAdmissions.slice(0, 4).map((item, index, visibleAdmissions) => (
+              <div key={index} className={`dashboard-recent-row flex items-center justify-between ${index < visibleAdmissions.length - 1 ? 'border-b border-slate-200' : ''}`}>
+                <div className="flex min-w-0 items-center gap-3">
+                  <img src={avatarFor(item.name)} alt={item.name} className="h-9 w-9 shrink-0 rounded-full object-cover grayscale" />
                   <div>
-                    <h4 className="text-white text-[14px] font-medium mb-1">{item.name}</h4>
-                    <p className="text-[#6c6a7e] text-[12px]">{item.program}</p>
+                    <h4 className="truncate text-white text-[13px] font-medium">{item.name}</h4>
+                    <p className="truncate text-[#6c6a7e] text-[11px]">{item.program}</p>
                   </div>
                 </div>
-                <span className="text-[#6c6a7e] text-[12px] font-medium">{timeAgo(item.createdAt)}</span>
+                <span className="ml-3 shrink-0 text-[#6c6a7e] text-[11px] font-medium">{timeAgo(item.createdAt)}</span>
               </div>
             ))}
           </div>

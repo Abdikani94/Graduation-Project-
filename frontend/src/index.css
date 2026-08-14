@@ -10794,19 +10794,69 @@ html body .admin-shell > .sidebar-card.is-collapsed {
 }
 
 .dashboard-chart-card {
-  height: 270px !important;
+  height: 220px !important;
   min-height: 0 !important;
 }
 
 .dashboard-trend-card,
 .dashboard-recent-card {
-  height: 225px !important;
+  height: 220px !important;
   min-height: 0 !important;
 }
 
 .dashboard-chart-card canvas,
 .dashboard-trend-card canvas {
-  max-height: 190px !important;
+  max-height: 150px !important;
+}
+
+.dashboard-page {
+  gap: 10px !important;
+}
+
+.dashboard-page .admin-card {
+  padding: 12px !important;
+}
+
+.dashboard-recent-row {
+  display: flex !important;
+  grid-template-columns: none !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 3px 0 !important;
+}
+
+.dashboard-recent-row:hover {
+  padding-left: 0 !important;
+}
+
+.dashboard-recent-card {
+  overflow: hidden !important;
+  padding: 10px 12px !important;
+}
+
+.dashboard-recent-card > h3 {
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.dashboard-recent-card > p {
+  margin: 2px 0 3px !important;
+  line-height: 1.2 !important;
+}
+
+.dashboard-recent-list {
+  overflow: hidden !important;
+}
+
+.dashboard-recent-row img {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.dashboard-recent-row h4,
+.dashboard-recent-row p {
+  margin: 0 !important;
+  line-height: 1.15 !important;
 }
 
 /* Legacy report/dashboard markup used white text from the former dark theme.
