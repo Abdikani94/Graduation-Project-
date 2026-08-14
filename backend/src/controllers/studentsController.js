@@ -3,6 +3,7 @@ import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 import { generateStudentNumber } from '../utils/studentNumber.js';
+import { assignAutomaticClass } from '../services/automaticClassService.js';
 
 const discountReasons = ['Regional', 'Financial Assistance', 'Scholarship', 'Other'];
 const discountPercentages = [20, 25, 30, 100];
@@ -36,10 +37,17 @@ export const getStudent = async (req, res) => {
 
 export const createStudent = async (req, res) => {
   const { fullName, email, mobile, faculty, department, campus = 'Main Campus', status = 'Enrolled' } = req.body || {};
-  if (!fullName || !email || !mobile) fail(422, 'Full name, email, and mobile are required');
+  if (!fullName || !email || !mobile || !faculty || !department) {
+    fail(422, 'Full name, email, mobile, faculty, and department are required');
+  }
 
   const student = await updateDb((db) => {
     const now = new Date().toISOString();
+    const assignedClass = assignAutomaticClass(db, {
+      faculty: assignedClass.faculty,
+      department: assignedClass.department,
+      academicYear: req.body.academicYear || new Date(req.body.enrolledAt || now).getFullYear()
+    });
     const item = {
       id: createId('stu'),
       applicationId: req.body.applicationId || '',
@@ -50,8 +58,8 @@ export const createStudent = async (req, res) => {
       faculty: faculty || '',
       department: department || '',
       campus,
-      classId: req.body.classId || null,
-      className: req.body.className || null,
+      classId: assignedClass.id,
+      className: assignedClass.classCode,
       discountReason: null,
       discountPercentage: null,
       status,
@@ -87,8 +95,20 @@ export const updateStudent = async (req, res) => {
     const found = db.students.find((item) => item.id === req.params.id || item.studentNumber === req.params.id);
     if (!found) fail(404, 'Student not found');
     const before = found.status;
-    for (const key of ['fullName', 'email', 'mobile', 'faculty', 'department', 'campus', 'status', 'whatsappSent', 'classId', 'className', 'discountReason', 'discountPercentage']) {
+    const previousFaculty = found.faculty;
+    const previousDepartment = found.department;
+    for (const key of ['fullName', 'email', 'mobile', 'faculty', 'department', 'campus', 'status', 'whatsappSent', 'discountReason', 'discountPercentage']) {
       if (req.body[key] !== undefined) found[key] = req.body[key];
+    }
+    if (found.faculty !== previousFaculty || found.department !== previousDepartment) {
+      const assignedClass = assignAutomaticClass(db, {
+        faculty: found.faculty,
+        department: found.department,
+        academicYear: req.body.academicYear || new Date(found.enrolledAt || Date.now()).getFullYear(),
+        excludedStudentId: found.id
+      });
+      found.classId = assignedClass.id;
+      found.className = assignedClass.classCode;
     }
     if (found.discountReason === 'Regional') {
       found.discountPercentage = regionalDiscountPercentage;

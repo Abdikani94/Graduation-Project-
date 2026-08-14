@@ -23,7 +23,7 @@ import {
   updateProgram
 } from '../controllers/programsController.js';
 import { createStudent, deleteStudent, getStudent, listStudents, markWhatsAppSent, updateStudent } from '../controllers/studentsController.js';
-import { createClass, deleteClass, listClasses, updateClass } from '../controllers/classesController.js';
+import { listClasses } from '../controllers/classesController.js';
 import { createPayment, deletePayment, exportPaymentsCsv, listPayments, updatePayment, updatePaymentStatus } from '../controllers/paymentsController.js';
 import { createContactMessage, deleteContactMessage, listContactMessages, updateContactStatus } from '../controllers/contactController.js';
 import { exportReportCsv, getReportSummary } from '../controllers/reportsController.js';
@@ -127,9 +127,6 @@ export const registerRoutes = (router) => {
   router.delete('/api/students/:id', requireAuth(deleteStudent, ['Admin']));
 
   router.get('/api/classes', requireAuth(listClasses, ['Admin', 'Officer']));
-  router.post('/api/classes', requireAuth(createClass, ['Admin']));
-  router.patch('/api/classes/:id', requireAuth(updateClass, ['Admin']));
-  router.delete('/api/classes/:id', requireAuth(deleteClass, ['Admin']));
 
   router.get('/api/payments', requireAuth(listPayments, ['Admin', 'Officer']));
   router.post('/api/payments/preview', requirePaymentAuth(preview));

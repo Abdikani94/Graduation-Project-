@@ -15,7 +15,7 @@ const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const databaseName = process.env.MONGODB_DB_NAME || 'jamhuriya_admission';
 const client = new MongoClient(uri, { serverSelectionTimeoutMS: 5000 });
 
-export const backupMongoDatabase = async () => {
+export const backupMongoDatabase = async ({ silent = false } = {}) => {
 try {
   await client.connect();
   const database = client.db(databaseName);
@@ -41,8 +41,10 @@ try {
     .reverse();
   for (const oldBackup of savedBackups.slice(10)) await fs.unlink(path.join(backupDirectory, oldBackup));
 
-  console.log(`MongoDB backup created: ${backupPath}`);
-  for (const [name, documents] of Object.entries(backup)) console.log(`${name}: ${documents.length}`);
+  if (!silent) {
+    console.log(`MongoDB backup created: ${backupPath}`);
+    for (const [name, documents] of Object.entries(backup)) console.log(`${name}: ${documents.length}`);
+  }
 } finally {
   await client.close();
 }

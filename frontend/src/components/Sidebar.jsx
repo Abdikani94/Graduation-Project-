@@ -1,91 +1,125 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, UserPlus, Users, Briefcase, TrendingUp, BookOpen, MessageCircle, History, Users2, FileText, Settings, LogOut, GraduationCap, Percent, FolderArchive, CalendarCheck, MessageSquareText, MessagesSquare, UserRoundSearch, X
+  Activity, BarChart3, BookOpen, Briefcase, CalendarCheck, ChevronDown,
+  FolderArchive, GraduationCap, History, LayoutDashboard, LogOut, Menu, MenuSquare,
+  MessageCircle, MessagesSquare, MessageSquareText,
+  Percent, Settings, UserPlus, UserRoundSearch, Users, Users2, X,
 } from 'lucide-react';
 import Card from './Card';
 import logo from '../images/logo.jpg';
 
+const storedGroups = () => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('adminSidebarGroups') || '{}');
+    const active = ['overview', 'analytics', 'operations'].find((id) => saved[id]) || 'overview';
+    return { overview: active === 'overview', analytics: active === 'analytics', operations: active === 'operations' };
+  } catch {
+    return { overview: true, analytics: true, operations: true };
+  }
+};
+
 const Sidebar = ({ open = false, onClose = () => {} }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const [groups, setGroups] = useState(storedGroups);
+  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('adminSidebarCollapsed') === 'true');
+
+  const sections = useMemo(() => [
+    {
+      id: 'overview', label: 'Overview', icon: MenuSquare,
+      items: [
+        ['/dashboard', LayoutDashboard, 'Dashboard'],
+        ['/applications', UserPlus, 'Applications'],
+        ['/students', Users, 'Students'],
+        ...(['Admin', 'Officer'].includes(currentUser.role) ? [['/student-search', UserRoundSearch, 'Student Search']] : []),
+        ['/classes', GraduationCap, 'Classes'],
+        ['/payments', Briefcase, 'Payments'],
+        ['/discount', Percent, 'Discount'],
+      ],
+    },
+    {
+      id: 'analytics', label: 'Analytics', icon: BarChart3,
+      items: [['/reports', BarChart3, 'Reports'], ['/programs', BookOpen, 'Programs']],
+    },
+    {
+      id: 'operations', label: 'Operations', icon: Activity,
+      items: [
+        ['/contact-messages', MessageCircle, 'Contact Messages'],
+        ['/file-storage', FolderArchive, 'File Storage'],
+        ...(currentUser.role === 'Admin' ? [
+          ['/admission-periods', CalendarCheck, 'Admission Periods'],
+          ['/sms-notifications', MessageSquareText, 'SMS Notifications'],
+          ['/scheduled-messages', MessagesSquare, 'Scheduled Messages'],
+        ] : []),
+        ['/activity-log', History, 'Activity Log'],
+        ['/admin-users', Users2, 'Admin Users'],
+        ['/admin-report', BarChart3, 'Admin Report'],
+        ['/settings', Settings, 'Settings'],
+      ],
+    },
+  ], [currentUser.role]);
+
+  useEffect(() => localStorage.setItem('adminSidebarGroups', JSON.stringify(groups)), [groups]);
+  useEffect(() => localStorage.setItem('adminSidebarCollapsed', String(collapsed)), [collapsed]);
+
+  useEffect(() => {
+    const activeSection = sections.find((section) => section.items.some(([to]) => location.pathname === to));
+    if (!activeSection) return;
+    setGroups({
+      overview: activeSection.id === 'overview',
+      analytics: activeSection.id === 'analytics',
+      operations: activeSection.id === 'operations',
+    });
+  }, [location.pathname, sections]);
+
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('authUser');
     navigate('/login');
   };
+
   return (
-    <Card className={`sidebar-card ${open ? 'is-open' : ''}`}>
+    <Card className={`sidebar-card ${open ? 'is-open' : ''} ${collapsed ? 'is-collapsed' : ''}`}>
       <div className="sidebar-brand">
-        <img src={logo} alt="Jamhuriya University logo" className="h-11 w-11 rounded-full object-contain" />
-        <div className="flex flex-col">
-          <h2 className="text-primary text-[15px] font-semibold leading-tight">Jamhuriya</h2>
-          <p className="text-brand-green text-[9px] font-medium tracking-[0.3px]">ADMIN PORTAL</p>
-        </div>
-        <button className="sidebar-close" onClick={onClose} aria-label="Close navigation"><X size={20} /></button>
+        <img src={logo} alt="Jamhuriya University logo" />
+        <div className="sidebar-brand-copy"><h2>Jamhuriya</h2><p>Admin Portal</p></div>
+        <button className="sidebar-close" onClick={onClose} aria-label="Close navigation"><X size={19} /></button>
+        <button className="sidebar-collapse-toggle" onClick={() => setCollapsed((value) => !value)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+          <Menu size={18} strokeWidth={2.1} />
+        </button>
       </div>
 
-      <div className="sidebar-navigation">
-        <div className="flex flex-col gap-1">
-          <p className="text-[#969696] text-[10px] font-semibold tracking-wider mb-2 px-2">OVERVIEW</p>
-          <NavItem onClick={onClose} to="/dashboard" icon={LayoutDashboard}>Dashboard</NavItem>
-          <NavItem onClick={onClose} to="/applications" icon={UserPlus}>Applications</NavItem>
-          <NavItem onClick={onClose} to="/students" icon={Users}>Students</NavItem>
-          {['Admin', 'Officer'].includes(currentUser.role) && <NavItem onClick={onClose} to="/student-search" icon={UserRoundSearch}>Student Search</NavItem>}
-          <NavItem onClick={onClose} to="/classes" icon={GraduationCap}>Classes</NavItem>
-          <NavItem onClick={onClose} to="/payments" icon={Briefcase}>Payments</NavItem>
-          <NavItem onClick={onClose} to="/discount" icon={Percent}>Discount</NavItem>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <p className="text-[#969696] text-[10px] font-semibold tracking-wider mb-2 px-2">ANALYTICS</p>
-          <NavItem onClick={onClose} to="/reports" icon={TrendingUp}>Reports</NavItem>
-          <NavItem onClick={onClose} to="/programs" icon={BookOpen}>Programs</NavItem>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <p className="text-[#969696] text-[10px] font-semibold tracking-wider mb-2 px-2">OPERATIONS</p>
-          <NavItem onClick={onClose} to="/contact-messages" icon={MessageCircle}>Contact Messages</NavItem>
-          <NavItem onClick={onClose} to="/file-storage" icon={FolderArchive}>File Storage</NavItem>
-          {currentUser.role === 'Admin' && <NavItem onClick={onClose} to="/admission-periods" icon={CalendarCheck}>Admission Periods</NavItem>}
-          {currentUser.role === 'Admin' && <NavItem onClick={onClose} to="/sms-notifications" icon={MessageSquareText}>SMS Notifications</NavItem>}
-          {currentUser.role === 'Admin' && <NavItem onClick={onClose} to="/scheduled-messages" icon={MessagesSquare}>Scheduled Student Messages</NavItem>}
-          <NavItem onClick={onClose} to="/activity-log" icon={History}>Activity Log</NavItem>
-          <NavItem onClick={onClose} to="/admin-users" icon={Users2}>Admin Users</NavItem>
-          <NavItem onClick={onClose} to="/admin-report" icon={FileText}>Admin Report</NavItem>
-          <NavItem onClick={onClose} to="/settings" icon={Settings}>Settings</NavItem>
-        </div>
-      </div>
+      <nav className="sidebar-navigation" aria-label="Admin navigation">
+        {sections.map((section) => {
+          const GroupIcon = section.icon;
+          const hasActiveItem = section.items.some(([to]) => location.pathname === to);
+          const expanded = groups[section.id];
+          return <section className={`sidebar-group ${expanded ? 'is-expanded' : ''} ${hasActiveItem ? 'has-active-item' : ''}`} key={section.id}>
+            <button className="sidebar-group-toggle" onClick={() => setGroups((current) => ({
+              overview: section.id === 'overview' ? !current.overview : false,
+              analytics: section.id === 'analytics' ? !current.analytics : false,
+              operations: section.id === 'operations' ? !current.operations : false,
+            }))} aria-expanded={expanded} title={collapsed ? section.label : undefined}>
+              <GroupIcon size={16} /><span>{section.label}</span><ChevronDown className="sidebar-group-chevron" size={15} />
+            </button>
+            {expanded && <div className="sidebar-group-items">
+              {section.items.map(([to, Icon, label]) => <NavItem collapsed={collapsed} key={to} onClick={onClose} to={to} icon={Icon}>{label}</NavItem>)}
+            </div>}
+          </section>;
+        })}
+      </nav>
 
       <div className="sidebar-profile">
-        <div className="flex items-center gap-3">
-          <div className="sidebar-avatar">{(currentUser.name || currentUser.username || 'A').slice(0, 2).toUpperCase()}</div>
-          <div className="flex flex-col flex-1 min-w-0">
-            <p className="text-text-dark text-[13px] font-semibold truncate">{currentUser.name || currentUser.email || 'Administrator'}</p>
-            <p className="text-[#969696] text-[11px] truncate">{currentUser.role || 'Admin'}</p>
-          </div>
-          <button onClick={logout} aria-label="Sign out" className="text-[#969696] hover:text-primary transition-colors cursor-pointer">
-            <LogOut size={16} />
-          </button>
-        </div>
+        <div className="sidebar-avatar">{(currentUser.name || currentUser.username || 'A').slice(0, 2).toUpperCase()}</div>
+        <div className="sidebar-profile-copy"><p className="sidebar-profile-name">{currentUser.name || currentUser.email || 'Administrator'}</p><p className="sidebar-profile-role">{currentUser.role || 'Admin'}</p></div>
+        <button onClick={logout} aria-label="Sign out" className="sidebar-logout-button" title="Sign out"><LogOut size={17} /></button>
       </div>
     </Card>
   );
 };
 
-const NavItem = ({ to, icon: Icon, children, onClick }) => (
-  <NavLink
-    to={to}
-    onClick={onClick}
-    className={({ isActive }) =>
-      `flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-colors duration-200 ${isActive
-        ? 'bg-primary text-white'
-        : 'text-text-dark hover:text-primary hover:bg-[#F5F5F5]'
-      }`
-    }
-  >
-    <Icon size={18} />
-    <span>{children}</span>
-  </NavLink>
-);
+const NavItem = ({ to, icon: Icon, children, onClick, collapsed }) => <NavLink to={to} onClick={onClick} title={collapsed ? children : undefined} className="sidebar-nav-link"><Icon size={18} /><span>{children}</span></NavLink>;
 
 export default Sidebar;

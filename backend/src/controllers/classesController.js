@@ -1,24 +1,19 @@
-import { createId, readDb, updateDb } from '../lib/db.js';
+import { readDb, updateDb } from '../lib/db.js';
 import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText, paginate, sortNewest } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
-
-const minimumCapacity = 1;
-
-const parseCapacity = (value) => {
-  const capacity = Number(value);
-  if (!Number.isInteger(capacity) || capacity < minimumCapacity) {
-    fail(422, `Class capacity must be a whole number of at least ${minimumCapacity}`);
-  }
-  return capacity;
-};
+import { assignAutomaticClass, CLASS_CAPACITY, classEnrollmentCount } from '../services/automaticClassService.js';
 
 const withComputedFields = (classItem, students) => {
-  const enrolled = students.filter((student) => student.classId === classItem.id).length;
+  const enrolled = students.filter((student) => student.classId === classItem.id && !['Withdrawn', 'Inactive', 'Graduated', 'Deleted'].includes(student.status)).length;
   return {
     ...classItem,
     enrolled,
-    status: enrolled >= classItem.capacity ? 'Full' : 'Open'
+    classCode: classItem.classCode || classItem.name,
+    name: classItem.classCode || classItem.name,
+    capacity: CLASS_CAPACITY,
+    currentStudents: enrolled,
+    status: enrolled >= CLASS_CAPACITY ? 'Full' : 'Open'
   };
 };
 
@@ -53,29 +48,21 @@ export const listClasses = async (req, res) => {
 };
 
 export const createClass = async (req, res) => {
-  const { name, faculty, department, capacity } = req.body || {};
-  if (!name) fail(422, 'Class name is required');
+  const { faculty, department, academicYear = new Date().getFullYear() } = req.body || {};
   if (!faculty) fail(422, 'Faculty is required');
   if (!department) fail(422, 'Department is required');
-  const parsedCapacity = parseCapacity(capacity);
 
   const classItem = await updateDb((db) => {
     findFacultyAndDepartment(db, faculty, department);
-    const now = new Date().toISOString();
-    const item = {
-      id: createId('cls'),
-      name,
-      faculty,
-      department,
-      capacity: parsedCapacity,
-      createdAt: now,
-      updatedAt: now
-    };
-    db.classes = db.classes || [];
-    db.classes.unshift(item);
+    const existingIds = new Set((db.classes || []).map((item) => item.id));
+    const item = assignAutomaticClass(db, { faculty, department, academicYear });
+    if (existingIds.has(item.id)) {
+      fail(409, `${item.classCode} still has available capacity; a new class is not required`);
+    }
+    item.currentStudents = classEnrollmentCount(db, item.id);
     addActivity(db, req, {
-      action: 'Added Class',
-      afterAction: name,
+      action: 'Generated Class',
+      afterAction: item.classCode,
       module: 'Classes'
     });
     return item;
@@ -90,13 +77,10 @@ export const updateClass = async (req, res) => {
     if (!found) fail(404, 'Class not found');
     const before = found.name;
 
-    if (req.body.faculty !== undefined || req.body.department !== undefined) {
-      findFacultyAndDepartment(db, req.body.faculty ?? found.faculty, req.body.department ?? found.department);
+    if (['name', 'classCode', 'faculty', 'department', 'departmentId', 'academicYear', 'sequenceNumber', 'capacity']
+      .some((key) => req.body?.[key] !== undefined)) {
+      fail(422, 'Generated class identity, department, academic year, and capacity cannot be edited');
     }
-    if (req.body.name !== undefined) found.name = req.body.name;
-    if (req.body.faculty !== undefined) found.faculty = req.body.faculty;
-    if (req.body.department !== undefined) found.department = req.body.department;
-    if (req.body.capacity !== undefined) found.capacity = parseCapacity(req.body.capacity);
     found.updatedAt = new Date().toISOString();
 
     addActivity(db, req, {

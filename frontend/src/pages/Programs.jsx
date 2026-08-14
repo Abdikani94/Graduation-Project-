@@ -28,6 +28,7 @@ const Programs = () => {
   // Inline Edit Department States
   const [editingDeptIndex, setEditingDeptIndex] = useState(null);
   const [editDeptName, setEditDeptName] = useState('');
+  const [editDeptCode, setEditDeptCode] = useState('');
   const [editDeptDuration, setEditDeptDuration] = useState('');
 
   // New Faculty Modal Form State
@@ -39,6 +40,7 @@ const Programs = () => {
   // New Department Modal Form State
   const [deptFaculty, setDeptFaculty] = useState('');
   const [deptName, setDeptName] = useState('');
+  const [deptCode, setDeptCode] = useState('');
   const [deptDuration, setDeptDuration] = useState('');
 
   const loadPrograms = async () => {
@@ -151,7 +153,7 @@ const Programs = () => {
 
   const handleSaveDept = async (e) => {
     e.preventDefault();
-    if (!deptFaculty || !deptName || !deptDuration) return;
+    if (!deptFaculty || !deptName || !deptCode || !deptDuration) return;
     const duration = Number(deptDuration);
     if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
       setToast({
@@ -164,7 +166,7 @@ const Programs = () => {
 
     try {
       const program = programs.find((item) => item.title === deptFaculty || item.id === deptFaculty);
-      await api.post(`/programs/${program.id}/departments`, { name: deptName, durationYears: duration });
+      await api.post(`/programs/${program.id}/departments`, { name: deptName, code: deptCode, durationYears: duration });
       showSuccess('Department added.');
       handleCancelDept();
       await loadPrograms();
@@ -176,6 +178,7 @@ const Programs = () => {
   const handleCancelDept = () => {
     setDeptFaculty('');
     setDeptName('');
+    setDeptCode('');
     setDeptDuration('');
     setIsDeptModalOpen(false);
   };
@@ -195,11 +198,12 @@ const Programs = () => {
   const startEditDept = (index, dept) => {
     setEditingDeptIndex(index);
     setEditDeptName(dept.name);
+    setEditDeptCode(dept.code || '');
     setEditDeptDuration(String(dept.durationYears || dept.duration || ''));
   };
 
   const saveEditDept = async (index) => {
-    if (!selectedFaculty || !editDeptName || !editDeptDuration) return;
+    if (!selectedFaculty || !editDeptName || !editDeptCode || !editDeptDuration) return;
     const duration = Number(editDeptDuration);
     if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
       setToast({
@@ -213,6 +217,7 @@ const Programs = () => {
       const department = selectedFaculty.departments[index];
       await api.patch(`/programs/${selectedFaculty.id}/departments/${department.id}`, {
         name: editDeptName,
+        code: editDeptCode,
         durationYears: duration,
       });
       setEditingDeptIndex(null);
@@ -461,6 +466,19 @@ const Programs = () => {
                 />
               </div>
 
+              <div className="flex flex-col mt-6">
+                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Department Code</label>
+                <input
+                  type="text"
+                  value={deptCode}
+                  onChange={(e) => setDeptCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8))}
+                  className="w-[200px] bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] uppercase outline-none focus:border-primary transition-colors"
+                  placeholder="e.g. CA or CNS"
+                  required
+                />
+                <p className="text-gray-500 text-[12px] mt-2 ml-1">Used to generate class codes, for example CA261.</p>
+              </div>
+
               {/* Duration (Years) */}
               <div className="flex flex-col mt-6">
                 <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Duration (Years)</label>
@@ -568,6 +586,14 @@ const Programs = () => {
                                 required
                               />
                               <input
+                                type="text"
+                                value={editDeptCode}
+                                onChange={(e) => setEditDeptCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8))}
+                                className="w-[76px] bg-[#070211] border border-white/10 text-white text-[13px] uppercase rounded-lg px-3 py-1.5 outline-none focus:border-primary text-center"
+                                placeholder="Code"
+                                required
+                              />
+                              <input
                                 type="number"
                                 min={minimumProgramDurationYears}
                                 step="1"
@@ -603,6 +629,7 @@ const Programs = () => {
                               <span className="text-white text-[14px] font-medium">{dept.name}</span>
                             </div>
                             <div className="flex items-center gap-3">
+                              <span className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary">{dept.code}</span>
                               <span className="flex items-center gap-1.5 text-gray-400 bg-white/5 border border-white/5 px-4 py-1.5 rounded-full text-[11px] font-semibold">
                                 <Clock size={11} className="text-primary" /> {dept.durationYears || dept.duration} Years
                               </span>

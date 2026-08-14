@@ -36,6 +36,47 @@ const {
   setSmsTransportForTests
 } = await import('../src/services/smsService.js');
 const { processCampaign } = await import('../src/services/scheduledMessageService.js');
+const { assignAutomaticClass, CLASS_CAPACITY } = await import('../src/services/automaticClassService.js');
+
+test('automatic classes reuse capacity, overflow at 61, and sequence independently by department', () => {
+  const database = {
+    programs: [{
+      id: 'fac_it',
+      title: 'Computer Science & IT',
+      departments: [
+        { id: 'dep_ca', name: 'Computer Application', code: 'CA' },
+        { id: 'dep_cns', name: 'Computer Networking & Security', code: 'CNS' }
+      ]
+    }],
+    classes: [],
+    students: []
+  };
+
+  const enroll = (department, index) => {
+    const assigned = assignAutomaticClass(database, {
+      faculty: 'Computer Science & IT',
+      department,
+      academicYear: '2026-2027'
+    });
+    database.students.push({ id: `student_${department}_${index}`, classId: assigned.id, status: 'Enrolled' });
+    return assigned;
+  };
+
+  const first = enroll('Computer Application', 1);
+  assert.equal(first.classCode, 'CA261');
+  assert.equal(first.capacity, CLASS_CAPACITY);
+
+  for (let index = 2; index <= CLASS_CAPACITY; index += 1) {
+    assert.equal(enroll('Computer Application', index).id, first.id);
+  }
+  const sixtyFirst = enroll('Computer Application', 61);
+  assert.equal(sixtyFirst.classCode, 'CA262');
+  assert.notEqual(sixtyFirst.id, first.id);
+
+  const independent = enroll('Computer Networking & Security', 1);
+  assert.equal(independent.classCode, 'CNS261');
+  assert.equal(new Set(database.classes.map((item) => item.classCode)).size, database.classes.length);
+});
 
 await ensureDb();
 
@@ -465,6 +506,42 @@ test('classes survive concurrent updates and a database restart', async () => {
   const reloaded = await readDb();
   assert.ok(reloaded.classes.some((item) => item.id === firstId));
   assert.ok(reloaded.classes.some((item) => item.id === secondId));
+});
+
+test('concurrent automatic assignment never puts more than 60 students in a class', async () => {
+  const marker = crypto.randomUUID().slice(0, 8);
+  const faculty = `Concurrency Faculty ${marker}`;
+  const department = `Concurrency Department ${marker}`;
+  const departmentId = `dep_concurrency_${marker}`;
+  const firstClassId = `cls_concurrency_${marker}`;
+
+  await updateDb((db) => {
+    db.programs.push({
+      id: `fac_concurrency_${marker}`,
+      title: faculty,
+      departments: [{ id: departmentId, name: department, code: `Z${marker.slice(0, 3).toUpperCase()}` }]
+    });
+    db.classes.push({
+      id: firstClassId, classCode: `Z${marker.slice(0, 3).toUpperCase()}261`,
+      name: `Z${marker.slice(0, 3).toUpperCase()}261`, faculty, department,
+      departmentId, academicYear: 2026, sequenceNumber: 1, capacity: 60
+    });
+    for (let index = 1; index <= 59; index += 1) {
+      db.students.push({ id: `concurrent_existing_${marker}_${index}`, classId: firstClassId, status: 'Enrolled' });
+    }
+  });
+
+  await Promise.all([1, 2].map((index) => updateDb(async (db) => {
+    if (index === 1) await new Promise((resolve) => setTimeout(resolve, 20));
+    const assigned = assignAutomaticClass(db, { faculty, department, academicYear: 2026 });
+    db.students.push({ id: `concurrent_new_${marker}_${index}`, classId: assigned.id, status: 'Enrolled' });
+  })));
+
+  const db = await readDb();
+  const relevantClasses = db.classes.filter((item) => item.departmentId === departmentId);
+  const counts = relevantClasses.map((item) => db.students.filter((student) => student.classId === item.id && student.status === 'Enrolled').length);
+  assert.deepEqual(counts.sort((a, b) => b - a), [60, 1]);
+  assert.equal(new Set(relevantClasses.map((item) => item.classCode)).size, 2);
 });
 
 test('discounts and every admin collection survive a database restart', async () => {

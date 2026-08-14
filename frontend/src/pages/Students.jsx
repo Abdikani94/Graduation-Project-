@@ -34,8 +34,6 @@ const Students = () => {
   const [editForm, setEditForm] = useState({});
   const [editApplicationId, setEditApplicationId] = useState(null);
   const [isLoadingEdit, setIsLoadingEdit] = useState(false);
-  const [editClasses, setEditClasses] = useState([]);
-  const [isLoadingEditClasses, setIsLoadingEditClasses] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState(null);
@@ -91,8 +89,6 @@ const Students = () => {
       department: student.department || '',
       campus: student.campus || '',
       status: student.status || 'Enrolled',
-      classId: student.classId || '',
-      className: student.className || '',
       nationalId: '',
       dateOfBirth: '',
       sex: '',
@@ -100,13 +96,6 @@ const Students = () => {
       emergencyTell: '',
       relationship: '',
     });
-    // Load the classes available for this student's faculty + department.
-    setEditClasses([]);
-    setIsLoadingEditClasses(true);
-    api.get('/classes', { faculty: student.faculty, department: student.department, limit: 100 })
-      .then((result) => setEditClasses(result.data || []))
-      .catch(() => setEditClasses([]))
-      .finally(() => setIsLoadingEditClasses(false));
     // Emergency & personal details live on the linked application record.
     if (student.applicationId) {
       setIsLoadingEdit(true);
@@ -148,9 +137,6 @@ const Students = () => {
         await api.patch(`/applications/${editApplicationId}`, appPayload);
       }
       const studentPayload = Object.fromEntries(STUDENT_KEYS.map((key) => [key, editForm[key] ?? '']));
-      const selectedClass = editClasses.find((item) => item.id === editForm.classId);
-      studentPayload.classId = editForm.classId || null;
-      studentPayload.className = selectedClass ? selectedClass.name : (editForm.classId ? (editForm.className || null) : null);
       await api.patch(`/students/${editingStudent.id}`, studentPayload);
       setToast({ type: 'success', title: 'Student updated', message: 'Student information was saved successfully.' });
       setEditingStudent(null);
@@ -348,26 +334,10 @@ const Students = () => {
                     </select>
                   </label>
                 </div>
-                <label className="flex flex-col gap-2 text-text-dark text-[13px] font-semibold">
-                  Class ({editingStudent.faculty} / {editingStudent.department})
-                  <select
-                    name="classId"
-                    value={editForm.classId || ''}
-                    onChange={updateEditForm}
-                    disabled={isLoadingEditClasses}
-                    className={`${editInputClass} disabled:opacity-60`}
-                  >
-                    <option value="">{isLoadingEditClasses ? 'Loading classes...' : 'No class assigned'}</option>
-                    {editClasses.map((classItem) => (
-                      <option key={classItem.id} value={classItem.id}>
-                        {classItem.name} ({classItem.enrolled}/{classItem.capacity}{classItem.status === 'Full' ? ' - Full' : ''})
-                      </option>
-                    ))}
-                  </select>
-                  {!isLoadingEditClasses && editClasses.length === 0 && (
-                    <span className="text-[#2D368D] text-[12px] font-normal">No classes exist yet for this faculty/department. Create one on the Classes page.</span>
-                  )}
-                </label>
+                <div className="rounded-xl border border-[#00A451]/20 bg-[#00A451]/5 px-4 py-3 text-[12px] text-text-dark">
+                  <span className="font-semibold">Assigned class: {editingStudent.className || 'Pending automatic assignment'}</span>
+                  <p className="mt-1 text-text-muted">Changing the faculty or department automatically moves the student to the first available class.</p>
+                </div>
               </div>
 
               {isLoadingEdit && (

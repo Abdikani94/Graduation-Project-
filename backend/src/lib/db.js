@@ -6,6 +6,8 @@ import { env } from '../config/env.js';
 import { createSeedData } from '../data/seed-data.js';
 import { hashPassword } from './crypto.js';
 import { admissionFee } from '../config/admissionFee.js';
+import { ensureDepartmentCodes } from '../utils/departmentCodes.js';
+import { CLASS_CAPACITY } from '../config/classConfig.js';
 
 const collections = [
   'users', 'programs', 'applications', 'students', 'payments', 'contactMessages', 'activities', 'classes',
@@ -29,7 +31,6 @@ const defaultSettings = {
 };
 let mongoClient;
 let mongoDatabase;
-let mongoConnectionLogged = false;
 let updateQueue = Promise.resolve();
 const mongoWriteLockId = 'jamhuriya-global-write-lock';
 const mongoWriteLockTimeoutMs = 30_000;
@@ -51,10 +52,6 @@ const getMongoDatabase = async () => {
   });
   await mongoClient.connect();
   mongoDatabase = mongoClient.db(env.mongodbDbName);
-  if (!mongoConnectionLogged) {
-    console.log(`MongoDB connected: ${env.mongodbUri}/${env.mongodbDbName}`);
-    mongoConnectionLogged = true;
-  }
   return mongoDatabase;
 };
 
@@ -75,6 +72,83 @@ const normalizeData = (data = {}) => {
   };
   for (const collection of collections) {
     if (!Array.isArray(normalized[collection])) normalized[collection] = [];
+  }
+  ensureDepartmentCodes(normalized.programs);
+  const departmentByName = new Map();
+  const departmentById = new Map();
+  for (const program of normalized.programs) {
+    for (const department of program.departments || []) {
+      const selection = { program, department };
+      departmentByName.set(`${program.title}\u0000${department.name}`, selection);
+      departmentById.set(department.id, selection);
+    }
+  }
+
+  // Canonicalize legacy class records from their department metadata. Class
+  // codes are never parsed to discover the sequence because a code such as
+  // CA2623 is ambiguous (2026/23 vs malformed legacy data). Instead, classes
+  // are grouped by department and academic year and numbered consecutively.
+  const classGroups = new Map();
+  const ungroupedClasses = [];
+  for (const classItem of normalized.classes) {
+    const selection = departmentById.get(classItem.departmentId)
+      || departmentByName.get(`${classItem.faculty}\u0000${classItem.department}`);
+    if (selection) {
+      classItem.facultyId = selection.program.id;
+      classItem.departmentId = selection.department.id;
+      classItem.faculty = selection.program.title;
+      classItem.department = selection.department.name;
+    }
+    classItem.capacity = CLASS_CAPACITY;
+    classItem.academicYear = Number(classItem.academicYear)
+      || new Date(classItem.createdAt || Date.now()).getFullYear();
+    if (selection) {
+      const key = `${selection.department.id}\u0000${classItem.academicYear}`;
+      if (!classGroups.has(key)) classGroups.set(key, { selection, classes: [] });
+      classGroups.get(key).classes.push(classItem);
+    } else {
+      ungroupedClasses.push(classItem);
+    }
+  }
+  const usedClassCodes = new Set();
+  for (const { selection, classes: groupedClasses } of classGroups.values()) {
+    groupedClasses.sort((a, b) => {
+      const created = String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+      return created || String(a.id || '').localeCompare(String(b.id || ''));
+    });
+    groupedClasses.forEach((classItem, index) => {
+      const sequenceNumber = index + 1;
+      const yearShort = String(classItem.academicYear).slice(-2);
+      classItem.sequenceNumber = sequenceNumber;
+      classItem.classCode = `${selection.department.code}${yearShort}${sequenceNumber}`;
+      classItem.name = classItem.classCode;
+      usedClassCodes.add(classItem.classCode);
+    });
+  }
+  for (const classItem of ungroupedClasses) {
+    const baseCode = String(classItem.classCode || classItem.name || `CLASS${classItem.id || ''}`);
+    let classCode = baseCode;
+    let suffix = 2;
+    while (usedClassCodes.has(classCode)) classCode = `${baseCode}-${suffix++}`;
+    classItem.classCode = classCode;
+    classItem.name = classCode;
+    classItem.sequenceNumber = Math.max(1, Number(classItem.sequenceNumber) || 1);
+    usedClassCodes.add(classCode);
+  }
+  const classById = new Map(normalized.classes.map((classItem) => [classItem.id, classItem]));
+  for (const classItem of normalized.classes) {
+    classItem.currentStudents = normalized.students.filter((student) => (
+      student.classId === classItem.id
+      && !['Withdrawn', 'Inactive', 'Graduated', 'Deleted'].includes(student.status)
+    )).length;
+  }
+  for (const student of normalized.students) {
+    const classItem = classById.get(student.classId);
+    if (classItem) student.className = classItem.classCode;
+  }
+  for (const application of normalized.applications) {
+    const classItem = classById.get(application.classId);
+    if (classItem) application.className = classItem.classCode;
   }
   for (const user of normalized.users) {
     if (user.role === 'Admin') user.permissions = [...new Set([...(user.permissions || []), ...admissionPeriodPermissions, ...scheduledMessagePermissions, ...studentSearchPermissions])];
@@ -140,6 +214,9 @@ const ensureMongoDb = async () => {
   const database = await getMongoDatabase();
   await Promise.all([
     database.collection('payments').createIndex({ referenceId: 1 }, { unique: true, sparse: true }),
+    database.collection('classes').createIndex({ classCode: 1 }, { unique: true, sparse: true }),
+    database.collection('classes').createIndex({ departmentId: 1, academicYear: 1, sequenceNumber: 1 }, { unique: true, sparse: true }),
+    database.collection('students').createIndex({ classId: 1, status: 1 }),
     database.collection('payments').createIndex({ requestId: 1 }, { unique: true, sparse: true }),
     database.collection('payments').createIndex(
       { applicationId: 1, userId: 1, idempotencyKey: 1 },
@@ -307,6 +384,5 @@ export const closeDb = async () => {
     await mongoClient.close();
     mongoClient = null;
     mongoDatabase = null;
-    mongoConnectionLogged = false;
   }
 };

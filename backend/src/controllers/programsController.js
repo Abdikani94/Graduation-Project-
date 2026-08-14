@@ -3,6 +3,7 @@ import { fail, sendJson, sendNoContent } from '../lib/http.js';
 import { matchesText } from '../lib/query.js';
 import { addActivity } from '../services/audit.js';
 import { admissionFee } from '../config/admissionFee.js';
+import { ensureDepartmentCodes, normalizeDepartmentCode } from '../utils/departmentCodes.js';
 
 const fixedAdmissionFee = admissionFee;
 const minimumProgramDurationYears = 5;
@@ -54,12 +55,14 @@ export const createProgram = async (req, res) => {
       departments: departments.map((department) => ({
         id: createId('dep'),
         name: department.name,
+        code: normalizeDepartmentCode(department.code),
         durationYears: durationForDepartment(department.name)
       })),
       createdAt: now,
       updatedAt: now
     };
     db.programs.unshift(item);
+    ensureDepartmentCodes(db.programs);
     addActivity(db, req, {
       action: 'Added Faculty',
       afterAction: title,
@@ -107,7 +110,7 @@ export const deleteProgram = async (req, res) => {
 };
 
 export const createDepartment = async (req, res) => {
-  const { name, durationYears, duration } = req.body || {};
+  const { name, code, durationYears, duration } = req.body || {};
   if (!name) fail(422, 'Department name is required');
   parseProgramDuration(durationYears || duration);
   const program = (await readDb()).programs.find((item) => item.id === req.params.id);
@@ -120,9 +123,11 @@ export const createDepartment = async (req, res) => {
     const item = {
       id: createId('dep'),
       name,
+      code: normalizeDepartmentCode(code),
       durationYears: parsedDuration
     };
     program.departments.push(item);
+    ensureDepartmentCodes(db.programs);
     program.updatedAt = new Date().toISOString();
     addActivity(db, req, {
       action: 'Added Department',
@@ -143,12 +148,14 @@ export const updateDepartment = async (req, res) => {
     if (!found) fail(404, 'Department not found');
     const before = found.name;
     if (req.body.name !== undefined) found.name = req.body.name;
+    if (req.body.code !== undefined) found.code = normalizeDepartmentCode(req.body.code);
     if (req.body.durationYears !== undefined || req.body.duration !== undefined) {
       parseProgramDuration(req.body.durationYears || req.body.duration);
       found.durationYears = durationForDepartment(found.name);
     } else if (req.body.name !== undefined) {
       found.durationYears = durationForDepartment(found.name);
     }
+    ensureDepartmentCodes(db.programs);
     program.updatedAt = new Date().toISOString();
     addActivity(db, req, {
       action: 'Updated Department',

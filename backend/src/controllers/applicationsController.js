@@ -10,6 +10,7 @@ import { createApplicationSubmittedNotification, scheduleSmsNotification } from 
 import { registrationBalance } from '../services/registrationPaymentService.js';
 import { admissionFee, admissionFeeMinor } from '../config/admissionFee.js';
 import { fingerprintApplicationFile, storedPassportPhotoHash } from '../utils/files.js';
+import { assignAutomaticClass, resolveAcademicYear } from '../services/automaticClassService.js';
 
 const applicationFields = [
   'fullName',
@@ -47,7 +48,6 @@ const applicationFields = [
   'cardNumber',
   'cardExpiry',
   'cardCVV',
-  'classId',
   'hasCertificate',
   'appointmentDate',
   'appointmentTime'
@@ -187,9 +187,16 @@ const generateReference = (db) => {
 
 const getProgramFee = () => fixedAdmissionFee;
 
-const createStudentFromApplication = (db, application, classItem) => {
+const createStudentFromApplication = (db, application) => {
   const existing = db.students.find((student) => student.applicationId === application.id);
   if (existing) return existing;
+  const classItem = assignAutomaticClass(db, {
+    faculty: application.faculty,
+    department: application.department,
+    academicYear: resolveAcademicYear(db, application)
+  });
+  application.faculty = classItem.faculty;
+  application.department = classItem.department;
   const student = {
     id: createId('stu'),
     applicationId: application.id,
@@ -197,8 +204,8 @@ const createStudentFromApplication = (db, application, classItem) => {
     fullName: application.fullName,
     email: application.email,
     mobile: application.mobile,
-    faculty: application.faculty,
-    department: application.department,
+    faculty: classItem.faculty,
+    department: classItem.department,
     campus: application.campus,
     classId: classItem?.id || null,
     className: classItem?.name || null,
@@ -211,6 +218,8 @@ const createStudentFromApplication = (db, application, classItem) => {
     updatedAt: new Date().toISOString()
   };
   db.students.unshift(student);
+  application.classId = classItem.id;
+  application.className = classItem.classCode;
   return student;
 };
 
@@ -514,17 +523,6 @@ export const updateApplication = async (req, res) => {
       fail(422, 'Phone Number must contain 8 to 12 digits after +252 and cannot start with zero');
     }
 
-    let selectedClass;
-    if (req.body?.classId !== undefined && req.body.classId !== null && req.body.classId !== '') {
-      selectedClass = (db.classes || []).find((item) => item.id === req.body.classId);
-      if (!selectedClass) fail(404, 'Class not found');
-      const targetFaculty = req.body.faculty || found.faculty;
-      const targetDepartment = req.body.programOfStudy || req.body.department || found.department;
-      if (selectedClass.faculty !== targetFaculty || selectedClass.department !== targetDepartment) {
-        fail(422, 'The selected class does not belong to this applicant\'s faculty and department');
-      }
-    }
-
     for (const [key, value] of Object.entries(req.body || {})) {
       if (!allowedFields.has(key)) continue;
       if (key === 'program') found.faculty = value;
@@ -545,9 +543,17 @@ export const updateApplication = async (req, res) => {
       student.faculty = found.faculty;
       student.department = found.department;
       student.campus = found.campus;
-      if (selectedClass) {
-        student.classId = selectedClass.id;
-        student.className = selectedClass.name;
+      if (student.faculty !== before.faculty || student.department !== before.department) {
+        const assignedClass = assignAutomaticClass(db, {
+          faculty: found.faculty,
+          department: found.department,
+          academicYear: resolveAcademicYear(db, found),
+          excludedStudentId: student.id
+        });
+        student.classId = assignedClass.id;
+        student.className = assignedClass.classCode;
+        found.classId = assignedClass.id;
+        found.className = assignedClass.classCode;
       }
       student.updatedAt = found.updatedAt;
     }
@@ -577,24 +583,6 @@ export const updateApplicationStatus = async (req, res) => {
     if (!application) fail(404, 'Application not found');
     const before = application.status;
 
-    let classItem = null;
-    if (status === 'Approved') {
-      const alreadyStudent = db.students.find((student) => student.applicationId === application.id);
-      if (!alreadyStudent) {
-        const classId = req.body?.classId || application.classId;
-        if (!classId) fail(422, 'A class must be selected to approve this application');
-        classItem = (db.classes || []).find((item) => item.id === classId);
-        if (!classItem) fail(404, 'Class not found');
-        if (classItem.faculty !== application.faculty || classItem.department !== application.department) {
-          fail(422, 'The selected class does not belong to this applicant\'s faculty and department');
-        }
-        const enrolled = db.students.filter((student) => student.classId === classItem.id).length;
-        if (enrolled >= classItem.capacity) {
-          fail(422, 'The selected class is full. Create a new class before approving this application.');
-        }
-      }
-    }
-
     application.status = status;
     application.notes = note || application.notes;
     application.reviewedBy = req.user.id;
@@ -602,7 +590,7 @@ export const updateApplicationStatus = async (req, res) => {
 
     let student = null;
     if (status === 'Approved') {
-      student = createStudentFromApplication(db, application, classItem);
+      student = createStudentFromApplication(db, application);
     }
 
     addActivity(db, req, {
@@ -612,7 +600,7 @@ export const updateApplicationStatus = async (req, res) => {
       applicantPerson: application.fullName,
       applicationReference: application.reference,
       module: 'Applications',
-      metadata: { note }
+      metadata: { note, automaticClass: student?.className || null }
     });
 
     return { application, student };

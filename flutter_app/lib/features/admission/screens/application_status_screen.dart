@@ -55,6 +55,12 @@ class ApplicationStatusScreen extends StatelessWidget {
                     _StatusRow(label: 'Faculty', value: draft.faculty),
                     _StatusRow(label: 'Department', value: draft.department),
                     _StatusRow(
+                      label: 'Assigned class',
+                      value: draft.assignedClass.isEmpty
+                          ? 'Assigned automatically after approval'
+                          : draft.assignedClass,
+                    ),
+                    _StatusRow(
                       label: 'Application status',
                       value: draft.applicationStatus.isEmpty
                           ? 'Pending'

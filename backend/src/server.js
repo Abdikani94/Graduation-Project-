@@ -9,7 +9,7 @@ import { startScheduledMessageScheduler } from './services/scheduledMessageServi
 import { backupMongoDatabase } from './utils/backup-mongodb.js';
 
 await ensureDb();
-if (env.dbDriver === 'mongodb') await backupMongoDatabase();
+if (env.dbDriver === 'mongodb') await backupMongoDatabase({ silent: true });
 startAdmissionPeriodScheduler(env.admissionPeriodSchedulerMs);
 startSmsScheduler(env.smsSchedulerMs);
 startScheduledMessageScheduler(env.smsSchedulerMs);
@@ -28,5 +28,4 @@ server.on('error', (error) => {
 
 server.listen(env.port, env.host, () => {
   console.log(`Server is running on port ${env.port}`);
-  console.log(`API URL: http://${env.host}:${env.port}`);
 });

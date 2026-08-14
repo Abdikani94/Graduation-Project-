@@ -84,6 +84,7 @@ class ApplicationDraft {
   String? submittedReference;
   String paymentStatus = 'Pending';
   String applicationStatus = '';
+  String assignedClass = '';
   String paymentAccessToken = '';
   String paymentReferenceId = '';
   String payerPhone = '';
@@ -424,6 +425,7 @@ class ApplicationDraft {
           (application['paymentStatus'] ?? paymentStatus).toString();
       applicationStatus =
           (application['status'] ?? applicationStatus).toString();
+      assignedClass = (application['className'] ?? assignedClass).toString();
     }
 
     if (payment is Map<String, dynamic>) {
