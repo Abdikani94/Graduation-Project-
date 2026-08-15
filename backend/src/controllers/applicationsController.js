@@ -508,6 +508,7 @@ export const getApplication = async (req, res) => {
 
 export const updateApplication = async (req, res) => {
   const allowedFields = new Set([...applicationFields, 'faculty', 'department', 'program', 'programOfStudy', 'paymentStatus', 'notes']);
+  const allowedCampuses = new Set(['Main Campus', 'Campus 2', 'Campus 3']);
   const application = await updateDb((db) => {
     const found = db.applications.find((item) => item.id === req.params.id || item.reference === req.params.id);
     if (!found) fail(404, 'Application not found');
@@ -521,6 +522,9 @@ export const updateApplication = async (req, res) => {
     }
     if (Object.hasOwn(req.body || {}, 'mobile') && !isValidPhone(req.body.mobile)) {
       fail(422, 'Phone Number must contain 8 to 12 digits after +252 and cannot start with zero');
+    }
+    if (Object.hasOwn(req.body || {}, 'campus') && !allowedCampuses.has(req.body.campus)) {
+      fail(422, 'Campus must be Main Campus, Campus 2, or Campus 3');
     }
 
     for (const [key, value] of Object.entries(req.body || {})) {

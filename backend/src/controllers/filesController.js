@@ -27,6 +27,7 @@ const maxCategoryLength = 80;
 const maxTags = 20;
 const maxTagLength = 40;
 const universityCampuses = ['Main Campus', 'Campus 2', 'Campus 3'];
+const fileCategories = ['Reports', 'Admissions', 'Academic', 'Finance', 'Administration', 'Operations', 'Human Resources', 'Other'];
 
 const isAdmin = (user) => user.role === 'Admin';
 const asArray = (value) => {
@@ -112,6 +113,7 @@ const validateMetadata = (body) => {
   const tags = asArray(body.tags);
   if (title.length < 3 || title.length > maxTitleLength) fail(422, `File title must be between 3 and ${maxTitleLength} characters`);
   if (!category || category.length > maxCategoryLength) fail(422, `File category is required and cannot exceed ${maxCategoryLength} characters`);
+  if (!fileCategories.includes(category)) fail(422, 'File category is invalid');
   if (description.length > maxDescriptionLength) fail(422, `Description cannot exceed ${maxDescriptionLength} characters`);
   if (tags.length > maxTags || tags.some((tag) => String(tag).length > maxTagLength)) fail(422, `Use no more than ${maxTags} tags, with ${maxTagLength} characters per tag`);
   if (!reportTypes.has(body.reportType)) fail(422, 'Report type is invalid');
@@ -277,6 +279,7 @@ export const updateFile = async (req, res) => {
     const nextTags = req.body?.tags === undefined ? found.tags : asArray(req.body.tags);
     if (nextTitle.length < 3 || nextTitle.length > maxTitleLength) fail(422, `File title must be between 3 and ${maxTitleLength} characters`);
     if (!nextCategory || nextCategory.length > maxCategoryLength) fail(422, `File category is required and cannot exceed ${maxCategoryLength} characters`);
+    if (!fileCategories.includes(nextCategory)) fail(422, 'File category is invalid');
     if (nextDescription.length > maxDescriptionLength) fail(422, `Description cannot exceed ${maxDescriptionLength} characters`);
     if (nextTags.length > maxTags || nextTags.some((tag) => String(tag).length > maxTagLength)) fail(422, `Use no more than ${maxTags} tags, with ${maxTagLength} characters per tag`);
     for (const key of ['title', 'description', 'category', 'reportDate', 'reportingMonth', 'reportingYear', 'expiryDate']) {
@@ -398,6 +401,7 @@ export const listFileOptions = async (req, res) => {
   sendJson(res, 200, {
     users: db.users.map((user) => ({ id: user.id, name: user.name, role: user.role, team: user.team || user.campus || '', department: user.department || '' })),
     campuses: universityCampuses,
+    categories: fileCategories,
     teams: [...new Set([...universityCampuses, ...db.users.map((user) => user.team).filter(Boolean)])],
     departments: [...new Set([...programDepartments, ...userDepartments].filter(Boolean))].sort((a, b) => a.localeCompare(b))
   });

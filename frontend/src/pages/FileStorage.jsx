@@ -13,6 +13,10 @@ const tabs = [
   ['all', 'All Files'], ['daily', 'Daily Reports'], ['monthly', 'Monthly Reports'],
   ['shared', 'Shared With Me'], ['mine', 'My Uploads'], ['pending', 'Pending Approval'], ['archived', 'Archived Files'],
 ];
+const fallbackFileCategories = [
+  'Reports', 'Admissions', 'Academic', 'Finance', 'Administration',
+  'Operations', 'Human Resources', 'Other',
+];
 const emptyUpload = {
   title: '', reportType: 'Daily Report', reportDate: new Date().toISOString().slice(0, 10),
   reportingMonth: String(new Date().getMonth() + 1), reportingYear: String(new Date().getFullYear()),
@@ -41,7 +45,7 @@ function FileStorage() {
   const isAdmin = currentUser.role === 'Admin';
   const [files, setFiles] = useState([]);
   const [stats, setStats] = useState({});
-  const [options, setOptions] = useState({ users: [], campuses: [], teams: [], departments: [] });
+  const [options, setOptions] = useState({ users: [], campuses: [], teams: [], departments: [], categories: fallbackFileCategories });
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [tab, setTab] = useState('all');
   const [search, setSearch] = useState('');
@@ -72,7 +76,7 @@ function FileStorage() {
       setFiles(list.data || []);
       setPagination(list.pagination || { page: 1, pages: 1, total: 0 });
       setStats(summary.stats || {});
-      setOptions(selections || { users: [], campuses: [], teams: [], departments: [] });
+      setOptions(selections || { users: [], campuses: [], teams: [], departments: [], categories: fallbackFileCategories });
       setNotifications(alerts || { data: [], unread: 0 });
       setSelected([]);
     } catch (error) {
@@ -292,7 +296,7 @@ function FileStorage() {
           <label><span>Report Type</span><select value={upload.reportType} onChange={(e) => setUpload({ ...upload, reportType: e.target.value })}><option>Daily Report</option><option>Monthly Report</option><option>General File</option></select></label>
           {upload.reportType === 'Daily Report' && <label><span>Report Date</span><input required type="date" max={today} value={upload.reportDate} onChange={(e) => setUpload({ ...upload, reportDate: e.target.value })} /></label>}
           {upload.reportType === 'Monthly Report' && <><label><span>Reporting Month</span><select value={upload.reportingMonth} onChange={(e) => setUpload({ ...upload, reportingMonth: e.target.value })}>{Array.from({ length: 12 }, (_, i) => <option value={i + 1} key={i}>{new Date(2026, i).toLocaleString('en', { month: 'long' })}</option>)}</select></label><label><span>Reporting Year</span><input required type="number" min="2000" max={new Date().getFullYear()} value={upload.reportingYear} onChange={(e) => setUpload({ ...upload, reportingYear: e.target.value })} /></label></>}
-          <label><span>Category</span><input required maxLength="80" value={upload.category} onChange={(e) => setUpload({ ...upload, category: e.target.value })} /></label>
+          <label><span>Category</span><select required value={upload.category} onChange={(e) => setUpload({ ...upload, category: e.target.value })}>{(options.categories?.length ? options.categories : fallbackFileCategories).map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
           <label><span>Campus</span><select value={upload.teamId} onChange={(e) => setUpload({ ...upload, teamId: e.target.value })}><option value="">No campus</option>{(options.campuses?.length ? options.campuses : ['Main Campus', 'Campus 2', 'Campus 3']).map((item) => <option key={item}>{item}</option>)}</select></label>
           <label><span>Department</span><select value={upload.departmentId} onChange={(e) => setUpload({ ...upload, departmentId: e.target.value })}><option value="">No department</option>{options.departments.map((item) => <option key={item}>{item}</option>)}</select></label>
           <label><span>Visibility</span><select value={upload.visibility} onChange={(e) => setUpload({ ...upload, visibility: e.target.value })}><option>Private</option><option>All Users</option><option>Selected Users</option><option>Selected Team</option><option>Selected Department</option><option>Admin Only</option></select></label>

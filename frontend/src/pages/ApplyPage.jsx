@@ -29,7 +29,7 @@ const steps = [
 
 const conditions = [
   'Must have completed Secondary school.',
-  'Should bring four (4) passport-size photos.',
+  'Should upload one clear passport-size profile photo.',
   'Should bring the original Secondary School Leaving Certificate with two copies.',
   'For part-time registration, two years experience is recommended.',
   'Should pay a fixed Admission Fee of $25 for all programs.',
@@ -37,7 +37,7 @@ const conditions = [
 
 const admissionRequirements = [
   ['High education completion', 'Submit evidence that you completed secondary school.'],
-  ['Four passport pictures', 'Bring four clear passport-size photos with a white background.'],
+  ['One passport photo', 'Upload one clear passport-size profile photo with a plain white background.'],
   ['Have certificate high school', 'Bring the original high school certificate with two copies.'],
   ['Pay fees of Admission', 'Pay the fixed $25 admission fee for any selected faculty.'],
 ];
@@ -49,7 +49,7 @@ const faqs = [
   },
   {
     question: 'Which documents are required for online admission?',
-    answer: 'Upload one clear passport photo and your secondary-school certificate in PDF, JPG, PNG, or WEBP format. If your certificate is not yet available, choose an appointment date and time to bring it to the admissions office. You may also be asked to bring the original certificate, two copies, and four passport-size photos during verification.',
+    answer: 'Upload one clear passport photo and your secondary-school certificate in PDF, JPG, PNG, or WEBP format. If your certificate is not yet available, choose an appointment date and time to bring it to the admissions office. Only one passport-size profile photo is required for registration.',
   },
   {
     question: 'Can I track my admission status online?',

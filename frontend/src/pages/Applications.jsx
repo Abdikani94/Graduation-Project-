@@ -40,7 +40,7 @@ const EDIT_SECTIONS = [
       { key: 'mobile', label: 'Mobile' },
       { key: 'sex', label: 'Sex', options: ['Male', 'Female'] },
       { key: 'maritalStatus', label: 'Marital Status', options: ['Single', 'Marriage', 'Divorced', 'Widowed'] },
-      { key: 'campus', label: 'Campus' },
+      { key: 'campus', label: 'Campus', options: ['Main Campus', 'Campus 2', 'Campus 3'] },
     ],
   },
   {

@@ -807,6 +807,10 @@
 
 .file-storage-page .storage-action-menu-popover {
   min-width: 154px;
+  top: auto;
+  bottom: calc(100% + 4px);
+  max-height: min(240px, calc(100vh - 24px));
+  overflow-y: auto;
 }
 
 .admission-periods-summary > .admin-card {
