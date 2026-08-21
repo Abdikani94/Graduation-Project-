@@ -6,10 +6,10 @@ import { ensureDb } from './lib/db.js';
 import { startAdmissionPeriodScheduler } from './services/admissionPeriodScheduler.js';
 import { startSmsScheduler } from './services/smsService.js';
 import { startScheduledMessageScheduler } from './services/scheduledMessageService.js';
-import { backupMongoDatabase } from './utils/backup-mongodb.js';
+import { backupMysqlDatabase } from './utils/backup-mysql.js';
 
 await ensureDb();
-if (env.dbDriver === 'mongodb') await backupMongoDatabase({ silent: true });
+if (env.dbDriver === 'mysql') await backupMysqlDatabase({ silent: true });
 startAdmissionPeriodScheduler(env.admissionPeriodSchedulerMs);
 startSmsScheduler(env.smsSchedulerMs);
 startScheduledMessageScheduler(env.smsSchedulerMs);

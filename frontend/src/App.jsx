@@ -59,6 +59,7 @@ const AdminLayout = () => {
           <Route path="/discount" element={<Discount />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/programs" element={<Programs />} />
+          <Route path="/programs/:facultyId" element={<Programs />} />
           <Route path="/contact-messages" element={<ContactMessages />} />
           <Route path="/file-storage" element={<FileStorage />} />
           <Route path="/admission-periods" element={<ProtectedModule user={currentUser} module="admissionPeriods"><AdmissionPeriods /></ProtectedModule>} />

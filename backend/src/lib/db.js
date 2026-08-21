@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { MongoClient } from 'mongodb';
+import mysql from 'mysql2/promise';
 import { env } from '../config/env.js';
 import { createSeedData } from '../data/seed-data.js';
 import { hashPassword } from './crypto.js';
@@ -29,13 +29,9 @@ const defaultSettings = {
     weeklyReports: false
   }
 };
-let mongoClient;
-let mongoDatabase;
+let mysqlPool;
 let updateQueue = Promise.resolve();
-const mongoWriteLockId = 'jamhuriya-global-write-lock';
-const mongoWriteLockTimeoutMs = 30_000;
-const mongoWriteLockWaitMs = 50;
-const protectedMongoCollections = ['users', 'applications', 'students', 'payments', 'classes'];
+const protectedCollections = ['users', 'applications', 'students', 'payments', 'classes'];
 
 const ensureDirectory = async (filePath) => {
   await fs.mkdir(path.dirname(filePath), { recursive: true });
@@ -43,16 +39,42 @@ const ensureDirectory = async (filePath) => {
 
 export const createId = (prefix) => `${prefix}_${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}`;
 
-const usesMongo = () => env.dbDriver === 'mongodb';
+const usesMysql = () => env.dbDriver === 'mysql';
 
-const getMongoDatabase = async () => {
-  if (mongoDatabase) return mongoDatabase;
-  mongoClient = new MongoClient(env.mongodbUri, {
-    serverSelectionTimeoutMS: env.mongoConnectTimeoutMs
+const mysqlTableNames = {
+  users: 'users',
+  programs: 'programs',
+  applications: 'applications',
+  students: 'students',
+  payments: 'payments',
+  contactMessages: 'contact_messages',
+  activities: 'activities',
+  classes: 'classes',
+  files: 'files',
+  fileShares: 'file_shares',
+  fileActivities: 'file_activities',
+  notifications: 'notifications',
+  smsNotifications: 'sms_notifications',
+  smsCampaigns: 'sms_campaigns',
+  smsCampaignRecipients: 'sms_campaign_recipients',
+  smsTemplates: 'sms_templates',
+  admissionPeriods: 'admission_periods',
+  admissionPeriodActivities: 'admission_period_activities'
+};
+
+const getMysqlPool = () => {
+  if (mysqlPool) return mysqlPool;
+  mysqlPool = mysql.createPool({
+    host: env.mysqlHost,
+    port: env.mysqlPort,
+    user: env.mysqlUser,
+    password: env.mysqlPassword,
+    database: env.mysqlDatabase,
+    waitForConnections: true,
+    connectionLimit: env.mysqlConnectionLimit,
+    charset: 'utf8mb4'
   });
-  await mongoClient.connect();
-  mongoDatabase = mongoClient.db(env.mongodbDbName);
-  return mongoDatabase;
+  return mysqlPool;
 };
 
 const jsonBackupFile = () => `${env.dbFile}.bak`;
@@ -72,6 +94,15 @@ const normalizeData = (data = {}) => {
   };
   for (const collection of collections) {
     if (!Array.isArray(normalized[collection])) normalized[collection] = [];
+  }
+  for (const contact of normalized.contactMessages) {
+    contact.response = contact.response || '';
+    contact.emailStatus = contact.emailStatus || 'NotSent';
+    // Legacy records could be marked Resolved without any reply being sent.
+    // Under the email-reply workflow only a confirmed delivery may resolve one.
+    if (contact.status === 'Resolved' && (contact.emailStatus !== 'Sent' || !contact.response)) {
+      contact.status = 'Pending';
+    }
   }
   ensureDepartmentCodes(normalized.programs);
   const departmentByName = new Map();
@@ -210,160 +241,150 @@ const writeJsonDb = async (data) => {
   return normalized;
 };
 
-const ensureMongoDb = async () => {
-  const database = await getMongoDatabase();
-  await Promise.all([
-    database.collection('payments').createIndex({ referenceId: 1 }, { unique: true, sparse: true }),
-    database.collection('classes').createIndex({ classCode: 1 }, { unique: true, sparse: true }),
-    database.collection('classes').createIndex({ departmentId: 1, academicYear: 1, sequenceNumber: 1 }, { unique: true, sparse: true }),
-    database.collection('students').createIndex({ classId: 1, status: 1 }),
-    database.collection('payments').createIndex({ requestId: 1 }, { unique: true, sparse: true }),
-    database.collection('payments').createIndex(
-      { applicationId: 1, userId: 1, idempotencyKey: 1 },
-      { unique: true, sparse: true }
-    ),
-    database.collection('files').createIndex({ uploadedBy: 1, reportType: 1, reportDate: 1 }),
-    database.collection('files').createIndex({ uploadedBy: 1, reportType: 1, reportingMonth: 1, reportingYear: 1 }),
-    database.collection('files').createIndex({ approvalStatus: 1, isArchived: 1, createdAt: -1 }),
-    database.collection('fileShares').createIndex({ fileId: 1, sharedWithUserId: 1 }),
-    database.collection('fileActivities').createIndex({ fileId: 1, createdAt: -1 }),
-    database.collection('notifications').createIndex({ userId: 1, read: 1, createdAt: -1 }),
-    database.collection('smsNotifications').createIndex({ idempotencyKey: 1 }, { unique: true, sparse: true }),
-    database.collection('smsNotifications').createIndex({ status: 1, nextRetryAt: 1, createdAt: -1 })
-    ,database.collection('smsCampaigns').createIndex({ status: 1, scheduledAt: 1, archived: 1 })
-    ,database.collection('smsCampaignRecipients').createIndex({ idempotencyKey: 1 }, { unique: true, sparse: true })
-    ,database.collection('smsCampaignRecipients').createIndex({ campaignId: 1, status: 1 })
-    ,database.collection('smsTemplates').createIndex({ key: 1 }, { unique: true, sparse: true })
-    ,database.collection('admissionPeriods').createIndex({ status: 1, openingDatetime: 1, closingDatetime: 1 })
-    ,database.collection('admissionPeriods').createIndex({ academicYear: 1, intakeName: 1, facultyId: 1, programId: 1 })
-    ,database.collection('admissionPeriodActivities').createIndex({ admissionPeriodId: 1, createdAt: -1 })
-  ]);
-  const userCount = await database.collection('users').countDocuments();
-  if (userCount === 0) {
-    const existingCoreRecords = await Promise.all(
-      protectedMongoCollections.filter((name) => name !== 'users')
-        .map((name) => database.collection(name).countDocuments())
-    );
-    if (existingCoreRecords.some((count) => count > 0)) {
-      throw new Error('MongoDB contains application data but no users. Automatic seeding was blocked to prevent data loss.');
-    }
-    const seed = normalizeData(createSeedData({ hashPassword }));
-    await writeSingleton(database, 'meta', seed.meta || {});
-    await writeSingleton(database, 'settings', seed.settings || {});
-    for (const collection of collections) {
-      const documents = seed[collection] || [];
-      if (documents.length) {
-        await database.collection(collection).bulkWrite(documents.map((document) => ({
-          updateOne: { filter: { id: document.id }, update: { $setOnInsert: document }, upsert: true }
-        })));
-      }
-    }
+const mysqlDocumentId = (document) => String(
+  document?.id || crypto.createHash('sha256').update(JSON.stringify(document)).digest('hex').slice(0, 32)
+);
+
+const ensureMysqlDb = async () => {
+  const pool = getMysqlPool();
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS system_singletons (
+      name VARCHAR(64) NOT NULL PRIMARY KEY,
+      document_json LONGTEXT NOT NULL,
+      updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+      CONSTRAINT chk_system_singletons_json CHECK (JSON_VALID(document_json))
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
+  for (const tableName of Object.values(mysqlTableNames)) {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS \`${tableName}\` (
+        id VARCHAR(191) NOT NULL PRIMARY KEY,
+        document_json LONGTEXT NOT NULL,
+        created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+        updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
+        CONSTRAINT \`chk_${tableName}_json\` CHECK (JSON_VALID(document_json))
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    `);
   }
 };
 
-const readSingleton = async (database, name, fallback) => {
-  const document = await database.collection(name).findOne({ _id: name });
-  return document?.value ?? fallback;
+const parseMysqlDocument = (value) => {
+  if (value && typeof value === 'object' && !Buffer.isBuffer(value)) return value;
+  return JSON.parse(Buffer.isBuffer(value) ? value.toString('utf8') : String(value));
 };
 
-const writeSingleton = async (database, name, value) => {
-  await database.collection(name).replaceOne(
-    { _id: name },
-    { _id: name, value },
-    { upsert: true }
-  );
-};
-
-const readMongoDb = async () => {
-  await ensureMongoDb();
-  const database = await getMongoDatabase();
+const readMysqlDb = async () => {
+  await ensureMysqlDb();
+  const pool = getMysqlPool();
+  const [singletonRows] = await pool.query('SELECT name, document_json FROM system_singletons');
+  const singletonMap = new Map(singletonRows.map((row) => [row.name, parseMysqlDocument(row.document_json)]));
   const data = {
-    meta: await readSingleton(database, 'meta', {}),
-    settings: await readSingleton(database, 'settings', {})
+    meta: singletonMap.get('meta') || {},
+    settings: singletonMap.get('settings') || {}
   };
-
   for (const collection of collections) {
-    data[collection] = await database
-      .collection(collection)
-      .find({}, { projection: { _id: 0 } })
-      .toArray();
+    const [rows] = await pool.query(`SELECT document_json FROM \`${mysqlTableNames[collection]}\` ORDER BY created_at, id`);
+    data[collection] = rows.map((row) => parseMysqlDocument(row.document_json));
   }
-
-  return data;
+  return normalizeData(data);
 };
 
-const writeMongoDb = async (data) => {
-  const database = await getMongoDatabase();
-  for (const collection of protectedMongoCollections) {
-    const currentCount = await database.collection(collection).countDocuments();
+const assertSafeCollectionCounts = async (countReader, data, driverName) => {
+  for (const collection of protectedCollections) {
+    const currentCount = await countReader(collection);
     const nextCount = Array.isArray(data[collection]) ? data[collection].length : 0;
     const suspiciousFloor = Math.max(3, Math.floor(currentCount * 0.25));
     if (currentCount >= 4 && nextCount <= suspiciousFloor && nextCount < currentCount - 1) {
       throw new Error(
-        `MongoDB safety guard blocked a suspicious ${collection} reduction from ${currentCount} to ${nextCount}.`
+        `${driverName} safety guard blocked a suspicious ${collection} reduction from ${currentCount} to ${nextCount}.`
       );
     }
   }
-  await writeSingleton(database, 'meta', data.meta || {});
-  await writeSingleton(database, 'settings', data.settings || {});
+};
 
-  for (const collection of collections) {
-    const documents = Array.isArray(data[collection]) ? data[collection] : [];
-    if (documents.length > 0) {
-      await database.collection(collection).bulkWrite(documents.map((document) => ({
-        replaceOne: { filter: { id: document.id }, replacement: document, upsert: true }
-      })), { ordered: true });
-      await database.collection(collection).deleteMany({ id: { $nin: documents.map((document) => document.id) } });
-    } else {
-      await database.collection(collection).deleteMany({ id: { $exists: true } });
+const writeMysqlDb = async (data) => {
+  await ensureMysqlDb();
+  const pool = getMysqlPool();
+  const normalized = normalizeData(data);
+  await assertSafeCollectionCounts(async (collection) => {
+    const [rows] = await pool.query(`SELECT COUNT(*) AS count FROM \`${mysqlTableNames[collection]}\``);
+    return Number(rows[0].count);
+  }, normalized, 'MySQL');
+
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    for (const [name, value] of [['meta', normalized.meta], ['settings', normalized.settings]]) {
+      await connection.query(
+        'INSERT INTO system_singletons (name, document_json) VALUES (?, ?) ON DUPLICATE KEY UPDATE document_json = VALUES(document_json)',
+        [name, JSON.stringify(value || {})]
+      );
     }
+    for (const collection of collections) {
+      const tableName = mysqlTableNames[collection];
+      const documents = normalized[collection] || [];
+      for (const document of documents) {
+        await connection.query(
+          `INSERT INTO \`${tableName}\` (id, document_json) VALUES (?, ?) ON DUPLICATE KEY UPDATE document_json = VALUES(document_json)`,
+          [mysqlDocumentId(document), JSON.stringify(document)]
+        );
+      }
+      if (documents.length === 0) {
+        await connection.query(`DELETE FROM \`${tableName}\``);
+      } else {
+        const ids = documents.map(mysqlDocumentId);
+        await connection.query(`DELETE FROM \`${tableName}\` WHERE id NOT IN (?)`, [ids]);
+      }
+    }
+    await connection.commit();
+    return normalized;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
   }
+};
 
-  return data;
+const acquireMysqlWriteLock = async () => {
+  const connection = await getMysqlPool().getConnection();
+  const [rows] = await connection.query('SELECT GET_LOCK(?, 30) AS acquired', ['jamhuriya-global-write-lock']);
+  if (Number(rows[0]?.acquired) !== 1) {
+    connection.release();
+    throw new Error('Timed out waiting for the MySQL write lock');
+  }
+  return async () => {
+    try {
+      await connection.query('SELECT RELEASE_LOCK(?)', ['jamhuriya-global-write-lock']);
+    } finally {
+      connection.release();
+    }
+  };
 };
 
 export const ensureDb = async () => {
-  if (usesMongo()) {
-    await ensureMongoDb();
+  if (usesMysql()) {
+    await ensureMysqlDb();
     return;
   }
   await ensureJsonDb();
 };
 
 export const readDb = async () => {
-  if (usesMongo()) return readMongoDb();
+  if (usesMysql()) return readMysqlDb();
   return readJsonDb();
 };
 
 export const writeDb = async (data) => {
-  if (usesMongo()) return writeMongoDb(normalizeData(data));
+  if (usesMysql()) return writeMysqlDb(data);
   return writeJsonDb(data);
-};
-
-const acquireMongoWriteLock = async () => {
-  const database = await getMongoDatabase();
-  const locks = database.collection('_systemLocks');
-  const owner = crypto.randomUUID();
-  const deadline = Date.now() + mongoWriteLockTimeoutMs;
-
-  while (Date.now() < deadline) {
-    try {
-      await locks.insertOne({ _id: mongoWriteLockId, owner, acquiredAt: new Date() });
-      return async () => { await locks.deleteOne({ _id: mongoWriteLockId, owner }); };
-    } catch (error) {
-      if (error?.code !== 11000) throw error;
-      await locks.deleteOne({ _id: mongoWriteLockId, acquiredAt: { $lt: new Date(Date.now() - mongoWriteLockTimeoutMs) } });
-      await new Promise((resolve) => setTimeout(resolve, mongoWriteLockWaitMs));
-    }
-  }
-  throw new Error('Timed out waiting for the MongoDB write lock');
 };
 
 export const updateDb = async (mutator) => {
   // Keep read-modify-write operations in one queue. Without this, two requests
   // can read the same snapshot and the last writer can erase the first change.
   const operation = updateQueue.then(async () => {
-    const releaseLock = usesMongo() ? await acquireMongoWriteLock() : null;
+    const releaseLock = usesMysql() ? await acquireMysqlWriteLock() : null;
     try {
       const db = await readDb();
       const result = await mutator(db);
@@ -380,9 +401,8 @@ export const updateDb = async (mutator) => {
 };
 
 export const closeDb = async () => {
-  if (mongoClient) {
-    await mongoClient.close();
-    mongoClient = null;
-    mongoDatabase = null;
+  if (mysqlPool) {
+    await mysqlPool.end();
+    mysqlPool = null;
   }
 };

@@ -8,14 +8,14 @@
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
     "seed": "node src/utils/seed.js",
-    "backup:mongo": "node src/utils/backup-mongodb.js",
-    "migrate:json-to-mongo": "node src/utils/migrate-json-to-mongodb.js",
+    "backup:mysql": "node src/utils/backup-mysql.js",
     "test": "node --test --experimental-test-isolation=none"
   },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
-    "mongodb": "^7.2.0"
+    "mysql2": "^3.23.4",
+    "nodemailer": "^9.0.5"
   }
 }

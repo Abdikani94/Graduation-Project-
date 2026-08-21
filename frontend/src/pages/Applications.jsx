@@ -240,13 +240,12 @@ const Applications = () => {
       </div>
 
       <Card className="applications-filter-card flex items-center gap-[15px] p-4 flex-wrap">
-        <div className="flex-1 relative min-w-[200px]">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+        <div className="admin-search-field min-w-[200px]">
+          <Search size={18} aria-hidden="true" />
           <input
-            type="text"
+            type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            className="w-full bg-main-bg border border-white/5 text-white rounded-xl py-3.5 pl-[44px] pr-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500"
             placeholder="Search name, email, reference ..."
           />
         </div>

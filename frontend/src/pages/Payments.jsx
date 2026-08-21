@@ -80,8 +80,8 @@ const Payments = () => {
       </section>
 
       <Card className="payments-filter-card grid gap-3 p-4 md:grid-cols-[minmax(240px,1fr)_180px_190px_auto]">
-        <label className="flex min-h-12 items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 focus-within:border-[#303b97] focus-within:bg-white">
-          <Search size={18} className="text-slate-400"/>
+        <label className="admin-search-field">
+          <Search size={18} aria-hidden="true" />
           <input value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-transparent text-sm outline-none" placeholder="Student, number, reference, phone or transaction ID" />
         </label>
         <select value={method} onChange={(event) => setMethod(event.target.value)} className="min-h-12 border border-slate-200 bg-white px-4 text-sm">{methods.map((item) => <option key={item}>{item}</option>)}</select>

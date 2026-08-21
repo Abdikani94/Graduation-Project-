@@ -7,8 +7,8 @@ await ensureDb();
 const data = await readDb();
 await closeDb();
 
-const target = env.dbDriver === 'mongodb'
-  ? `${env.mongodbUri}/${env.mongodbDbName}`
+const target = env.dbDriver === 'mysql'
+  ? `mysql://${env.mysqlHost}:${env.mysqlPort}/${env.mysqlDatabase}`
   : env.dbFile;
 
 console.log(`Database ready: ${target}`);

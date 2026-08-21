@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { History } from 'lucide-react';
+import { History, Search } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
 import Toast from '../components/Toast';
@@ -74,21 +74,22 @@ const ActivityLog = () => {
         <h1 className="text-white text-[22px] font-semibold tracking-tight">System Activity Log</h1>
       </div>
 
-      <Card className="flex items-center gap-[15px] p-4 flex-wrap">
-        <div className="flex-1 relative min-w-[200px]">
+      <Card className="activity-log-filters admin-search-toolbar">
+        <label className="admin-search-field min-w-[220px]">
+          <Search size={18} aria-hidden="true" />
           <input
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by admin or action"
-            className="w-full bg-[#070211] border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-600"
+            className=""
           />
-        </div>
-        <div className="relative min-w-[160px]">
+        </label>
+        <div className="min-w-[160px]">
           <select
             value={module}
             onChange={(event) => setModule(event.target.value)}
-            className="w-full bg-[#070211] border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none appearance-none pr-10 cursor-pointer"
+            className="admin-filter-select"
             style={{
               backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`,
               backgroundRepeat: 'no-repeat',
@@ -98,7 +99,7 @@ const ActivityLog = () => {
             {['All Modules', 'Applications', 'Programs', 'Students', 'Classes', 'Payments', 'Discount', 'Admin Users', 'Contacts', 'Settings'].map((item) => <option key={item}>{item}</option>)}
           </select>
         </div>
-        <button onClick={exportLog} className="bg-primary hover:bg-opacity-90 text-white rounded-xl px-6 py-3.5 text-[13px] font-medium transition-colors ml-auto whitespace-nowrap cursor-pointer">
+        <button onClick={exportLog} className="admin-search-submit whitespace-nowrap cursor-pointer">
           Export Log
         </button>
       </Card>

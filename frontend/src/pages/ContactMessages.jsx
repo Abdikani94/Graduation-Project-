@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { User, Search, Eye, Check, Trash2, X } from 'lucide-react';
+import { User, Search, Eye, Mail, Send, Trash2, X } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
@@ -21,6 +21,9 @@ const ContactMessages = () => {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ page: 1, pages: 1, total: 0 });
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const [reply, setReply] = useState('');
+  const [isSendingReply, setIsSendingReply] = useState(false);
+  const [emailConfigured, setEmailConfigured] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [toast, setToast] = useState(null);
 
@@ -31,6 +34,7 @@ const ContactMessages = () => {
       setMessages(result.data || []);
       setSummary(result.summary || { replied: 0, pending: 0, cancelled: 0 });
       setPagination(result.pagination || { page: 1, pages: 1, total: 0 });
+      setEmailConfigured(Boolean(result.emailConfigured));
     } catch (error) {
       setToast({ type: 'error', title: 'Messages error', message: error.message });
     } finally {
@@ -92,6 +96,28 @@ const ContactMessages = () => {
     }
   };
 
+  const openMessage = (message) => {
+    setSelectedMessage(message);
+    setReply(message.response || '');
+  };
+
+  const sendReply = async (event) => {
+    event.preventDefault();
+    const response = reply.trim();
+    if (!response) return setToast({ type: 'error', title: 'Reply required', message: 'Write a response before sending the email.' });
+    setIsSendingReply(true);
+    try {
+      const result = await api.post(`/contact-messages/${selectedMessage.id}/reply`, { response });
+      setToast({ type: 'success', title: 'Email sent', message: `Your response was emailed to ${selectedMessage.email}.` });
+      setSelectedMessage(result.contact || null);
+      await loadMessages();
+    } catch (error) {
+      setToast({ type: 'error', title: 'Email not sent', message: error.message });
+    } finally {
+      setIsSendingReply(false);
+    }
+  };
+
   return (
     <PageLayout className="contact-messages-page admin-data-page">
       <Toast toast={toast} onClose={() => setToast(null)} />
@@ -101,10 +127,10 @@ const ContactMessages = () => {
         <StatCard icon={User} title="Cancelled contacts" value={summary.cancelled.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
-      <Card className="flex items-center gap-[15px] p-4 flex-wrap">
-        <div className="flex-1 relative min-w-[200px]">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} type="text" className="w-full bg-main-bg border border-white/5 text-white rounded-xl py-3.5 pl-[44px] pr-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500" placeholder="Search name, email, phone, message ..." />
+      <Card className="contact-messages-toolbar flex items-center gap-[15px] p-4 flex-wrap">
+        <div className="admin-search-field min-w-[200px]">
+          <Search size={18} aria-hidden="true" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} type="search" placeholder="Search name, email, phone, message ..." />
         </div>
         <select value={status} onChange={(event) => setStatus(event.target.value)} className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
           {statuses.map((item) => <option key={item}>{item}</option>)}
@@ -114,16 +140,16 @@ const ContactMessages = () => {
         </select>
       </Card>
 
-      <Card className="flex flex-col flex-1 overflow-hidden">
+      <Card className="contact-messages-table-card flex flex-col overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="contact-messages-table w-full text-left border-collapse">
             <thead>
               <tr className="border-b border-white/5">
                 <th className="px-6 py-5 w-[60px]"><div className="w-4 h-4 rounded-full border-[1.5px] border-primary opacity-70"></div></th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">FROM</th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">PHINE NUMBER</th>
+                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">PHONE NUMBER</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">TYPE OF CONTACT</th>
-                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">TYPE OF CONTACT</th>
+                <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">MESSAGE</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">STATUS</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">ACTION</th>
               </tr>
@@ -153,11 +179,12 @@ const ContactMessages = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <button onClick={() => setSelectedMessage(contact)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="View">
+                    <div className="contact-message-actions">
+                    <button onClick={() => openMessage(contact)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="View and reply">
                       <Eye size={18} />
                     </button>
-                    <button onClick={() => updateStatus(contact, 'Resolved')} className="text-gray-500 hover:text-[#00A451] transition-colors p-1" type="button" title="Resolve">
-                      <Check size={17} />
+                    <button onClick={() => openMessage(contact)} className="text-gray-500 hover:text-[#00A451] transition-colors p-1" type="button" title="Reply by email">
+                      <Mail size={17} />
                     </button>
                     <button onClick={() => updateStatus(contact, 'Cancelled')} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Cancel">
                       <X size={17} />
@@ -165,6 +192,7 @@ const ContactMessages = () => {
                     {canDeleteMessages && <button onClick={() => deleteMessage(contact)} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Delete">
                       <Trash2 size={17} />
                     </button>}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -188,7 +216,14 @@ const ContactMessages = () => {
             <h2 className="text-white text-[20px] font-semibold mb-1">{selectedMessage.name}</h2>
             <p className="text-gray-500 text-[12px] mb-5">{selectedMessage.email} - {selectedMessage.phone}</p>
             <span className={`w-fit px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center ${statusClass(selectedMessage.status)}`}>{selectedMessage.status}</span>
-            <p className="text-gray-300 text-[13px] leading-6 whitespace-pre-wrap mt-5">{selectedMessage.message}</p>
+            <div className="contact-message-original"><span>Message from applicant</span><p>{selectedMessage.message}</p></div>
+            {selectedMessage.repliedAt && <p className="contact-reply-meta">Last email sent {new Date(selectedMessage.repliedAt).toLocaleString()} by {selectedMessage.repliedBy || 'Admin'}</p>}
+            <form className="contact-reply-form" onSubmit={sendReply}>
+              <label htmlFor="contact-reply">Reply by email to {selectedMessage.email}</label>
+              {!emailConfigured && <p className="contact-email-config-warning">Email delivery is disabled. Configure SMTP in backend/.env and restart the backend.</p>}
+              <textarea id="contact-reply" rows="6" maxLength="5000" value={reply} onChange={(event) => setReply(event.target.value)} placeholder="Write the response the applicant will receive by email..." required />
+              <div><span>{reply.length}/5000</span><button className="admin-button admin-button--primary" disabled={isSendingReply || !emailConfigured} type="submit"><Send size={17} /> {isSendingReply ? 'Sending...' : selectedMessage.repliedAt ? 'Send Updated Reply' : 'Send Email Reply'}</button></div>
+            </form>
           </Card>
         </div>
       )}

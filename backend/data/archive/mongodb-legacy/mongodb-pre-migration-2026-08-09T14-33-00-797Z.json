@@ -1,0 +1,534 @@
+{
+  "meta": {
+    "version": 1,
+    "seededAt": "2026-08-09T14:06:07.360Z"
+  },
+  "settings": {
+    "universityName": "Jamhuriya University",
+    "supportEmail": "support@jamhuriya.edu.so",
+    "admissionsSemester": "Fall 2026",
+    "currency": "USD",
+    "twoFactorRequired": false,
+    "notifications": {
+      "newAdmissions": true,
+      "paymentSuccess": true,
+      "weeklyReports": false
+    },
+    "maintenanceMode": false,
+    "updatedAt": "2026-08-09T14:06:07.360Z"
+  },
+  "students": [
+    {
+      "id": "stu_1001",
+      "applicationId": "app_1001",
+      "studentNumber": "JUST-2026-0001",
+      "fullName": "Said Omar Ahmed Mohamud",
+      "email": "said.omar@example.com",
+      "mobile": "614465608",
+      "faculty": "Computer Science & IT",
+      "department": "Computer Application",
+      "campus": "Campus 3",
+      "status": "Enrolled",
+      "whatsappSent": false,
+      "enrolledAt": "2026-07-01T14:06:07.587Z",
+      "createdAt": "2026-07-01T14:06:07.587Z",
+      "updatedAt": "2026-07-01T14:06:07.587Z"
+    }
+  ],
+  "activities": [
+    {
+      "id": "act_1001",
+      "action": "Approved Application",
+      "beforeAction": "Pending",
+      "afterAction": "Approved",
+      "adminId": "usr_admin",
+      "adminName": "System Admin",
+      "adminEmail": "admin@jamhuriya.edu.so",
+      "applicantPerson": "Said Omar Ahmed Mohamud",
+      "applicationReference": "JUM-2026-0001",
+      "module": "Applications",
+      "metadata": {},
+      "createdAt": "2026-07-01T14:06:07.587Z"
+    },
+    {
+      "id": "act_1002",
+      "action": "Rejected Application",
+      "beforeAction": "Pending",
+      "afterAction": "Rejected",
+      "adminId": "usr_officer",
+      "adminName": "Admission Officer",
+      "adminEmail": "officer@jamhuriya.edu.so",
+      "applicantPerson": "Ahmed Ali Warsame",
+      "applicationReference": "JUM-2026-0003",
+      "module": "Applications",
+      "metadata": {},
+      "createdAt": "2026-07-25T14:06:07.587Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_1001",
+      "applicationId": "app_1001",
+      "reference": "JUM-2026-0001",
+      "amount": 0.1,
+      "currency": "USD",
+      "method": "EVC PLUS",
+      "transactionCode": "EVC-2026-9001",
+      "status": "Paid",
+      "createdAt": "2026-06-29T14:06:07.587Z",
+      "updatedAt": "2026-06-30T14:06:07.587Z"
+    },
+    {
+      "id": "pay_1002",
+      "applicationId": "app_1002",
+      "reference": "JUM-2026-0002",
+      "amount": 0.1,
+      "currency": "USD",
+      "method": "Zaad",
+      "transactionCode": "ZAAD-2026-9002",
+      "status": "Pending",
+      "createdAt": "2026-07-31T14:06:07.587Z",
+      "updatedAt": "2026-07-31T14:06:07.587Z"
+    },
+    {
+      "id": "pay_1003",
+      "applicationId": "app_1003",
+      "reference": "JUM-2026-0003",
+      "amount": 0.1,
+      "currency": "USD",
+      "method": "eDahab",
+      "transactionCode": "EDH-2026-9003",
+      "status": "Failed",
+      "createdAt": "2026-07-23T14:06:07.587Z",
+      "updatedAt": "2026-07-25T14:06:07.587Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr_admin",
+      "name": "System Admin",
+      "username": "admin",
+      "email": "admin@jamhuriya.edu.so",
+      "passwordHash": "pbkdf2$100000$e0068f8c764dc0cd121c13f1db8c050d$e682c00325845fef1ddc3e7cc0c19c7731e9a87c548a77612d86c0bc05e0550a",
+      "role": "Admin",
+      "permissions": [
+        "admission_period.view",
+        "admission_period.create",
+        "admission_period.update",
+        "admission_period.open",
+        "admission_period.close",
+        "admission_period.pause",
+        "admission_period.resume",
+        "admission_period.extend",
+        "admission_period.reopen",
+        "admission_period.cancel",
+        "admission_period.archive",
+        "admission_period.view_audit_log",
+        "scheduled_message.view",
+        "scheduled_message.create",
+        "scheduled_message.update",
+        "scheduled_message.schedule",
+        "scheduled_message.send_now",
+        "scheduled_message.cancel",
+        "scheduled_message.retry",
+        "scheduled_message.view_results",
+        "scheduled_message.manage_templates",
+        "student_search.view",
+        "student_search.view_contact",
+        "student_search.view_emergency_contact",
+        "student_search.view_academic",
+        "student_search.view_payment_summary",
+        "student_search.view_full_profile"
+      ],
+      "campus": "Main Campus",
+      "status": "Active",
+      "createdAt": "2026-05-11T14:06:07.467Z",
+      "updatedAt": "2026-08-09T14:17:37.593Z",
+      "lastLoginAt": "2026-08-09T14:17:37.593Z"
+    },
+    {
+      "id": "usr_officer",
+      "name": "Admission Officer",
+      "username": "officer",
+      "email": "officer@jamhuriya.edu.so",
+      "passwordHash": "pbkdf2$100000$341f24a342324e70ebff7708271ebcb0$d38c603fbab6e0fbfeb844acfe5d2aa42b6d382454448183f76485e2fe3c6fdb",
+      "role": "Officer",
+      "campus": "Campus 3",
+      "status": "Active",
+      "createdAt": "2026-06-10T14:06:07.587Z",
+      "updatedAt": "2026-08-04T14:06:07.587Z",
+      "permissions": [
+        "student_search.view",
+        "student_search.view_contact",
+        "student_search.view_emergency_contact",
+        "student_search.view_academic",
+        "student_search.view_payment_summary"
+      ]
+    }
+  ],
+  "files": [],
+  "contactMessages": [
+    {
+      "id": "con_1001",
+      "name": "Hassan Mohamed",
+      "email": "hassan@example.com",
+      "phone": "615000111",
+      "type": "Admission",
+      "message": "I need help completing my online application.",
+      "status": "Pending",
+      "response": "",
+      "createdAt": "2026-08-06T14:06:07.587Z",
+      "updatedAt": "2026-08-06T14:06:07.587Z"
+    },
+    {
+      "id": "con_1002",
+      "name": "Asha Ali",
+      "email": "asha@example.com",
+      "phone": "616000222",
+      "type": "Payment",
+      "message": "My payment reference is not showing as paid.",
+      "status": "Resolved",
+      "response": "Payment confirmed by finance office.",
+      "createdAt": "2026-08-01T14:06:07.587Z",
+      "updatedAt": "2026-08-02T14:06:07.587Z"
+    }
+  ],
+  "fileShares": [],
+  "applications": [
+    {
+      "id": "app_1001",
+      "reference": "JUM-2026-0001",
+      "fullName": "Said Omar Ahmed Mohamud",
+      "motherName": "Amina Ali",
+      "nationality": "Somali",
+      "nationalId": "SO-11001",
+      "rollNumber": "SNE-2025-0142",
+      "dateOfBirth": "2004-04-15",
+      "placeOfBirth": "Mogadishu",
+      "district": "Hodon",
+      "area": "KM4",
+      "email": "said.omar@example.com",
+      "mobile": "614465608",
+      "sex": "Male",
+      "maritalStatus": "Single",
+      "campus": "Campus 3",
+      "emergencyName": "Ahmed Mohamud",
+      "emergencyTell": "615552222",
+      "relationship": "Father",
+      "familyStudied": "Maya",
+      "schoolName": "Tawakkal Secondary School",
+      "schoolDistrict": "Hodon",
+      "graduationYear": "2025",
+      "percentage": "86",
+      "heardFrom": "Social Media",
+      "faculty": "Computer Science & IT",
+      "department": "Computer Application",
+      "modeOfStudy": "Full Time",
+      "paymentPlan": "Admission fee only",
+      "paymentMethod": "EVC PLUS",
+      "admissionFee": 25,
+      "paymentStatus": "Paid",
+      "hasCertificate": "Yes",
+      "appointmentDate": "",
+      "appointmentTime": "",
+      "status": "Approved",
+      "documents": {},
+      "notes": "Eligible for admission.",
+      "reviewedBy": "usr_admin",
+      "createdAt": "2026-06-29T13:28:06.862Z",
+      "updatedAt": "2026-07-01T13:28:06.863Z"
+    },
+    {
+      "id": "app_1002",
+      "reference": "JUM-2026-0002",
+      "fullName": "Maryan Hassan Nur",
+      "motherName": "Fadumo Abdi",
+      "nationality": "Somali",
+      "nationalId": "SO-11002",
+      "rollNumber": "SNE-2025-0881",
+      "dateOfBirth": "2005-02-20",
+      "placeOfBirth": "Mogadishu",
+      "district": "Wadajir",
+      "area": "Airport Road",
+      "email": "maryan.hassan@example.com",
+      "mobile": "617770909",
+      "sex": "Female",
+      "maritalStatus": "Single",
+      "campus": "Main Campus",
+      "emergencyName": "Hassan Nur",
+      "emergencyTell": "617771010",
+      "relationship": "Father",
+      "familyStudied": "Haa",
+      "schoolName": "Al Huda Secondary School",
+      "schoolDistrict": "Wadajir",
+      "graduationYear": "2025",
+      "percentage": "91",
+      "heardFrom": "Friends",
+      "faculty": "Medicine & Health Science",
+      "department": "Nursing",
+      "modeOfStudy": "Full Time",
+      "paymentPlan": "Semester payment",
+      "paymentMethod": "Zaad",
+      "admissionFee": 25,
+      "paymentStatus": "Pending",
+      "hasCertificate": "Yes",
+      "appointmentDate": "",
+      "appointmentTime": "",
+      "status": "Pending",
+      "documents": {},
+      "notes": "",
+      "reviewedBy": null,
+      "createdAt": "2026-07-31T13:28:06.863Z",
+      "updatedAt": "2026-07-31T13:28:06.863Z"
+    },
+    {
+      "id": "app_1003",
+      "reference": "JUM-2026-0003",
+      "fullName": "Ahmed Ali Warsame",
+      "motherName": "Zahra Yusuf",
+      "nationality": "Somali",
+      "nationalId": "SO-11003",
+      "rollNumber": "SNE-2025-0920",
+      "dateOfBirth": "2003-11-03",
+      "placeOfBirth": "Baidoa",
+      "district": "Dharkenley",
+      "area": "Ex-Control",
+      "email": "ahmed.warsame@example.com",
+      "mobile": "612345678",
+      "sex": "Male",
+      "maritalStatus": "Single",
+      "campus": "Campus 2",
+      "emergencyName": "Ali Warsame",
+      "emergencyTell": "612340000",
+      "relationship": "Father",
+      "familyStudied": "Maya",
+      "schoolName": "Al Furqan Secondary School",
+      "schoolDistrict": "Dharkenley",
+      "graduationYear": "2024",
+      "percentage": "74",
+      "heardFrom": "University came to our School",
+      "faculty": "Engineering",
+      "department": "Civil Engineering",
+      "modeOfStudy": "Part Time",
+      "paymentPlan": "Admission fee only",
+      "paymentMethod": "eDahab",
+      "admissionFee": 25,
+      "paymentStatus": "Failed",
+      "hasCertificate": "No",
+      "appointmentDate": "2026-06-16",
+      "appointmentTime": "10:30",
+      "status": "Rejected",
+      "documents": {},
+      "notes": "Certificate must be provided before admission.",
+      "reviewedBy": "usr_officer",
+      "createdAt": "2026-07-23T13:28:06.863Z",
+      "updatedAt": "2026-07-25T13:28:06.863Z"
+    }
+  ],
+  "smsCampaigns": [],
+  "smsNotifications": [],
+  "admissionPeriodActivities": [],
+  "smsCampaignRecipients": [],
+  "programs": [
+    {
+      "id": "fac_medicine",
+      "title": "Medicine & Health Science",
+      "admissionFee": 25,
+      "campus": "Main Campus",
+      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80",
+      "departments": [
+        {
+          "id": "dep_mbbs",
+          "name": "Medicine & General Surgery",
+          "durationYears": 7
+        },
+        {
+          "id": "dep_nursing",
+          "name": "Nursing",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_midwifery",
+          "name": "Midwifery",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_public_health",
+          "name": "Public Health",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_laboratory",
+          "name": "Medical Laboratory Science",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_radiography",
+          "name": "BSc in Medical Radiography and Imaging Technology",
+          "durationYears": 5
+        }
+      ]
+    },
+    {
+      "id": "fac_computing",
+      "title": "Computer & IT",
+      "admissionFee": 25,
+      "campus": "Campus 3",
+      "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=600&q=80",
+      "departments": [
+        {
+          "id": "dep_computer_application",
+          "name": "Computer Application",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_networking",
+          "name": "Computer Network & Security",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_multimedia",
+          "name": "Computer Multi-Media",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_ai_data",
+          "name": "BSc in Artificial Intelligence and Data Science",
+          "durationYears": 5
+        }
+      ]
+    },
+    {
+      "id": "fac_business",
+      "title": "Economics & Management",
+      "admissionFee": 25,
+      "campus": "Main Campus",
+      "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80",
+      "departments": [
+        {
+          "id": "dep_business_admin",
+          "name": "Business Administration",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_public_admin",
+          "name": "Public Administration",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_banking",
+          "name": "Banking & Finance",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_accounting",
+          "name": "Accounting",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_economics",
+          "name": "Economics",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_business_analytics",
+          "name": "BSc in Business Analytics",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_social_work",
+          "name": "BSc in Social Work",
+          "durationYears": 5
+        }
+      ]
+    },
+    {
+      "id": "fac_engineering",
+      "title": "Engineering",
+      "admissionFee": 25,
+      "campus": "Campus 2",
+      "image": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80",
+      "departments": [
+        {
+          "id": "dep_civil",
+          "name": "Civil Engineering",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_electrical_power",
+          "name": "Electrical Engineering (Majoring in Power and Energy)",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_electrical_networking",
+          "name": "Electrical Engineering (Majoring in Telecommunications and Networking)",
+          "durationYears": 5
+        }
+      ]
+    },
+    {
+      "id": "fac_agro",
+      "title": "Agro-Veterinary",
+      "admissionFee": 25,
+      "campus": "Main Campus",
+      "image": "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=600&q=80",
+      "departments": [
+        {
+          "id": "dep_agriculture",
+          "name": "Agricultural",
+          "durationYears": 5
+        },
+        {
+          "id": "dep_veterinary",
+          "name": "Veterinary",
+          "durationYears": 5
+        }
+      ]
+    }
+  ],
+  "smsTemplates": [],
+  "classes": [],
+  "fileActivities": [],
+  "notifications": [],
+  "admissionPeriods": [
+    {
+      "id": "adp_general_2026",
+      "name": "General Admission 2026-2027",
+      "academicYear": "2026-2027",
+      "intakeName": "General Intake",
+      "admissionType": "General Admission",
+      "facultyId": "",
+      "programId": "",
+      "description": "University-wide admission registration period.",
+      "applicantInstructions": "Complete every required field and submit before the closing deadline.",
+      "openingDatetime": "2026-07-10T14:06:07.587Z",
+      "closingDatetime": "2027-08-09T14:06:07.587Z",
+      "timezone": "Africa/Nairobi",
+      "status": "Open",
+      "automaticOpen": true,
+      "automaticClose": true,
+      "allowDraftApplications": true,
+      "allowApplicationEditing": true,
+      "maximumApplications": null,
+      "applicationCount": 3,
+      "openedAt": "2026-08-09T14:06:07.360Z",
+      "openedBy": "usr_admin",
+      "closedAt": null,
+      "closedBy": null,
+      "pausedAt": null,
+      "pausedBy": null,
+      "pauseReason": "",
+      "cancellationReason": "",
+      "extensionReason": "",
+      "sendOpeningNotification": false,
+      "sendClosingReminder": false,
+      "closingReminderPeriod": 24,
+      "archived": false,
+      "version": 1,
+      "createdBy": "usr_admin",
+      "updatedBy": "usr_admin",
+      "createdAt": "2026-08-09T14:06:07.360Z",
+      "updatedAt": "2026-08-09T14:06:07.360Z"
+    }
+  ]
+}

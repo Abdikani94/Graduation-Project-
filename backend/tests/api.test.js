@@ -656,6 +656,18 @@ test('public visitor can submit a contact message', async () => {
   });
   assert.equal(response.status, 201);
   assert.equal(response.body.contact.status, 'Pending');
+
+  const contactAdminLogin = await request({ method: 'POST', path: '/api/auth/login', body: { username: 'admin', password: 'admin12345' } });
+  const replyWithoutSmtp = await request({
+    method: 'POST',
+    path: `/api/contact-messages/${response.body.contact.id}/reply`,
+    token: contactAdminLogin.body.token,
+    body: { response: 'Thank you. The admissions office is located at the main campus.' }
+  });
+  assert.equal(replyWithoutSmtp.status, 503);
+  const savedContact = (await readDb()).contactMessages.find((item) => item.id === response.body.contact.id);
+  assert.equal(savedContact.status, 'Pending');
+  assert.equal(savedContact.response, '');
 });
 
 test('admin cannot create an academic program shorter than 5 years', async () => {

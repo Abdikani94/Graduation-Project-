@@ -251,7 +251,7 @@ function FileStorage() {
       <Card className="storage-workspace">
         <nav className="storage-tabs">{visibleTabs.map(([key, label]) => <button className={tab === key ? 'active' : ''} key={key} onClick={() => setTab(key)}>{label}</button>)}</nav>
         <div className="storage-filters">
-          <label><Search size={17} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, filename, tags..." /></label>
+          <label className="admin-search-field"><Search size={17} aria-hidden="true" /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title, filename, tags..." /></label>
           <select value={reportType} onChange={(e) => setReportType(e.target.value)}><option value="">All report types</option><option>Daily Report</option><option>Monthly Report</option><option>General File</option></select>
           <select value={status} onChange={(e) => setStatus(e.target.value)}><option value="">All statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Revision Requested</option></select>
           <select value={sort} onChange={(e) => setSort(e.target.value)}><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="name">File name</option><option value="size">File size</option><option value="downloads">Most downloaded</option></select>

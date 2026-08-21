@@ -18,6 +18,7 @@ import {
   createDepartment,
   deleteDepartment,
   deleteProgram,
+  getProgram,
   listPrograms,
   updateDepartment,
   updateProgram
@@ -25,7 +26,7 @@ import {
 import { createStudent, deleteStudent, getStudent, listStudents, markWhatsAppSent, updateStudent } from '../controllers/studentsController.js';
 import { listClasses } from '../controllers/classesController.js';
 import { createPayment, deletePayment, exportPaymentsCsv, listPayments, updatePayment, updatePaymentStatus } from '../controllers/paymentsController.js';
-import { createContactMessage, deleteContactMessage, listContactMessages, updateContactStatus } from '../controllers/contactController.js';
+import { createContactMessage, deleteContactMessage, listContactMessages, replyToContactMessage, updateContactStatus } from '../controllers/contactController.js';
 import { exportReportCsv, getReportSummary } from '../controllers/reportsController.js';
 import { createAdminUser, deleteAdminUser, listAdminUsers, updateAdminUser } from '../controllers/adminUsersController.js';
 import { getSettings, updateSettings } from '../controllers/settingsController.js';
@@ -79,6 +80,7 @@ export const registerRoutes = (router) => {
 
   router.get('/api/options', getOptions);
   router.get('/api/programs', listPrograms);
+  router.get('/api/programs/:id', getProgram);
   router.post('/api/programs', requireAuth(createProgram, ['Admin']));
   router.patch('/api/programs/:id', requireAuth(updateProgram, ['Admin']));
   router.delete('/api/programs/:id', requireAuth(deleteProgram, ['Admin']));
@@ -142,6 +144,7 @@ export const registerRoutes = (router) => {
   router.post('/api/contact-messages', createContactMessage);
   router.get('/api/contact-messages', requireAuth(listContactMessages, ['Admin', 'Officer']));
   router.patch('/api/contact-messages/:id/status', requireAuth(updateContactStatus, ['Admin', 'Officer']));
+  router.post('/api/contact-messages/:id/reply', requireAuth(replyToContactMessage, ['Admin', 'Officer']));
   router.delete('/api/contact-messages/:id', requireAuth(deleteContactMessage, ['Admin']));
 
   router.get('/api/dashboard', requireAuth(getDashboard, ['Admin', 'Officer']));

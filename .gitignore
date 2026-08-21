@@ -26,6 +26,7 @@ backend/data/*.json
 backend/data/*.bak
 backend/data/*.tmp
 backend/data/mongo-backups/
+backend/data/mysql-backups/
 backend/uploads/*
 !backend/uploads/.gitkeep
 *.db

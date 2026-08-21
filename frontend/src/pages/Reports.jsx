@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FileText, User, DollarSign, Download, Info, Eye, Calendar } from 'lucide-react';
+import { FileText, User, DollarSign, Download, Info, Calendar } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
@@ -218,7 +218,6 @@ const Reports = () => {
               <h3 className="text-white text-[16px] font-semibold mb-1">Top 5 Geographic Analysis</h3>
               <p className="text-gray-500 text-[12px]">Districts / addresses with most applicants</p>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors"><Eye size={12} /> View all</button>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>
@@ -312,7 +311,6 @@ const Reports = () => {
               <h3 className="text-white text-[16px] font-semibold mb-1">Top 5 Secondary School Feeders</h3>
               <p className="text-gray-500 text-[12px]">Schools sending most applicants</p>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors shrink-0"><Eye size={12} /> View all</button>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>
@@ -338,7 +336,6 @@ const Reports = () => {
               <h3 className="text-white text-[16px] font-semibold mb-1">Faculty Demand</h3>
               <p className="text-gray-500 text-[12px]">App count per faculty</p>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors shrink-0"><Eye size={12} /> View all</button>
           </div>
 
           <div className="flex items-center justify-center h-[200px] mb-6">
@@ -407,7 +404,6 @@ const Reports = () => {
               <h3 className="text-white text-[16px] font-semibold mb-1">Top 5 Departments</h3>
               <p className="text-gray-500 text-[12px]">Top departments</p>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors shrink-0"><Eye size={12} /> View all</button>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>
@@ -438,7 +434,6 @@ const Reports = () => {
               <p className="text-gray-500 text-[12px]">Estimated projected revenue</p>
             </div>
             <div className="flex items-start gap-6">
-              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors shrink-0"><Eye size={12} /> View all</button>
               <div className="text-right">
                 <p className="text-[11px] text-gray-500 mb-1 font-medium uppercase tracking-wider">Total Revenue</p>
                 <p className="text-[20px] font-bold text-[#00A451] m-0">{money(report.stats?.totalRevenue)}</p>
@@ -537,7 +532,6 @@ const Reports = () => {
               <h3 className="text-white text-[16px] font-semibold mb-1">Top Source of Informations</h3>
               <p className="text-gray-500 text-[12px]">Source vs Applicants</p>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-white text-[11px] font-medium hover:bg-white/5 transition-colors shrink-0"><Eye size={12} /> View all</button>
           </div>
           <table className="w-full text-left border-collapse">
             <thead>

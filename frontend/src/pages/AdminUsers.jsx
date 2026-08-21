@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Edit2, Plus, Trash2, User, X } from 'lucide-react';
+import { Edit2, Plus, Search, Trash2, User, X } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
@@ -141,17 +141,18 @@ const AdminUsers = () => {
         <StatCard icon={User} title="Officers" value={summary.officers.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
       </div>
 
-      <Card className="flex items-center gap-[15px] p-4 flex-wrap">
-        <div className="flex-1 relative min-w-[200px]">
-          <input value={search} onChange={(event) => setSearch(event.target.value)} type="text" className="w-full bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500" placeholder="Search users" />
-        </div>
-        <select value={role} onChange={(event) => setRole(event.target.value)} className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
+      <Card className="admin-search-toolbar">
+        <label className="admin-search-field min-w-[220px]">
+          <Search size={18} aria-hidden="true" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} type="text" className="" placeholder="Search users" />
+        </label>
+        <select value={role} onChange={(event) => setRole(event.target.value)} className="admin-filter-select" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
           {['Campus Admin', 'Admin', 'Officer'].map((item) => <option key={item}>{item}</option>)}
         </select>
-        <select value={campus} onChange={(event) => setCampus(event.target.value)} className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
+        <select value={campus} onChange={(event) => setCampus(event.target.value)} className="admin-filter-select" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
           {['Main Campus', 'Campus 2', 'Campus 3'].map((item) => <option key={item}>{item}</option>)}
         </select>
-        <button onClick={openCreate} className="bg-primary hover:bg-opacity-90 text-white rounded-xl px-6 py-3.5 text-[13px] font-medium transition-colors ml-auto whitespace-nowrap flex items-center gap-2">
+        <button onClick={openCreate} className="admin-search-submit whitespace-nowrap">
           <Plus size={16} /> Add User
         </button>
       </Card>

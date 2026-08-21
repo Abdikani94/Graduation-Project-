@@ -111,10 +111,10 @@ const faculties = [
 const facultyNavigation = faculties.map((faculty, index) => ({ ...faculty, index }));
 
 const stats = [
-  ['15,000+', 'Students'],
-  ['8,000+', 'Labs'],
-  ['30,000+', 'Relationships'],
-  ['99.5%', 'International Exams'],
+  ['4,800+', 'Students'],
+  ['10+', 'Labs'],
+  ['450+', 'International Exams'],
+  ['20+', 'External Relations'],
 ];
 
 const dates = [
@@ -304,13 +304,13 @@ function LandingPage() {
             <a href="#programs" className="btn-ghost">Explore Programs</a>
           </div>
           <div className="home-hero-stats flex flex-wrap justify-center font-semibold">
-            <span>5,000+ Students</span>
-            <span className="text-white/55">.</span>
-            <span>20+ Programs</span>
-            <span className="text-white/55">.</span>
-            <span>15+ Years</span>
-            <span className="text-white/55">.</span>
-            <span>8+ Countries</span>
+                <span>4,800+ Students</span>
+                <span className="text-white/55">.</span>
+                <span>35+ Programs</span>
+                <span className="text-white/55">.</span>
+                <span>5+ Faculties</span>
+                <span className="text-white/55">.</span>
+                <span>4,000+ Graduates</span>
           </div>
         </section>
 

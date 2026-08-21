@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, useRef } from 'react';
-import { User, Search, Edit2, Plus, X, Image as ImageIcon, BookOpen, Clock, Calendar, Check, Trash2, Edit } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Clock, Edit2, Eye, Image as ImageIcon, Plus, Search, Trash2, University, X } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 import StatCard from '../components/StatCard';
 import PageLayout from '../components/PageLayout';
 import Card from '../components/Card';
@@ -7,666 +8,120 @@ import Toast from '../components/Toast';
 import api from '../api/axios';
 import { confirmDialog } from '../services/dialogService';
 import { isSuperAdmin } from '../utils/accessControl';
+import medicineImage from '../images/faculty-medicine-landscape.jpg';
+import computerImage from '../images/faculty-computer-landscape.jpg';
+import engineeringImage from '../images/faculty-engineering-landscape.jpg';
+import veterinaryImage from '../images/faculty-veterinary-landscape.jpg';
+import economicsImage from '../images/faculty-economics-landscape.jpg';
+import educationImage from '../images/faculty-education-landscape.jpg';
 
-const fallbackImage = 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80';
-const fixedAdmissionFee = 0.1;
-const minimumProgramDurationYears = 5;
-
-const Programs = () => {
-  const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}');
-  const canManageFaculties = isSuperAdmin(currentUser);
-  const [programs, setPrograms] = useState([]);
-  const [summary, setSummary] = useState({ totalPrograms: 0, totalFaculties: 0, totalAdmissionFees: 0 });
-  const [search, setSearch] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [toast, setToast] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeptModalOpen, setIsDeptModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-
-  // Selected Faculty for Detail Modal
-  const [selectedFaculty, setSelectedFaculty] = useState(null);
-  const [editingFaculty, setEditingFaculty] = useState(null);
-
-  // Inline Edit Department States
-  const [editingDeptIndex, setEditingDeptIndex] = useState(null);
-  const [editDeptName, setEditDeptName] = useState('');
-  const [editDeptCode, setEditDeptCode] = useState('');
-  const [editDeptDuration, setEditDeptDuration] = useState('');
-
-  // New Faculty Modal Form State
-  const [facultyName, setFacultyName] = useState('');
-  const [, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState('');
-  const fileInputRef = useRef(null);
-
-  // New Department Modal Form State
-  const [deptFaculty, setDeptFaculty] = useState('');
-  const [deptName, setDeptName] = useState('');
-  const [deptCode, setDeptCode] = useState('');
-  const [deptDuration, setDeptDuration] = useState('');
-
-  const loadPrograms = async () => {
-    setIsLoading(true);
-    try {
-      const result = await api.get('/programs', { search });
-      setPrograms(result.data || []);
-      setSummary(result.summary || { totalPrograms: 0, totalFaculties: 0, totalAdmissionFees: 0 });
-      if (selectedFaculty) {
-        const refreshed = (result.data || []).find((program) => program.id === selectedFaculty.id);
-        setSelectedFaculty(refreshed || null);
-      }
-    } catch (error) {
-      setToast({ type: 'error', title: 'Programs error', message: error.message });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadPrograms();
-  }, [search]);
-
-  const filteredPrograms = useMemo(() => programs, [programs]);
-  const money = (value) => `$${Number(value || 0).toLocaleString()}`;
-  const showSuccess = (message) => setToast({ type: 'success', title: 'Saved', message });
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleSaveFaculty = async (e) => {
-    e.preventDefault();
-    if (!facultyName) return;
-
-    const payload = {
-      title: facultyName,
-      admissionFee: fixedAdmissionFee,
-      image: imagePreview || editingFaculty?.image || fallbackImage,
+const ADMISSION_FEE = 25;
+const facultyImages = [
+  { terms: ['medicine', 'health', 'nursing'], image: medicineImage },
+  { terms: ['computer', 'information technology', ' it'], image: computerImage },
+  { terms: ['engineering'], image: engineeringImage },
+  { terms: ['agro', 'veterinary', 'agriculture'], image: veterinaryImage },
+  { terms: ['economics', 'management', 'business'], image: economicsImage },
+  { terms: ['education', 'teaching'], image: educationImage },
+];
+const facultyImage = (faculty) => facultyImages.find(({ terms }) => terms.some((term) => String(faculty?.title || '').toLowerCase().includes(term)))?.image || faculty?.image || computerImage;
+const money = (value = ADMISSION_FEE) => `$${Number(value).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+const blankFaculty = { title: '', description: '', status: 'Active', image: '' };
+const blankProgram = { name: '', code: '', durationYears: 5, status: 'Active', description: '' };
+const MAX_IMAGE_FILE_BYTES = 8 * 1024 * 1024;
+const resizeFacultyImage = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onerror = () => reject(new Error('The selected image could not be read.'));
+  reader.onload = () => {
+    const image = new Image();
+    image.onerror = () => reject(new Error('The selected file is not a valid image.'));
+    image.onload = () => {
+      const maximumWidth = 1600;
+      const maximumHeight = 1000;
+      const scale = Math.min(1, maximumWidth / image.width, maximumHeight / image.height);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(image.width * scale));
+      canvas.height = Math.max(1, Math.round(image.height * scale));
+      const context = canvas.getContext('2d');
+      context.fillStyle = '#ffffff';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.82));
     };
+    image.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+});
 
+const LoadingCards = () => <div className="programs-card-grid" aria-label="Loading faculties">{[1, 2, 3].map((item) => <div className="faculty-skeleton" key={item}><span /><i /><i /></div>)}</div>;
+const ErrorState = ({ message, retry }) => <Card className="program-state"><strong>Unable to load faculties</strong><p>{message}</p><button className="admin-button admin-button--secondary" onClick={retry}>Retry</button></Card>;
+
+const FacultyForm = ({ initial, onClose, onSaved }) => {
+  const [form, setForm] = useState(initial ? { ...blankFaculty, ...initial } : blankFaculty);
+  const [saving, setSaving] = useState(false); const [error, setError] = useState(''); const inputRef = useRef(null);
+  const change = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  const upload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setError('');
+    if (!file.type.startsWith('image/')) return setError('Please choose a valid image file.');
+    if (file.size > MAX_IMAGE_FILE_BYTES) return setError('The image must be 8 MB or smaller.');
     try {
-      if (editingFaculty) {
-        await api.patch(`/programs/${editingFaculty.id}`, payload);
-        showSuccess('Faculty updated.');
-      } else {
-        await api.post('/programs', { ...payload, departments: [] });
-        showSuccess('Faculty added.');
-      }
-      handleCancelFaculty();
-      await loadPrograms();
-    } catch (error) {
-      setToast({ type: 'error', title: 'Save failed', message: error.message });
+      const optimizedImage = await resizeFacultyImage(file);
+      setForm((current) => ({ ...current, image: optimizedImage }));
+    } catch (imageError) {
+      setError(imageError.message);
     }
   };
-
-  const handleCancelFaculty = () => {
-    setFacultyName('');
-    setSelectedImage(null);
-    setImagePreview('');
-    setEditingFaculty(null);
-    setIsModalOpen(false);
-  };
-
-  const handleOpenFacultyEdit = (e, faculty) => {
-    e.stopPropagation();
-    setEditingFaculty(faculty);
-    setFacultyName(faculty.title || '');
-    setImagePreview(faculty.image || '');
-    setIsModalOpen(true);
-  };
-
-  const handleDeleteFaculty = async (e, faculty) => {
-    e.stopPropagation();
-    const confirmation = [
-      'Are you sure you want to delete this faculty?',
-      '',
-      `Faculty: ${faculty.title || 'Untitled faculty'}`,
-      'All departments under this faculty will also be removed.',
-      'This action cannot be undone.',
-    ].join('\n');
-
-    if (!await confirmDialog(confirmation, { title: 'Delete faculty', confirmLabel: 'Delete Faculty', destructive: true })) return;
-    try {
-      await api.delete(`/programs/${faculty.id}`);
-      showSuccess('Faculty deleted.');
-      await loadPrograms();
-    } catch (error) {
-      setToast({ type: 'error', title: 'Delete failed', message: error.message });
-    }
-  };
-
-  const handleOpenDeptModal = (e, facultyTitle) => {
-    e.stopPropagation(); // Avoid opening the Faculty Detail card
-    setDeptFaculty(facultyTitle);
-    setIsDeptModalOpen(true);
-  };
-
-  const handleSaveDept = async (e) => {
-    e.preventDefault();
-    if (!deptFaculty || !deptName || !deptCode || !deptDuration) return;
-    const duration = Number(deptDuration);
-    if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
-      setToast({
-        type: 'error',
-        title: 'Validation error',
-        message: `Academic program duration must be at least ${minimumProgramDurationYears} years.`,
-      });
-      return;
-    }
-
-    try {
-      const program = programs.find((item) => item.title === deptFaculty || item.id === deptFaculty);
-      await api.post(`/programs/${program.id}/departments`, { name: deptName, code: deptCode, durationYears: duration });
-      showSuccess('Department added.');
-      handleCancelDept();
-      await loadPrograms();
-    } catch (error) {
-      setToast({ type: 'error', title: 'Save failed', message: error.message });
-    }
-  };
-
-  const handleCancelDept = () => {
-    setDeptFaculty('');
-    setDeptName('');
-    setDeptCode('');
-    setDeptDuration('');
-    setIsDeptModalOpen(false);
-  };
-
-  const handleOpenDetailModal = (faculty) => {
-    setSelectedFaculty(faculty);
-    setIsDetailModalOpen(true);
-  };
-
-  const handleCloseDetailModal = () => {
-    setSelectedFaculty(null);
-    setEditingDeptIndex(null);
-    setIsDetailModalOpen(false);
-  };
-
-  // CRUD Registered Department Functions
-  const startEditDept = (index, dept) => {
-    setEditingDeptIndex(index);
-    setEditDeptName(dept.name);
-    setEditDeptCode(dept.code || '');
-    setEditDeptDuration(String(dept.durationYears || dept.duration || ''));
-  };
-
-  const saveEditDept = async (index) => {
-    if (!selectedFaculty || !editDeptName || !editDeptCode || !editDeptDuration) return;
-    const duration = Number(editDeptDuration);
-    if (!Number.isInteger(duration) || duration < minimumProgramDurationYears) {
-      setToast({
-        type: 'error',
-        title: 'Validation error',
-        message: `Academic program duration must be at least ${minimumProgramDurationYears} years.`,
-      });
-      return;
-    }
-    try {
-      const department = selectedFaculty.departments[index];
-      await api.patch(`/programs/${selectedFaculty.id}/departments/${department.id}`, {
-        name: editDeptName,
-        code: editDeptCode,
-        durationYears: duration,
-      });
-      setEditingDeptIndex(null);
-      showSuccess('Department updated.');
-      await loadPrograms();
-    } catch (error) {
-      setToast({ type: 'error', title: 'Update failed', message: error.message });
-    }
-  };
-
-  const cancelEditDept = () => {
-    setEditingDeptIndex(null);
-  };
-
-  const deleteDept = async (index) => {
-    if (!selectedFaculty) return;
-    const department = selectedFaculty.departments[index];
-    const confirmation = [
-      'Are you sure you want to delete this department/program?',
-      '',
-      `Faculty: ${selectedFaculty.title || 'Not provided'}`,
-      `Department: ${department.name || 'Unnamed department'}`,
-      'This action cannot be undone.',
-    ].join('\n');
-
-    if (!await confirmDialog(confirmation, { title: 'Delete department', confirmLabel: 'Delete Department', destructive: true })) return;
-    try {
-      await api.delete(`/programs/${selectedFaculty.id}/departments/${department.id}`);
-      showSuccess('Department deleted.');
-      await loadPrograms();
-    } catch (error) {
-      setToast({ type: 'error', title: 'Delete failed', message: error.message });
-    }
-  };
-
-  return (
-    <PageLayout className="programs-admin-page admin-data-page">
-      <Toast toast={toast} onClose={() => setToast(null)} />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-[15px]">
-        <StatCard icon={User} title="Total Programs" value={summary.totalPrograms.toLocaleString()} color="#00A451" iconColor="#00A451" />
-        <StatCard icon={User} title="Total Faculties" value={summary.totalFaculties.toLocaleString()} color="#2D368D" iconColor="#2D368D" />
-        <StatCard icon={User} title="Total Admission fees" value={money(summary.totalAdmissionFees)} color="#2D368D" iconColor="#2D368D" />
-      </div>
-
-      <Card className="flex items-center gap-[15px] p-4 flex-wrap">
-        <div className="flex-1 relative min-w-[200px]">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input type="text" value={search} onChange={(event) => setSearch(event.target.value)} className="w-full bg-main-bg border border-white/5 text-white rounded-xl py-3.5 pl-[44px] pr-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500" placeholder="Search programs ..." />
-        </div>
-        <select className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
-          <option>All Status</option>
-        </select>
-        <select className="bg-main-bg border border-white/5 text-white rounded-xl px-4 py-3.5 text-[13px] outline-none min-w-[160px] appearance-none pr-10 cursor-pointer" style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}>
-          <option>All Faculties</option>
-        </select>
-        {canManageFaculties && <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-primary hover:bg-opacity-90 text-white rounded-xl px-6 py-3.5 text-[13px] font-medium transition-colors ml-auto whitespace-nowrap cursor-pointer"
-        >
-          Add Faculty
-        </button>}
-      </Card>
-
-      {/* Faculty Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[15px]">
-        {isLoading && <Card className="p-6 text-gray-500 text-[13px]">Loading programs...</Card>}
-        {!isLoading && filteredPrograms.length === 0 && <Card className="p-6 text-gray-500 text-[13px]">No programs found.</Card>}
-        {filteredPrograms.map((program) => (
-          <Card
-            key={program.id}
-            onClick={() => handleOpenDetailModal(program)}
-            className="flex flex-col overflow-hidden cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all duration-300 group"
-          >
-            <div className="overflow-hidden relative h-[180px]">
-              <img
-                src={program.image || fallbackImage}
-                alt={program.title}
-                className="w-full h-full object-cover grayscale opacity-90 group-hover:scale-105 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#090217] via-transparent to-transparent opacity-60"></div>
-            </div>
-            <div className="p-5 flex flex-col flex-1">
-              <h3 className="text-[18px] font-semibold text-white mb-2 font-jakarta">{program.title}</h3>
-              <p className="text-[16px] font-semibold text-white mb-6">
-                <span className="text-[#2D368D] font-medium font-sans">Fee - </span>{money(program.admissionFee)}
-              </p>
-
-              <div className="mt-auto flex flex-col gap-3">
-                <button
-                  onClick={(e) => handleOpenDeptModal(e, program.title)}
-                  className="flex items-center justify-center gap-2 bg-transparent text-gray-400 border border-dashed border-white/10 rounded-lg p-3 text-[14px] font-medium hover:border-white/30 hover:text-white transition-all cursor-pointer w-full"
-                >
-                  <Plus size={16} /> Add program
-                </button>
-                {canManageFaculties && <button
-                  onClick={(e) => handleOpenFacultyEdit(e, program)}
-                  className="flex items-center justify-center gap-2 bg-transparent text-gray-400 border border-dashed border-white/10 rounded-lg p-3 text-[14px] font-medium hover:border-white/30 hover:text-white transition-all cursor-pointer w-full"
-                >
-                  <Edit2 size={16} /> Edit
-                </button>}
-                {canManageFaculties && <button
-                  onClick={(e) => handleDeleteFaculty(e, program)}
-                  className="flex items-center justify-center gap-2 bg-transparent text-red-400 border border-dashed border-red-500/20 rounded-lg p-3 text-[14px] font-medium hover:border-red-500/40 hover:text-red-300 transition-all cursor-pointer w-full"
-                >
-                  <Trash2 size={16} /> Delete
-                </button>}
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {/* New Faculty Modal overlay */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] max-h-[90vh] overflow-y-auto rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
-            {/* Close Button */}
-            <button
-              onClick={handleCancelFaculty}
-              className="absolute right-8 top-8 w-8 h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all cursor-pointer"
-            >
-              <X size={16} />
-            </button>
-
-            {/* Title */}
-            <h2 className="text-white text-[20px] font-bold tracking-tight mb-6 font-jakarta">{editingFaculty ? 'Edit Faculty' : 'New Faculty'}</h2>
-
-            {/* Form */}
-            <form onSubmit={handleSaveFaculty} className="flex flex-col">
-              {/* Upload Image Section */}
-              <div
-                onClick={triggerFileInput}
-                className="w-full border-2 border-dashed border-[#2D368D]/30 hover:border-[#2D368D]/60 transition-all rounded-[16px] bg-[#070211]/50 h-[140px] flex flex-col items-center justify-center cursor-pointer gap-2 overflow-hidden relative"
-              >
-                {imagePreview ? (
-                  <img src={imagePreview} alt="Upload Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
-                ) : (
-                  <div className="flex items-center gap-2.5 text-[#2D368D] font-semibold text-[13px]">
-                    <ImageIcon size={18} />
-                    <span>Click to upload</span>
-                  </div>
-                )}
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="hidden"
-                />
-              </div>
-
-              {/* Faculty Name */}
-              <div className="flex flex-col mt-6">
-                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Faculty Name</label>
-                <input
-                  type="text"
-                  value={facultyName}
-                  onChange={(e) => setFacultyName(e.target.value)}
-                  className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors"
-                  required
-                />
-              </div>
-
-              {/* Fee Admission */}
-              <div className="flex flex-col mt-6">
-                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Fee (Admission)</label>
-                <input
-                  type="text"
-                  value={`$${fixedAdmissionFee}`}
-                  readOnly
-                  className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none opacity-80 cursor-not-allowed"
-                  required
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-3 mt-8">
-                <button
-                  type="button"
-                  onClick={handleCancelFaculty}
-                  className="bg-transparent border border-white/10 hover:bg-white/5 text-white rounded-full px-8 py-3 text-[13px] font-semibold transition-all cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-primary hover:bg-opacity-90 text-white rounded-full px-8 py-3 text-[13px] font-semibold transition-all cursor-pointer"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* New Department Modal overlay */}
-      {isDeptModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[560px] max-h-[90vh] overflow-y-auto rounded-[24px] p-8 relative flex flex-col animate-fade-in font-sans">
-            {/* Close Button */}
-            <button
-              onClick={handleCancelDept}
-              className="absolute right-8 top-8 w-8 h-8 rounded-full border border-white/10 hover:border-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all cursor-pointer"
-            >
-              <X size={16} />
-            </button>
-
-            {/* Title */}
-            <h2 className="text-white text-[20px] font-bold tracking-tight mb-6 font-jakarta">New department</h2>
-
-            {/* Form */}
-            <form onSubmit={handleSaveDept} className="flex flex-col">
-              {/* Faculty Select */}
-              <div className="flex flex-col">
-                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Faculty</label>
-                <div className="relative">
-                  <select
-                    value={deptFaculty}
-                    onChange={(e) => setDeptFaculty(e.target.value)}
-                    className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none appearance-none pr-12 cursor-pointer"
-                    style={{
-                      backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="%238c8a9e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>')`,
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'right 20px center'
-                    }}
-                    required
-                  >
-                    <option value="" disabled>Select Faculty</option>
-                    {programs.map((p) => (
-                      <option key={p.id} value={p.title}>{p.title}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Department Name */}
-              <div className="flex flex-col mt-6">
-                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Department Name</label>
-                <input
-                  type="text"
-                  value={deptName}
-                  onChange={(e) => setDeptName(e.target.value)}
-                  className="w-full bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors"
-                  required
-                />
-              </div>
-
-              <div className="flex flex-col mt-6">
-                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Department Code</label>
-                <input
-                  type="text"
-                  value={deptCode}
-                  onChange={(e) => setDeptCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8))}
-                  className="w-[200px] bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] uppercase outline-none focus:border-primary transition-colors"
-                  placeholder="e.g. CA or CNS"
-                  required
-                />
-                <p className="text-gray-500 text-[12px] mt-2 ml-1">Used to generate class codes, for example CA261.</p>
-              </div>
-
-              {/* Duration (Years) */}
-              <div className="flex flex-col mt-6">
-                <label className="text-white text-[13px] font-semibold mb-2.5 ml-1">Duration (Years)</label>
-                <input
-                  type="number"
-                  min={minimumProgramDurationYears}
-                  step="1"
-                  value={deptDuration}
-                  onChange={(e) => setDeptDuration(e.target.value)}
-                  className="w-[200px] bg-[#070211] border border-white/5 text-white rounded-2xl px-5 py-4 text-[13px] outline-none focus:border-primary transition-colors"
-                  placeholder={`${minimumProgramDurationYears} or more`}
-                  required
-                />
-                <p className="text-gray-500 text-[12px] mt-2 ml-1">Minimum duration is {minimumProgramDurationYears} years.</p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-3 mt-8">
-                <button
-                  type="button"
-                  onClick={handleCancelDept}
-                  className="bg-transparent border border-white/10 hover:bg-white/5 text-white rounded-full px-8 py-3 text-[13px] font-semibold transition-all cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-primary hover:bg-opacity-90 text-white rounded-full px-8 py-3 text-[13px] font-semibold transition-all cursor-pointer"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Faculty Detail Info Card Modal */}
-      {isDetailModalOpen && selectedFaculty && (
-        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-[#090217] border border-[#150D25] w-full max-w-[620px] max-h-[85vh] rounded-[28px] overflow-hidden relative flex flex-col animate-fade-in font-sans shadow-2xl">
-            {/* Float Close Button */}
-            <button
-              onClick={handleCloseDetailModal}
-              className="absolute right-5 top-5 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 hover:bg-black/60 flex items-center justify-center text-white hover:scale-105 transition-all cursor-pointer z-10"
-            >
-              <X size={16} />
-            </button>
-
-            {/* Banner Image */}
-            <div className="w-full h-[220px] relative shrink-0">
-              <img src={selectedFaculty.image || fallbackImage} alt={selectedFaculty.title} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#090217] via-[#090217]/50 to-transparent"></div>
-            </div>
-
-            {/* Modal Content */}
-            <div className="p-8 flex flex-col flex-1 min-h-0 overflow-y-auto">
-              <h2 className="text-white text-[24px] font-bold tracking-tight mb-2 font-jakarta">{selectedFaculty.title}</h2>
-              <div className="flex items-center gap-4 text-gray-400 text-[13px] font-medium mb-6">
-                <span className="flex items-center gap-1.5"><Calendar size={14} className="text-primary" /> Established: 2012</span>
-                <span className="flex items-center gap-1.5"><BookOpen size={14} className="text-primary" /> {selectedFaculty.departments.length} Departments</span>
-              </div>
-
-              {/* Fee and Info metrics */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="p-4 rounded-2xl bg-[#070211]/50 border border-white/5">
-                  <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wider mb-1">Admission Fee</p>
-                  <p className="text-[#2D368D] text-[18px] font-bold">{money(selectedFaculty.admissionFee)}</p>
-                </div>
-                <div className="p-4 rounded-2xl bg-[#070211]/50 border border-white/5">
-                  <p className="text-gray-500 text-[11px] font-medium uppercase tracking-wider mb-1">Total Enrollment</p>
-                  <p className="text-white text-[18px] font-bold">428 Students</p>
-                </div>
-              </div>
-
-              <div className="border-t border-white/5 my-4"></div>
-
-              {/* Departments Registered List */}
-              <h3 className="text-white text-[15px] font-bold mb-4 font-jakarta flex items-center gap-2">
-                <BookOpen size={16} className="text-primary" /> Registered Departments
-              </h3>
-
-              <div className="flex flex-col gap-3 overflow-y-auto pr-1 max-h-[220px] custom-scrollbar">
-                {selectedFaculty.departments.length === 0 ? (
-                  <p className="text-gray-500 text-[13px] py-4 text-center">No departments registered yet. Click "Add program" on the main screen to register one!</p>
-                ) : (
-                  selectedFaculty.departments.map((dept, i) => {
-                    const isEditing = editingDeptIndex === i;
-
-                    return (
-                      <div key={i} className="flex items-center justify-between p-4 bg-[#070211]/40 border border-white/5 rounded-2xl hover:bg-white/[0.01] transition-all group">
-                        {isEditing ? (
-                          /* INLINE EDIT MODE */
-                          <div className="flex items-center gap-3 w-full">
-                            <div className="w-8 h-8 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-bold text-[12px]">
-                              {i + 1}
-                            </div>
-                            <div className="flex-1 flex gap-2">
-                              <input
-                                type="text"
-                                value={editDeptName}
-                                onChange={(e) => setEditDeptName(e.target.value)}
-                                className="flex-1 bg-[#070211] border border-white/10 text-white text-[13px] rounded-lg px-3 py-1.5 outline-none focus:border-primary"
-                                placeholder="Department Name"
-                                required
-                              />
-                              <input
-                                type="text"
-                                value={editDeptCode}
-                                onChange={(e) => setEditDeptCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8))}
-                                className="w-[76px] bg-[#070211] border border-white/10 text-white text-[13px] uppercase rounded-lg px-3 py-1.5 outline-none focus:border-primary text-center"
-                                placeholder="Code"
-                                required
-                              />
-                              <input
-                                type="number"
-                                min={minimumProgramDurationYears}
-                                step="1"
-                                value={editDeptDuration}
-                                onChange={(e) => setEditDeptDuration(e.target.value)}
-                                className="w-[70px] bg-[#070211] border border-white/10 text-white text-[13px] rounded-lg px-3 py-1.5 outline-none focus:border-primary text-center"
-                                placeholder="Duration"
-                                required
-                              />
-                            </div>
-                            <div className="flex items-center gap-1.5 ml-2">
-                              <button
-                                onClick={() => saveEditDept(i)}
-                                className="w-8 h-8 rounded-lg bg-green-500/10 border border-green-500/20 text-green-500 hover:bg-green-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
-                              >
-                                <Check size={14} />
-                              </button>
-                              <button
-                                onClick={cancelEditDept}
-                                className="w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center cursor-pointer"
-                              >
-                                <X size={14} />
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          /* STANDARD DISPLAY MODE */
-                          <>
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-[12px]">
-                                {i + 1}
-                              </div>
-                              <span className="text-white text-[14px] font-medium">{dept.name}</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <span className="rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-[11px] font-bold text-primary">{dept.code}</span>
-                              <span className="flex items-center gap-1.5 text-gray-400 bg-white/5 border border-white/5 px-4 py-1.5 rounded-full text-[11px] font-semibold">
-                                <Clock size={11} className="text-primary" /> {dept.durationYears || dept.duration} Years
-                              </span>
-                              {/* Edit & Delete Action Buttons */}
-                              <div className="flex items-center gap-1 opacity-40 hover:opacity-100 group-hover:opacity-100 transition-all duration-200">
-                                <button
-                                  onClick={() => startEditDept(i, dept)}
-                                  className="w-7 h-7 rounded-lg bg-white/5 hover:bg-primary/20 text-gray-400 hover:text-white transition-all flex items-center justify-center cursor-pointer"
-                                  title="Edit Department"
-                                >
-                                  <Edit size={12} />
-                                </button>
-                                {canManageFaculties && <button
-                                  onClick={() => deleteDept(i)}
-                                  className="w-7 h-7 rounded-lg bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-500 transition-all flex items-center justify-center cursor-pointer"
-                                  title="Delete Department"
-                                >
-                                  <Trash2 size={12} />
-                                </button>}
-                              </div>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </PageLayout>
-  );
+  const submit = async (event) => { event.preventDefault(); setError(''); setSaving(true); try { const payload = { title: form.title.trim(), description: form.description.trim(), status: form.status, image: form.image, admissionFee: ADMISSION_FEE }; if (initial?.id) await api.patch(`/programs/${initial.id}`, payload); else await api.post('/programs', { ...payload, departments: [] }); onSaved(initial ? 'Faculty updated.' : 'Faculty added.'); } catch (requestError) { setError(requestError.message); } finally { setSaving(false); } };
+  return <div className="management-modal" role="dialog" aria-modal="true"><div className="management-modal__panel"><button className="management-modal__close" onClick={onClose} aria-label="Close"><X size={20} /></button><h2>{initial ? 'Edit Faculty' : 'Add Faculty'}</h2><p className="management-modal__intro">Manage faculty information without mixing program-specific fields.</p><form onSubmit={submit} className="management-form">
+    <button type="button" className="faculty-image-picker" onClick={() => inputRef.current?.click()}>{form.image ? <img src={form.image} alt="Faculty preview" /> : <><ImageIcon size={22} /><span>Choose faculty image</span></>}<input ref={inputRef} hidden type="file" accept="image/*" onChange={upload} /></button>
+    <label>Faculty Name *<input name="title" value={form.title} onChange={change} required /></label><label>Description<textarea name="description" rows="3" value={form.description} onChange={change} /></label><label>Status<select name="status" value={form.status} onChange={change}><option>Active</option><option>Inactive</option></select></label><label>Admission Fee<input value={money()} readOnly /></label>
+    {error && <p className="form-error" role="alert">{error}</p>}<div className="management-form__actions"><button type="button" className="admin-button admin-button--secondary" onClick={onClose}>Cancel</button><button disabled={saving} className="admin-button admin-button--primary">{saving ? 'Saving…' : 'Save Faculty'}</button></div>
+  </form></div></div>;
 };
 
+const ProgramForm = ({ faculty, initial, onClose, onSaved }) => {
+  const [form, setForm] = useState(initial ? { ...blankProgram, ...initial } : blankProgram); const [saving, setSaving] = useState(false); const [error, setError] = useState('');
+  const change = (event) => setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+  const submit = async (event) => { event.preventDefault(); setError(''); setSaving(true); const payload = { ...form, name: form.name.trim(), code: form.code.trim().toUpperCase(), durationYears: Number(form.durationYears), admissionFee: ADMISSION_FEE }; try { if (initial?.id) await api.patch(`/programs/${faculty.id}/departments/${initial.id}`, payload); else await api.post(`/programs/${faculty.id}/departments`, payload); onSaved(initial ? 'Program updated.' : 'Program added.'); } catch (requestError) { setError(requestError.message); } finally { setSaving(false); } };
+  return <div className="management-modal" role="dialog" aria-modal="true"><div className="management-modal__panel"><button className="management-modal__close" onClick={onClose} aria-label="Close"><X size={20} /></button><h2>{initial ? 'Edit Program' : 'Add Program'}</h2><p className="management-modal__intro">Faculty: {faculty.title}</p><form onSubmit={submit} className="management-form management-form--two-column">
+    <label>Program Name *<input name="name" value={form.name} onChange={change} required /></label><label>Program Code *<input name="code" value={form.code} onChange={change} required /></label><label>Faculty<input value={faculty.title} readOnly /></label><label>Duration (Years) *<input name="durationYears" type="number" min="5" max="10" value={form.durationYears} onChange={change} required /></label><label>Admission Fee<input value={money()} readOnly /></label><label>Status<select name="status" value={form.status} onChange={change}><option>Active</option><option>Inactive</option></select></label><label className="management-form__wide">Description<textarea name="description" rows="3" value={form.description || ''} onChange={change} /></label>
+    {error && <p className="form-error management-form__wide" role="alert">{error}</p>}<div className="management-form__actions management-form__wide"><button type="button" className="admin-button admin-button--secondary" onClick={onClose}>Cancel</button><button disabled={saving} className="admin-button admin-button--primary">{saving ? 'Saving…' : 'Save Program'}</button></div>
+  </form></div></div>;
+};
+
+const FacultyListing = () => {
+  const navigate = useNavigate(); const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}'); const canManage = isSuperAdmin(currentUser);
+  const [faculties, setFaculties] = useState([]); const [allFaculties, setAllFaculties] = useState([]); const [summary, setSummary] = useState({ totalPrograms: 0, totalFaculties: 0, admissionFee: ADMISSION_FEE }); const [search, setSearch] = useState(''); const [status, setStatus] = useState('All'); const [facultyId, setFacultyId] = useState(''); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [showForm, setShowForm] = useState(false); const [toast, setToast] = useState(null);
+  const loadOptions = useCallback(async () => { try { const result = await api.get('/programs'); setAllFaculties(result.data || []); } catch { /* Main request presents the actionable error. */ } }, []);
+  const load = useCallback(async () => { setLoading(true); setError(''); try { const result = await api.get('/programs', { search, status, facultyId }); setFaculties(result.data || []); setSummary(result.summary || {}); } catch (requestError) { setError(requestError.message); } finally { setLoading(false); } }, [search, status, facultyId]);
+  useEffect(() => { loadOptions(); }, [loadOptions]); useEffect(() => { const timer = setTimeout(load, 220); return () => clearTimeout(timer); }, [load]);
+  const saved = async (message) => { setShowForm(false); setToast({ type: 'success', title: 'Saved', message }); await Promise.all([load(), loadOptions()]); };
+  return <PageLayout className="programs-admin-page admin-data-page"><Toast toast={toast} onClose={() => setToast(null)} /><div className="program-page-heading"><div><p>Academic Management</p><h1>Programs & Faculties</h1><span>Manage faculties and their academic programs.</span></div></div>
+    <div className="programs-summary-grid"><StatCard icon={BookOpen} title="Active Programs" value={Number(summary.totalPrograms || 0).toLocaleString()} color="#00A451" iconColor="#00A451" /><StatCard icon={University} title="Total Faculties" value={Number(summary.totalFaculties || 0).toLocaleString()} color="#2D368D" iconColor="#2D368D" /><StatCard icon={CheckCircle2} title="Standard Admission Fee" value={money(summary.admissionFee)} color="#2D368D" iconColor="#2D368D" /></div>
+    <Card className="admin-search-toolbar programs-toolbar"><div className="admin-search-field"><Search size={19} /><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search faculty, program, or code" /></div><select className="admin-filter-select" value={status} onChange={(e) => setStatus(e.target.value)}><option value="All">All Status</option><option>Active</option><option>Inactive</option></select><select className="admin-filter-select" value={facultyId} onChange={(e) => setFacultyId(e.target.value)}><option value="">All Faculties</option>{allFaculties.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select>{canManage && <button className="admin-button admin-button--primary programs-add-faculty" onClick={() => setShowForm(true)}><Plus size={18} /> Add Faculty</button>}</Card>
+    {loading ? <LoadingCards /> : error ? <ErrorState message={error} retry={load} /> : faculties.length === 0 ? <Card className="program-state"><University size={28} /><strong>No faculties found.</strong><p>Try changing your search or filters.</p></Card> : <div className="programs-card-grid">{faculties.map((faculty) => <button type="button" key={faculty.id} className="program-faculty-card" onClick={() => navigate(`/admin/programs/${faculty.id}`)}><div className="program-faculty-card__media"><img src={facultyImage(faculty)} alt="" /><span>{faculty.departments?.length || 0} programs</span></div><div className="program-faculty-card__body"><div><span className={`status-pill status-pill--${(faculty.status || 'Active').toLowerCase()}`}>{faculty.status || 'Active'}</span><h2>{faculty.title}</h2></div><p><span>Admission fee</span><strong>{money(faculty.admissionFee)}</strong></p><span className="faculty-view-link">View Faculty <ArrowRight size={17} /></span></div></button>)}</div>}{showForm && <FacultyForm onClose={() => setShowForm(false)} onSaved={saved} />}
+  </PageLayout>;
+};
+
+const FacultyDetail = () => {
+  const { facultyId } = useParams(); const navigate = useNavigate(); const currentUser = JSON.parse(localStorage.getItem('authUser') || '{}'); const canManage = isSuperAdmin(currentUser);
+  const [faculty, setFaculty] = useState(null); const [loading, setLoading] = useState(true); const [error, setError] = useState(''); const [search, setSearch] = useState(''); const [status, setStatus] = useState('All'); const [facultyForm, setFacultyForm] = useState(false); const [programForm, setProgramForm] = useState(null); const [viewProgram, setViewProgram] = useState(null); const [toast, setToast] = useState(null);
+  const load = useCallback(async () => { setLoading(true); setError(''); try { const result = await api.get(`/programs/${facultyId}`); setFaculty(result.program); } catch (requestError) { setError(requestError.message); } finally { setLoading(false); } }, [facultyId]); useEffect(() => { load(); }, [load]);
+  const programs = useMemo(() => (faculty?.departments || []).filter((item) => status === 'All' || (item.status || 'Active') === status).filter((item) => [item.name, item.code].some((value) => String(value || '').toLowerCase().includes(search.toLowerCase()))), [faculty, search, status]);
+  const saved = async (message) => { setFacultyForm(false); setProgramForm(null); setToast({ type: 'success', title: 'Saved', message }); await load(); };
+  const removeFaculty = async () => { if (!await confirmDialog(`Are you sure you want to delete ${faculty.title}?\n\nThe faculty must have no programs. This action cannot be undone.`, { title: 'Delete faculty', confirmLabel: 'Delete Faculty', destructive: true })) return; try { await api.delete(`/programs/${faculty.id}`); navigate('/admin/programs'); } catch (requestError) { setToast({ type: 'error', title: 'Delete blocked', message: requestError.message }); } };
+  const removeProgram = async (program) => { if (!await confirmDialog(`Are you sure you want to delete this program?\n\nProgram: ${program.name}\nThis action cannot be undone.`, { title: 'Delete program', confirmLabel: 'Delete Program', destructive: true })) return; try { await api.delete(`/programs/${faculty.id}/departments/${program.id}`); setToast({ type: 'success', title: 'Deleted', message: 'Program deleted.' }); await load(); } catch (requestError) { setToast({ type: 'error', title: 'Delete failed', message: requestError.message }); } };
+  if (loading) return <PageLayout className="programs-admin-page"><LoadingCards /></PageLayout>; if (error || !faculty) return <PageLayout className="programs-admin-page"><button className="faculty-back" onClick={() => navigate('/admin/programs')}><ArrowLeft size={18} /> Back to Faculties</button><ErrorState message={error || 'Faculty not found.'} retry={load} /></PageLayout>;
+  return <PageLayout className="programs-admin-page faculty-detail-page"><Toast toast={toast} onClose={() => setToast(null)} /><button className="faculty-back" onClick={() => navigate('/admin/programs')}><ArrowLeft size={18} /> Back to Faculties</button><section className="faculty-hero"><img src={facultyImage(faculty)} alt="" /><div className="faculty-hero__overlay"><span className={`status-pill status-pill--${(faculty.status || 'Active').toLowerCase()}`}>{faculty.status || 'Active'}</span><h1>{faculty.title}</h1><p>{faculty.description || 'Faculty academic programs and department management.'}</p><div className="faculty-hero__metrics"><span><BookOpen size={18} /><strong>{faculty.departments?.length || 0}</strong> Programs</span><span><strong>{money(faculty.admissionFee)}</strong> Admission Fee</span></div></div></section>
+    {canManage && <div className="faculty-management-actions"><button className="admin-button admin-button--secondary" onClick={() => setFacultyForm(true)}><Edit2 size={17} /> Edit Faculty</button><button className="admin-button admin-button--danger" onClick={removeFaculty}><Trash2 size={17} /> Delete Faculty</button></div>}
+    <section className="faculty-programs-section"><div className="faculty-programs-heading"><div><h2>Programs & Departments</h2><p>Only programs assigned to {faculty.title} are shown.</p></div><button className="admin-button admin-button--primary" onClick={() => setProgramForm({})}><Plus size={18} /> Add Program</button></div><div className="program-detail-toolbar"><div className="admin-search-field"><Search size={18} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search programs or codes" /></div><select className="admin-filter-select" value={status} onChange={(e) => setStatus(e.target.value)}><option value="All">All Status</option><option>Active</option><option>Inactive</option></select></div>
+      {programs.length === 0 ? <Card className="program-state"><BookOpen size={28} /><strong>{faculty.departments?.length ? 'No programs match your filters.' : 'No programs have been added to this faculty yet.'}</strong>{!faculty.departments?.length && <button className="admin-button admin-button--primary" onClick={() => setProgramForm({})}><Plus size={17} /> Add Program</button>}</Card> : <div className="department-grid">{programs.map((program) => <article className="department-card" key={program.id}><div className="department-card__top"><span className="department-code">{program.code}</span><span className={`status-pill status-pill--${(program.status || 'Active').toLowerCase()}`}>{program.status || 'Active'}</span></div><h3>{program.name}</h3><p className="department-description">{program.description || `Academic program offered by ${faculty.title}.`}</p><dl><div><dt>Faculty</dt><dd>{faculty.title}</dd></div><div><dt>Duration</dt><dd><Clock size={15} /> {program.durationYears || 5} Years</dd></div><div><dt>Admission Fee</dt><dd>{money(program.admissionFee)}</dd></div></dl><div className="department-card__actions"><button onClick={() => setViewProgram(program)}><Eye size={16} /> View</button><button onClick={() => setProgramForm(program)}><Edit2 size={16} /> Edit</button>{canManage && <button className="danger" onClick={() => removeProgram(program)}><Trash2 size={16} /> Delete</button>}</div></article>)}</div>}
+    </section>{facultyForm && <FacultyForm initial={faculty} onClose={() => setFacultyForm(false)} onSaved={saved} />}{programForm && <ProgramForm faculty={faculty} initial={programForm.id ? programForm : null} onClose={() => setProgramForm(null)} onSaved={saved} />}
+    {viewProgram && <div className="management-modal" role="dialog" aria-modal="true"><div className="management-modal__panel program-view-modal"><button className="management-modal__close" onClick={() => setViewProgram(null)}><X size={20} /></button><span className="department-code">{viewProgram.code}</span><h2>{viewProgram.name}</h2><p>{viewProgram.description || 'No description has been added.'}</p><dl><div><dt>Faculty</dt><dd>{faculty.title}</dd></div><div><dt>Duration</dt><dd>{viewProgram.durationYears || 5} Years</dd></div><div><dt>Admission Fee</dt><dd>{money(viewProgram.admissionFee)}</dd></div><div><dt>Status</dt><dd>{viewProgram.status || 'Active'}</dd></div></dl></div></div>}
+  </PageLayout>;
+};
+
+const Programs = () => useParams().facultyId ? <FacultyDetail /> : <FacultyListing />;
 export default Programs;

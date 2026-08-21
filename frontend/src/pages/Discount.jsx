@@ -111,18 +111,17 @@ const Discount = () => {
 
       <Card className="p-6 flex flex-col gap-6">
         <h2 className="text-white text-[16px] font-semibold">Find a Student</h2>
-        <form onSubmit={handleSearch} className="flex items-center gap-[15px] flex-wrap">
-          <div className="flex-1 relative min-w-[220px]">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+        <form onSubmit={handleSearch} className="admin-search-form">
+          <div className="admin-search-field min-w-[220px]">
+            <Search size={18} aria-hidden="true" />
             <input
               value={studentId}
               onChange={(event) => setStudentId(event.target.value)}
-              type="text"
-              className="w-full bg-main-bg border border-white/5 text-white rounded-xl py-3.5 pl-[44px] pr-4 text-[13px] outline-none focus:border-primary transition-colors placeholder-gray-500"
+              type="search"
               placeholder="Enter Student Name or ID (e.g. JUST-2026-0001) ..."
             />
           </div>
-          <button disabled={isSearching} type="submit" className="bg-primary hover:bg-opacity-90 text-white rounded-full px-8 py-3.5 text-[13px] font-medium transition-colors cursor-pointer disabled:opacity-50">
+          <button disabled={isSearching} type="submit" className="admin-search-submit">
             {isSearching ? 'Searching...' : 'Search'}
           </button>
         </form>

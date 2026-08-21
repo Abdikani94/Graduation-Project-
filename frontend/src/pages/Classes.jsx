@@ -48,9 +48,9 @@ const Classes = () => {
       </div>
 
       <Card className="flex items-center gap-4 p-4 flex-wrap">
-        <div className="flex-1 relative min-w-[220px]">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input value={search} onChange={(event) => setSearch(event.target.value)} className="admin-field w-full pl-11" placeholder="Search class code, faculty, or department" />
+        <div className="admin-search-field min-w-[220px]">
+          <Search size={18} aria-hidden="true" />
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search class code, faculty, or department" />
         </div>
         <select value={faculty} onChange={(event) => setFaculty(event.target.value)} className="admin-field min-w-[220px]">
           {faculties.map((item) => <option key={item}>{item}</option>)}

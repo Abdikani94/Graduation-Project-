@@ -2,16 +2,19 @@
 
 Backend API for the automated online admission gateway. It follows the PDF requirements: online applications, document upload support, payment tracking, admin dashboard, reports, contact/support messages, role-based access, settings, and activity logs.
 
-## MongoDB
+## MySQL / MariaDB (XAMPP)
 
-The backend is configured to use local MongoDB:
+The backend stores application data in the local XAMPP MySQL/MariaDB database:
 
 ```text
-mongodb://localhost:27017
+host: 127.0.0.1
+port: 3306
 database: jamhuriya_admission
 ```
 
-Make sure MongoDB is running before seeding or starting the backend.
+Start MySQL from the XAMPP Control Panel before seeding or starting the backend.
+The server creates a local recovery snapshot in `backend/data/mysql-backups`
+at startup and keeps the latest 10 snapshots. You can also run `npm run backup:mysql`.
 
 ## Run
 
@@ -27,9 +30,7 @@ classes, applications, students, payments, and other records.
 When startup succeeds, the terminal prints:
 
 ```text
-MongoDB connected: mongodb://localhost:27017/jamhuriya_admission
 Server is running on port 5055
-API URL: http://127.0.0.1:5055
 ```
 
 If you see `Port 5055 is already in use`, another backend server is already running on that port. Use the existing server, stop it, or change `PORT` in `backend/.env`.
@@ -79,4 +80,6 @@ Protected routes need:
 Authorization: Bearer <token>
 ```
 
-With the included `.env`, application data is stored in MongoDB under the `jamhuriyya_admission` database. Uploaded application files are stored under `backend/uploads/applications`.
+With the included `.env`, application data is stored in MySQL/MariaDB under the
+`jamhuriya_admission` database. Uploaded application files are stored under
+`backend/uploads/applications`; database records only store their metadata and paths.
