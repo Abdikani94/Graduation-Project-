@@ -74,7 +74,7 @@ const applications = [
   {
     id: 'app_1001',
     reference: 'JUM-2026-0001',
-    fullName: 'Said Omar Ahmed Mohamud',
+    fullName: 'Ali Omar Ahmed Mohamud',
     motherName: 'Amina Ali',
     nationality: 'Somali',
     nationalId: 'SO-11001',

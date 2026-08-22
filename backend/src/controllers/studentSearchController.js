@@ -78,10 +78,15 @@ const studentSearchView = (db, application, user) => {
   return view;
 };
 
-const inStaffScope = (application, student, user) => {
+export const inStaffScope = (application, student, user) => {
   if (user.role === 'Admin') return true;
-  if (user.campus && user.campus !== 'All Campuses' && (student.campus || application.campus) !== user.campus) return false;
-  if (user.department && (student.department || application.department) !== user.department) return false;
+  const recordCampus = student.campus || application.campus || '';
+  const recordDepartment = student.department || application.department || '';
+  // Older applications were created before campus became required. Do not
+  // make those students impossible to find; enforce scope whenever the record
+  // actually contains the corresponding scope value.
+  if (user.campus && user.campus !== 'All Campuses' && recordCampus && recordCampus !== user.campus) return false;
+  if (user.department && recordDepartment && recordDepartment !== user.department) return false;
   return true;
 };
 

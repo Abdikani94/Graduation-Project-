@@ -141,11 +141,18 @@ const ContactMessages = () => {
       </Card>
 
       <Card className="contact-messages-table-card flex flex-col overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="contact-messages-table-scroll overflow-x-auto">
           <table className="contact-messages-table w-full text-left border-collapse">
+            <colgroup>
+              <col className="contact-col-from" />
+              <col className="contact-col-phone" />
+              <col className="contact-col-type" />
+              <col className="contact-col-message" />
+              <col className="contact-col-status" />
+              <col className="contact-col-actions" />
+            </colgroup>
             <thead>
               <tr className="border-b border-white/5">
-                <th className="px-6 py-5 w-[60px]"><div className="w-4 h-4 rounded-full border-[1.5px] border-primary opacity-70"></div></th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">FROM</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">PHONE NUMBER</th>
                 <th className="px-6 py-5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">TYPE OF CONTACT</th>
@@ -155,41 +162,40 @@ const ContactMessages = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoading && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={7}>Loading contact messages...</td></tr>}
-              {!isLoading && messages.length === 0 && <tr><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={7}>No contact messages found.</td></tr>}
+              {isLoading && <tr className="contact-messages-empty-row"><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={6}>Loading contact messages...</td></tr>}
+              {!isLoading && messages.length === 0 && <tr className="contact-messages-empty-row"><td className="px-6 py-8 text-center text-gray-500 text-[13px]" colSpan={6}>No contact messages found.</td></tr>}
               {!isLoading && messages.map((contact) => (
                 <tr key={contact.id} className="border-b border-white/[0.02] hover:bg-white/[0.01] transition-colors">
-                  <td className="px-6 py-4"><div className="w-4 h-4 rounded-full border-[1.5px] border-primary opacity-70"></div></td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4" data-label="From">
                     <div className="flex flex-col">
                       <p className="text-white text-[14px] font-medium mb-0.5">{contact.name}</p>
                       <p className="text-gray-500 text-[11px] tracking-wide">{contact.email}</p>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-[13px] text-gray-400">{contact.phone}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-[13px] text-gray-400" data-label="Phone">{contact.phone}</td>
+                  <td className="px-6 py-4" data-label="Type">
                     <span className="px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center text-[#2D368D] bg-[#2D368D]/10 border-[#2D368D]/20">
                       {contact.type}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-[13px] text-gray-400 max-w-[300px] truncate">{contact.message}</td>
-                  <td className="px-6 py-4">
+                  <td className="contact-message-preview px-6 py-4 text-[13px] text-gray-400" data-label="Message">{contact.message}</td>
+                  <td className="px-6 py-4" data-label="Status">
                     <span className={`px-4 py-1.5 rounded-full text-[12px] font-medium border inline-flex items-center justify-center ${statusClass(contact.status)}`}>
                       {contact.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4" data-label="Actions">
                     <div className="contact-message-actions">
-                    <button onClick={() => openMessage(contact)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="View and reply">
+                    <button onClick={() => openMessage(contact)} className="text-gray-500 hover:text-white transition-colors p-1" type="button" title="View and reply" aria-label={`View message from ${contact.name}`}>
                       <Eye size={18} />
                     </button>
-                    <button onClick={() => openMessage(contact)} className="text-gray-500 hover:text-[#00A451] transition-colors p-1" type="button" title="Reply by email">
+                    <button onClick={() => openMessage(contact)} className="text-gray-500 hover:text-[#00A451] transition-colors p-1" type="button" title="Reply by email" aria-label={`Reply to ${contact.name} by email`}>
                       <Mail size={17} />
                     </button>
-                    <button onClick={() => updateStatus(contact, 'Cancelled')} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Cancel">
+                    <button onClick={() => updateStatus(contact, 'Cancelled')} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Cancel" aria-label={`Cancel message from ${contact.name}`}>
                       <X size={17} />
                     </button>
-                    {canDeleteMessages && <button onClick={() => deleteMessage(contact)} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Delete">
+                    {canDeleteMessages && <button onClick={() => deleteMessage(contact)} className="text-gray-500 hover:text-red-500 transition-colors p-1" type="button" title="Delete" aria-label={`Delete message from ${contact.name}`}>
                       <Trash2 size={17} />
                     </button>}
                     </div>
@@ -200,7 +206,7 @@ const ContactMessages = () => {
           </table>
         </div>
         
-        <div className="flex items-center justify-between p-6 mt-auto border-t border-white/5">
+        <div className="contact-messages-pagination flex items-center justify-between p-6 mt-auto border-t border-white/5">
           <div className="text-[13px] font-medium text-gray-500">Page {pagination.page} of {pagination.pages} - {pagination.total} messages</div>
           <div className="flex gap-3">
             <button disabled={page <= 1 || isLoading} onClick={() => setPage((value) => Math.max(value - 1, 1))} className="px-5 py-2 rounded-full border border-white/10 text-gray-400 text-[13px] font-medium hover:text-white hover:border-white/20 transition-all bg-transparent cursor-pointer disabled:opacity-40">Previous</button>
@@ -210,8 +216,8 @@ const ContactMessages = () => {
       </Card>
 
       {selectedMessage && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <Card className="w-full max-w-[560px] max-h-[90vh] overflow-y-auto p-7 relative">
+        <div className="contact-message-modal fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <Card className="contact-message-dialog w-full max-w-[560px] max-h-[90vh] overflow-y-auto p-7 relative">
             <button onClick={() => setSelectedMessage(null)} className="absolute right-5 top-5 text-gray-400 hover:text-white" type="button"><X size={18} /></button>
             <h2 className="text-white text-[20px] font-semibold mb-1">{selectedMessage.name}</h2>
             <p className="text-gray-500 text-[12px] mb-5">{selectedMessage.email} - {selectedMessage.phone}</p>
