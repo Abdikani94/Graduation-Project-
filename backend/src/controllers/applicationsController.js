@@ -128,7 +128,7 @@ const requiredCreateFields = [
 
 const optionValues = {
   sex: ['Male', 'Female'],
-  maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
+  maritalStatus: ['Single', 'Married'],
   hasCertificate: ['Yes', 'No'],
   relationship: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'],
   familyStudied: ['Haa', 'Maya', 'Yes', 'No'],

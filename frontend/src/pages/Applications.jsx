@@ -39,7 +39,7 @@ const EDIT_SECTIONS = [
       { key: 'email', label: 'Email', type: 'email' },
       { key: 'mobile', label: 'Mobile' },
       { key: 'sex', label: 'Sex', options: ['Male', 'Female'] },
-      { key: 'maritalStatus', label: 'Marital Status', options: ['Single', 'Marriage', 'Divorced', 'Widowed'] },
+      { key: 'maritalStatus', label: 'Marital Status', options: ['Single', 'Married'] },
       { key: 'campus', label: 'Campus', options: ['Main Campus', 'Campus 2', 'Campus 3'] },
     ],
   },

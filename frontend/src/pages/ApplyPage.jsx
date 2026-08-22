@@ -501,7 +501,7 @@ const idPattern = /^[1-9]\d{9,14}$/;
 const rollNumberPattern = /^[1-9]\d{9,14}$/;
 const optionValues = {
   sex: ['Male', 'Female'],
-  maritalStatus: ['Single', 'Marriage', 'Divorced', 'Widowed'],
+  maritalStatus: ['Single', 'Married'],
   hasCertificate: ['Yes', 'No'],
   relationship: ['Mother', 'Father', 'Brother', 'Sister', 'Other specify'],
   familyStudied: ['Yes', 'No'],
@@ -1143,7 +1143,7 @@ function ApplyPage() {
                   label="Marital Status"
                   name="maritalStatus"
                   value={form.maritalStatus}
-                  options={['Single', { value: 'Marriage', label: 'Married' }, 'Divorced', 'Widowed']}
+                  options={['Single', 'Married']}
                   onChange={updateForm}
                   placeholder="Select marital status"
                 />
